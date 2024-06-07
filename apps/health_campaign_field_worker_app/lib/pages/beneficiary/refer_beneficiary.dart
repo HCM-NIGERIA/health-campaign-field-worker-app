@@ -10,6 +10,7 @@ import '../../blocs/facility/facility.dart';
 import '../../blocs/household_overview/household_overview.dart';
 import '../../blocs/referral_management/referral_management.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/project_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
@@ -41,6 +42,7 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
   static const _referredByKey = 'referredBy';
   static const _referredToKey = 'referredTo';
   static const _referralReason = 'referralReason';
+  static const _referralCode = 'referralCode';
   static const _referralComments = 'referralComments';
   final clickedStatus = ValueNotifier<bool>(false);
 
@@ -124,6 +126,9 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                 final referralComment =
                                     form.control(_referralComments).value;
 
+                                final referralCode =
+                                    form.control(_referralCode).value;
+
                                 final cycleIndex = context.selectedCycle.id == 0
                                     ? ""
                                     : "0${context.selectedCycle.id}";
@@ -184,6 +189,17 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                                           AdditionalField(
                                             "projectTypeId",
                                             projectTypeId,
+                                          ),
+                                        if (referralCode != null &&
+                                            referralCode
+                                                .toString()
+                                                .trim()
+                                                .isNotEmpty &&
+                                            context.projectTypeCode ==
+                                                ProjectTypes.smc.toValue())
+                                          AdditionalField(
+                                            _referralCode,
+                                            referralCode,
                                           ),
                                       ],
                                     ),
@@ -386,8 +402,14 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                               return state.maybeWhen(
                                 orElse: () => const Offstage(),
                                 initialized: (appConfiguration, _) {
-                                  final List<KeyValue> reasons =
-                                      (appConfiguration.referralReasons ?? [])
+                                  final List<KeyValue> reasons = context
+                                              .projectTypeCode ==
+                                          ProjectTypes.smc.toValue()
+                                      ? (appConfiguration.referralReasonsSmc ??
+                                              [])
+                                          .map((e) => KeyValue(e.code, e.code))
+                                          .toList()
+                                      : (appConfiguration.referralReasons ?? [])
                                           .map((e) => KeyValue(e.code, e.code))
                                           .toList();
 
@@ -413,6 +435,20 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
                               );
                             },
                           ),
+                          if (context.projectTypeCode ==
+                              ProjectTypes.smc.toValue())
+                            DigitTextFormField(
+                              formControlName: _referralCode,
+                              isRequired: true,
+                              label: localizations.translate(
+                                i18.referBeneficiary.referralCodeLabel,
+                              ),
+                              validationMessages: {
+                                'required': (_) => localizations.translate(
+                                      i18.common.corecommonRequired,
+                                    ),
+                              },
+                            ),
                           DigitTextFormField(
                             formControlName: _referralComments,
                             label: localizations.translate(
@@ -446,6 +482,9 @@ class _ReferBeneficiaryPageState extends LocalizedState<ReferBeneficiaryPage> {
           FormControl<FacilityModel>(validators: [Validators.required]),
       _referralReason: FormControl<KeyValue>(value: null),
       _referralComments: FormControl<String>(value: null),
+      _referralCode: context.projectTypeCode == ProjectTypes.smc.toValue()
+          ? FormControl<String>(validators: [Validators.required])
+          : FormControl<String>(value: null),
     });
   }
 }

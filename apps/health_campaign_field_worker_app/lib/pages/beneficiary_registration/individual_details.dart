@@ -17,6 +17,7 @@ import '../../blocs/search_households/search_bloc_common_wrapper.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/project_types.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
 import '../../utils/i18_key_constants.dart' as i18;
@@ -52,6 +53,7 @@ class _IndividualDetailsPageState
   DateTime now = DateTime.now();
   static const _disabilityTypeKey = 'disabilityType';
   static const _heightKey = 'height';
+  bool isHeadAgeValid = true;
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +109,18 @@ class _IndividualDetailsPageState
                           : () async {
                               if (form.control(_dobKey).value == null) {
                                 form.control(_dobKey).setErrors({'': true});
+                              } else if (!isHeadAgeValid) {
+                                await DigitToast.show(
+                                  context,
+                                  options: DigitToastOptions(
+                                    localizations.translate(i18
+                                        .individualDetails.headAgeValidError),
+                                    true,
+                                    theme,
+                                  ),
+                                );
+
+                                return;
                               }
                               final userId = context.loggedInUserUuid;
                               final projectId = context.projectId;
@@ -484,7 +498,17 @@ class _IndividualDetailsPageState
                                             (age.years == 150 &&
                                                 age.months > 0))) {
                                       formControl.setErrors({'': true});
+                                    } else if (context.projectTypeCode ==
+                                            ProjectTypes.smc.toValue() &&
+                                        widget.isHeadOfHousehold &&
+                                        age.years < 18) {
+                                      isHeadAgeValid = false;
                                     } else {
+                                      if (context.projectTypeCode ==
+                                              ProjectTypes.smc.toValue() &&
+                                          widget.isHeadOfHousehold) {
+                                        isHeadAgeValid = true;
+                                      }
                                       formControl.removeError('');
                                     }
                                   }
@@ -528,99 +552,111 @@ class _IndividualDetailsPageState
                                 },
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                kPadding / 2,
-                                kPadding,
-                                kPadding / 2,
-                                0,
-                              ),
-                              child: DigitTextFormField(
-                                keyboardType: TextInputType.number,
-                                formControlName: _mobileNumberKey,
-                                label: localizations.translate(
-                                  i18.individualDetails.mobileNumberLabelText,
+                            Offstage(
+                              offstage: context.projectTypeCode ==
+                                      ProjectTypes.smc.toValue()
+                                  ? !widget.isHeadOfHousehold
+                                  : false,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  kPadding / 2,
+                                  kPadding,
+                                  kPadding / 2,
+                                  0,
                                 ),
-                                maxLength: 11,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp("[0-9]"),
+                                child: DigitTextFormField(
+                                  keyboardType: TextInputType.number,
+                                  formControlName: _mobileNumberKey,
+                                  label: localizations.translate(
+                                    i18.individualDetails.mobileNumberLabelText,
                                   ),
-                                ],
-                                validationMessages: {
-                                  'mobileNumber': (object) =>
-                                      localizations.translate(i18
-                                          .individualDetails
-                                          .mobileNumberInvalidFormatValidationMessage),
-                                },
+                                  maxLength: 11,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp("[0-9]"),
+                                    ),
+                                  ],
+                                  validationMessages: {
+                                    'mobileNumber': (object) =>
+                                        localizations.translate(i18
+                                            .individualDetails
+                                            .mobileNumberInvalidFormatValidationMessage),
+                                  },
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            kPadding / 2,
-                            0,
-                            kPadding / 2,
-                            0,
-                          ),
-                          child: DigitTextFormField(
-                            keyboardType: TextInputType.number,
-                            isRequired: true,
-                            formControlName: _heightKey,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp("[0-9]"),
-                              ),
-                            ],
-                            label: localizations.translate(
-                              i18.individualDetails.heightLabelText,
+                        if (context.projectTypeCode ==
+                            ProjectTypes.lf.toValue())
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              kPadding / 2,
+                              0,
+                              kPadding / 2,
+                              0,
                             ),
-                            maxLength: 3,
-                            validationMessages: {
-                              'required': (object) => localizations
-                                  .translate(i18.common.corecommonRequired),
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            kPadding / 2,
-                            0,
-                            kPadding / 2,
-                            0,
-                          ),
-                          child: BlocBuilder<AppInitializationBloc,
-                              AppInitializationState>(
-                            builder: (context, state) {
-                              if (state is! AppInitialized) {
-                                return const Offstage();
-                              }
-
-                              final disabilityTypes =
-                                  state.appConfiguration.disabilityTypes ??
-                                      <DisabilityTypes>[];
-
-                              return DigitReactiveDropdown<String>(
-                                label: localizations.translate(
-                                  i18.deliverIntervention.disabilityLabel,
+                            child: DigitTextFormField(
+                              keyboardType: TextInputType.number,
+                              isRequired: true,
+                              formControlName: _heightKey,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9]"),
                                 ),
-                                isRequired: true,
-                                valueMapper: (value) =>
-                                    localizations.translate(value),
-                                initialValue: disabilityTypes.firstOrNull?.code,
-                                menuItems: disabilityTypes.map((e) {
-                                  return e.code;
-                                }).toList(),
-                                formControlName: _disabilityTypeKey,
-                                validationMessages: {
-                                  'required': (object) => localizations
-                                      .translate(i18.common.corecommonRequired),
-                                },
-                              );
-                            },
+                              ],
+                              label: localizations.translate(
+                                i18.individualDetails.heightLabelText,
+                              ),
+                              maxLength: 3,
+                              validationMessages: {
+                                'required': (object) => localizations
+                                    .translate(i18.common.corecommonRequired),
+                              },
+                            ),
                           ),
-                        ),
+                        if (context.projectTypeCode ==
+                            ProjectTypes.lf.toValue())
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              kPadding / 2,
+                              0,
+                              kPadding / 2,
+                              0,
+                            ),
+                            child: BlocBuilder<AppInitializationBloc,
+                                AppInitializationState>(
+                              builder: (context, state) {
+                                if (state is! AppInitialized) {
+                                  return const Offstage();
+                                }
+
+                                final disabilityTypes =
+                                    state.appConfiguration.disabilityTypes ??
+                                        <DisabilityTypes>[];
+
+                                return DigitReactiveDropdown<String>(
+                                  label: localizations.translate(
+                                    i18.deliverIntervention.disabilityLabel,
+                                  ),
+                                  isRequired: true,
+                                  valueMapper: (value) =>
+                                      localizations.translate(value),
+                                  initialValue:
+                                      disabilityTypes.firstOrNull?.code,
+                                  menuItems: disabilityTypes.map((e) {
+                                    return e.code;
+                                  }).toList(),
+                                  formControlName: _disabilityTypeKey,
+                                  validationMessages: {
+                                    'required': (object) =>
+                                        localizations.translate(
+                                            i18.common.corecommonRequired),
+                                  },
+                                );
+                              },
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -704,9 +740,13 @@ class _IndividualDetailsPageState
       ),
     );
 
-    final disabilityType = form.control(_disabilityTypeKey).value;
+    final disabilityType = context.projectTypeCode == ProjectTypes.lf.toValue()
+        ? form.control(_disabilityTypeKey).value
+        : null;
 
-    final height = form.control(_heightKey).value as String;
+    final height = context.projectTypeCode == ProjectTypes.lf.toValue()
+        ? form.control(_heightKey).value as String
+        : "";
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -726,18 +766,21 @@ class _IndividualDetailsPageState
           identifierType: 'DEFAULT',
         ),
       ],
-      additionalFields: disabilityType != null
+      additionalFields: context.projectTypeCode == ProjectTypes.lf.toValue() &&
+              disabilityType != null
           ? IndividualAdditionalFields(
               version: 1,
               fields: [
-                AdditionalField(
-                  _disabilityTypeKey,
-                  disabilityType,
-                ),
-                AdditionalField(
-                  _heightKey,
-                  height.length == 1 ? '0$height' : height,
-                ),
+                if (context.projectTypeCode == ProjectTypes.lf.toValue())
+                  AdditionalField(
+                    _disabilityTypeKey,
+                    disabilityType,
+                  ),
+                if (context.projectTypeCode == ProjectTypes.lf.toValue())
+                  AdditionalField(
+                    _heightKey,
+                    height.length == 1 ? '0$height' : height,
+                  ),
               ],
             )
           : null,
@@ -750,25 +793,27 @@ class _IndividualDetailsPageState
         : context.selectedProjectType!.id;
 
     individual = individual.copyWith(
-      additionalFields: individual.additionalFields!.copyWith(
-        fields: [
-          ...individual.additionalFields!.fields,
-          AdditionalField(
-            "projectId",
-            context.projectId,
-          ),
-          if (cycleIndex.isNotEmpty)
-            AdditionalField(
-              "cycleIndex",
-              cycleIndex,
+      additionalFields: individual.additionalFields == null
+          ? null
+          : individual.additionalFields!.copyWith(
+              fields: [
+                ...individual.additionalFields!.fields,
+                AdditionalField(
+                  "projectId",
+                  context.projectId,
+                ),
+                if (cycleIndex.isNotEmpty)
+                  AdditionalField(
+                    "cycleIndex",
+                    cycleIndex,
+                  ),
+                if (projectTypeId.isNotEmpty)
+                  AdditionalField(
+                    "projectTypeId",
+                    projectTypeId,
+                  ),
+              ],
             ),
-          if (projectTypeId.isNotEmpty)
-            AdditionalField(
-              "projectTypeId",
-              projectTypeId,
-            ),
-        ],
-      ),
     );
 
     return individual;
@@ -842,18 +887,20 @@ class _IndividualDetailsPageState
               },
             ),
       ),
-      _heightKey: FormControl<String>(
-        value: height,
-        validators: [Validators.required],
-      ),
+      if (context.projectTypeCode == ProjectTypes.lf.toValue())
+        _heightKey: FormControl<String>(
+          value: height,
+          validators: [Validators.required],
+        ),
       _mobileNumberKey:
           FormControl<String>(value: individual?.mobileNumber, validators: [
         CustomValidator.validMobileNumber,
       ]),
-      _disabilityTypeKey:
-          FormControl<String>(value: disabilityType, validators: [
-        Validators.required,
-      ]),
+      if (context.projectTypeCode == ProjectTypes.lf.toValue())
+        _disabilityTypeKey:
+            FormControl<String>(value: disabilityType, validators: [
+          Validators.required,
+        ]),
     });
   }
 }

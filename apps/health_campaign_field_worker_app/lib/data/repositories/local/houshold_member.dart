@@ -20,11 +20,11 @@ class HouseholdMemberLocalRepository
           ..where(
             buildAnd(
               [
-                                if (query.householdClientReferenceIds != null)
+                if (query.householdClientReferenceIds != null)
                   sql.householdMember.householdClientReferenceId.isIn(
                     query.householdClientReferenceIds!,
                   ),
-                       if (query.individualClientReferenceIds != null)
+                if (query.individualClientReferenceIds != null)
                   sql.householdMember.individualClientReferenceId.isIn(
                     query.individualClientReferenceIds!,
                   ),

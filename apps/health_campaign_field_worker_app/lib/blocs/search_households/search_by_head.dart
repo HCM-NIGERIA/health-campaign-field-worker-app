@@ -180,7 +180,7 @@ class SearchByHeadBloc extends SearchHouseholdsBloc {
                 ?.individualClientReferenceId,
       );
 
-      if (head == null) continue;
+      if (head == null || beneficiaries.isEmpty) continue;
 
       // Search for project beneficiaries based on client reference ID and project.
 

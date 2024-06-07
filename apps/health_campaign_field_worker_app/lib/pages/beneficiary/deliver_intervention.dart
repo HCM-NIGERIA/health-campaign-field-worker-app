@@ -13,6 +13,7 @@ import '../../blocs/product_variant/product_variant.dart';
 import '../../blocs/project/project.dart';
 import '../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/project_types.dart';
 import '../../models/project_type/project_type_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/environment_config.dart';
@@ -51,6 +52,13 @@ class _DeliverInterventionPageState
   bool doseAdministered = false;
 
   bool isCommentRequired = false;
+
+  // toggle doseAdministered
+  void checkDoseAdministration(bool newValue) {
+    setState(() {
+      doseAdministered = newValue;
+    });
+  }
 
   // List of controllers for form elements
   final List _controllers = [];
@@ -154,6 +162,7 @@ class _DeliverInterventionPageState
                                               .deliveries?[
                                           deliveryInterventionstate.dose - 1],
                                       state.selectedIndividual,
+                                      context.projectTypeCode,
                                     )?.productVariants)
                                   : projectState.projectType?.resources;
                           final int numberOfDoses = (projectState
@@ -244,13 +253,20 @@ class _DeliverInterventionPageState
                                                                   theme,
                                                                 ),
                                                               );
-                                                            } else if ((((form
-                                                                            .control(
-                                                                      _quantityDistributedKey,
-                                                                    ) as FormArray)
-                                                                        .value) ??
-                                                                    [])
-                                                                .any((e) => e == 0)) {
+                                                            } else if ((context
+                                                                        .projectTypeCode ==
+                                                                    ProjectTypes
+                                                                        .lf
+                                                                        .toValue()) &&
+                                                                (((form.control(
+                                                                          _quantityDistributedKey,
+                                                                        )
+                                                                                as FormArray)
+                                                                            .value) ??
+                                                                        [])
+                                                                    .any((e) =>
+                                                                        e ==
+                                                                        0)) {
                                                               await DigitToast
                                                                   .show(
                                                                 context,
@@ -264,7 +280,12 @@ class _DeliverInterventionPageState
                                                                   theme,
                                                                 ),
                                                               );
-                                                            } else if (isCommentMandatory(
+                                                            } else if ((context
+                                                                        .projectTypeCode ==
+                                                                    ProjectTypes
+                                                                        .lf
+                                                                        .toValue()) &&
+                                                                isCommentMandatory(
                                                                   isCommentRequired,
                                                                   productVariants,
                                                                   form,
@@ -395,109 +416,49 @@ class _DeliverInterventionPageState
                                                                           long,
                                                                     ),
                                                                   );
-                                                                  DigitDialog
-                                                                      .show<
-                                                                          bool>(
-                                                                    context,
-                                                                    options:
-                                                                        DigitDialogOptions(
-                                                                      titleText: localizations.translate(i18
-                                                                          .deliverIntervention
-                                                                          .didYouObservePreviousAdvEventsTitle),
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      enableRecordPast:
-                                                                          true,
-                                                                      dialogPadding:
-                                                                          const EdgeInsets
-                                                                              .fromLTRB(
-                                                                        kPadding,
-                                                                        kPadding,
-                                                                        kPadding,
-                                                                        0,
-                                                                      ),
-                                                                      primaryAction:
-                                                                          DigitDialogActions(
-                                                                        label: localizations
-                                                                            .translate(
-                                                                          i18.common
-                                                                              .coreCommonNo,
+                                                                  if (context
+                                                                          .projectTypeCode ==
+                                                                      ProjectTypes
+                                                                          .lf
+                                                                          .toValue()) {
+                                                                    DigitDialog
+                                                                        .show<
+                                                                            bool>(
+                                                                      context,
+                                                                      options:
+                                                                          DigitDialogOptions(
+                                                                        titleText: localizations.translate(i18
+                                                                            .deliverIntervention
+                                                                            .didYouObservePreviousAdvEventsTitle),
+                                                                        barrierDismissible:
+                                                                            false,
+                                                                        enableRecordPast:
+                                                                            true,
+                                                                        dialogPadding:
+                                                                            const EdgeInsets.fromLTRB(
+                                                                          kPadding,
+                                                                          kPadding,
+                                                                          kPadding,
+                                                                          0,
                                                                         ),
-                                                                        action:
-                                                                            (ctx) {
-                                                                          if (!interventionSubmitted) {
-                                                                            interventionSubmitted =
-                                                                                true;
-                                                                            context.read<DeliverInterventionBloc>().add(
-                                                                                  DeliverInterventionSubmitEvent(
-                                                                                    taskData.first,
-                                                                                    false,
-                                                                                    context.boundary,
-                                                                                  ),
-                                                                                );
-                                                                            final reloadState =
-                                                                                context.read<HouseholdOverviewBloc>();
-                                                                            Future.delayed(
-                                                                              const Duration(
-                                                                                milliseconds: 1000,
-                                                                              ),
-                                                                              () {
-                                                                                reloadState.add(
-                                                                                  HouseholdOverviewReloadEvent(
-                                                                                    projectId: context.projectId,
-                                                                                    projectBeneficiaryType: context.beneficiaryType,
-                                                                                  ),
-                                                                                );
-                                                                              },
-                                                                            ).then(
-                                                                              (value) {
-                                                                                context.router.popAndPush(
-                                                                                  HouseholdAcknowledgementRoute(
-                                                                                    enableViewHousehold: true,
-                                                                                  ),
-                                                                                );
-                                                                                Navigator.pop(ctx);
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        },
-                                                                      ),
-                                                                      secondaryAction:
-                                                                          DigitDialogActions(
-                                                                        label: localizations
-                                                                            .translate(
-                                                                          i18.common
-                                                                              .coreCommonYes,
-                                                                        ),
-                                                                        action:
-                                                                            (ctx) async {
-                                                                          if (!interventionSubmitted) {
-                                                                            interventionSubmitted =
-                                                                                true;
-                                                                            context.read<DeliverInterventionBloc>().add(
-                                                                                  DeliverInterventionSubmitEvent(
-                                                                                    taskData.first,
-                                                                                    false,
-                                                                                    context.boundary,
-                                                                                  ),
-                                                                                );
-                                                                            Navigator.pop(
-                                                                              ctx,
-                                                                            );
-                                                                            final reloadState =
-                                                                                context.read<HouseholdOverviewBloc>();
-                                                                            final response =
-                                                                                await router.push(
-                                                                              SideEffectsRoute(
-                                                                                tasks: [
-                                                                                  (taskData).last,
-                                                                                ],
-                                                                                fromSurvey: true,
-                                                                              ),
-                                                                            );
-
-                                                                            if (response ==
-                                                                                null) {
+                                                                        primaryAction:
+                                                                            DigitDialogActions(
+                                                                          label:
+                                                                              localizations.translate(
+                                                                            i18.common.coreCommonNo,
+                                                                          ),
+                                                                          action:
+                                                                              (ctx) {
+                                                                            if (!interventionSubmitted) {
+                                                                              interventionSubmitted = true;
+                                                                              context.read<DeliverInterventionBloc>().add(
+                                                                                    DeliverInterventionSubmitEvent(
+                                                                                      taskData.first,
+                                                                                      false,
+                                                                                      context.boundary,
+                                                                                    ),
+                                                                                  );
+                                                                              final reloadState = context.read<HouseholdOverviewBloc>();
                                                                               Future.delayed(
                                                                                 const Duration(
                                                                                   milliseconds: 1000,
@@ -521,11 +482,105 @@ class _DeliverInterventionPageState
                                                                                 },
                                                                               );
                                                                             }
-                                                                          }
-                                                                        },
+                                                                          },
+                                                                        ),
+                                                                        secondaryAction:
+                                                                            DigitDialogActions(
+                                                                          label:
+                                                                              localizations.translate(
+                                                                            i18.common.coreCommonYes,
+                                                                          ),
+                                                                          action:
+                                                                              (ctx) async {
+                                                                            if (!interventionSubmitted) {
+                                                                              interventionSubmitted = true;
+                                                                              context.read<DeliverInterventionBloc>().add(
+                                                                                    DeliverInterventionSubmitEvent(
+                                                                                      taskData.first,
+                                                                                      false,
+                                                                                      context.boundary,
+                                                                                    ),
+                                                                                  );
+                                                                              Navigator.pop(
+                                                                                ctx,
+                                                                              );
+                                                                              final reloadState = context.read<HouseholdOverviewBloc>();
+                                                                              final response = await router.push(
+                                                                                SideEffectsRoute(
+                                                                                  tasks: [
+                                                                                    (taskData).last,
+                                                                                  ],
+                                                                                  fromSurvey: true,
+                                                                                ),
+                                                                              );
+
+                                                                              if (response == null) {
+                                                                                Future.delayed(
+                                                                                  const Duration(
+                                                                                    milliseconds: 1000,
+                                                                                  ),
+                                                                                  () {
+                                                                                    reloadState.add(
+                                                                                      HouseholdOverviewReloadEvent(
+                                                                                        projectId: context.projectId,
+                                                                                        projectBeneficiaryType: context.beneficiaryType,
+                                                                                      ),
+                                                                                    );
+                                                                                  },
+                                                                                ).then(
+                                                                                  (value) {
+                                                                                    context.router.popAndPush(
+                                                                                      HouseholdAcknowledgementRoute(
+                                                                                        enableViewHousehold: true,
+                                                                                      ),
+                                                                                    );
+                                                                                    Navigator.pop(ctx);
+                                                                                  },
+                                                                                );
+                                                                              }
+                                                                            }
+                                                                          },
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  );
+                                                                    );
+                                                                  } else {
+                                                                    context
+                                                                        .read<
+                                                                            DeliverInterventionBloc>()
+                                                                        .add(
+                                                                          DeliverInterventionSubmitEvent(
+                                                                            taskData.first,
+                                                                            false,
+                                                                            context.boundary,
+                                                                          ),
+                                                                        );
+                                                                    if (state
+                                                                                .futureDeliveries !=
+                                                                            null &&
+                                                                        state
+                                                                            .futureDeliveries!
+                                                                            .isNotEmpty &&
+                                                                        projectState.projectType?.cycles?.isNotEmpty ==
+                                                                            true) {
+                                                                      context
+                                                                          .router
+                                                                          .push(
+                                                                        SplashAcknowledgementRoute(
+                                                                          enableBackToSearch:
+                                                                              false,
+                                                                        ),
+                                                                      );
+                                                                    } else {
+                                                                      context
+                                                                          .router
+                                                                          .push(
+                                                                        SplashAcknowledgementRoute(
+                                                                          enableBackToSearch:
+                                                                              true,
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  }
                                                                 }
                                                               }
                                                             }
@@ -572,54 +627,81 @@ class _DeliverInterventionPageState
                                                         style: theme.textTheme
                                                             .displayMedium,
                                                       ),
-                                                      // if (context
-                                                      //         .beneficiaryType ==
-                                                      //     BeneficiaryType
-                                                      //         .individual)
-                                                      //   DigitStepper(
-                                                      //     activeStep:
-                                                      //         deliveryInterventionstate
-                                                      //                 .dose -
-                                                      //             1,
-                                                      //     stepRadius: 12.5,
-                                                      //     steps: steps,
-                                                      //     maxStepReached: 3,
-                                                      //     lineLength: (MediaQuery.of(
-                                                      //                     context)
-                                                      //                 .size
-                                                      //                 .width -
-                                                      //             12.5 *
-                                                      //                 2 *
-                                                      //                 steps
-                                                      //                     .length -
-                                                      //             50) /
-                                                      //         (steps.length - 1),
-                                                      //   ),
+                                                      if (context
+                                                              .projectTypeCode ==
+                                                          ProjectTypes.smc
+                                                              .toValue())
+                                                        DigitTextFormField(
+                                                          readOnly: true,
+                                                          formControlName:
+                                                              _doseAdministrationKey,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          label: localizations
+                                                              .translate(i18
+                                                                  .deliverIntervention
+                                                                  .currentCycle),
+                                                        ),
+                                                      if (context.beneficiaryType ==
+                                                              BeneficiaryType
+                                                                  .individual &&
+                                                          context.projectTypeCode ==
+                                                              ProjectTypes.smc
+                                                                  .toValue())
+                                                        DigitStepper(
+                                                          activeStep:
+                                                              deliveryInterventionstate
+                                                                      .dose -
+                                                                  1,
+                                                          stepRadius: 12.5,
+                                                          steps: steps,
+                                                          maxStepReached: 3,
+                                                          lineLength: (MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width -
+                                                                  12.5 *
+                                                                      2 *
+                                                                      steps
+                                                                          .length -
+                                                                  50) /
+                                                              (steps.length -
+                                                                  1),
+                                                        ),
                                                       // Solution Customizations
-                                                      // DigitDateFormPicker(
-                                                      //   isEnabled: false,
-                                                      //   formControlName:
-                                                      //       _dateOfAdministrationKey,
-                                                      //   label: localizations
-                                                      //       .translate(
-                                                      //     i18.householdDetails
-                                                      //         .dateOfRegistrationLabel,
-                                                      //   ),
-                                                      //   confirmText: localizations
-                                                      //       .translate(
-                                                      //     i18.common.coreCommonOk,
-                                                      //   ),
-                                                      //   cancelText: localizations
-                                                      //       .translate(
-                                                      //     i18.common
-                                                      //         .coreCommonCancel,
-                                                      //   ),
-                                                      //   isRequired: false,
-                                                      //   padding:
-                                                      //       const EdgeInsets.only(
-                                                      //     top: kPadding,
-                                                      //   ),
-                                                      // ),
+                                                      if (context
+                                                              .projectTypeCode ==
+                                                          ProjectTypes.smc
+                                                              .toValue())
+                                                        DigitDateFormPicker(
+                                                          isEnabled: false,
+                                                          formControlName:
+                                                              _dateOfAdministrationKey,
+                                                          label: localizations
+                                                              .translate(
+                                                            i18.householdDetails
+                                                                .dateOfRegistrationLabel,
+                                                          ),
+                                                          confirmText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.common
+                                                                .coreCommonOk,
+                                                          ),
+                                                          cancelText:
+                                                              localizations
+                                                                  .translate(
+                                                            i18.common
+                                                                .coreCommonCancel,
+                                                          ),
+                                                          isRequired: false,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            top: kPadding,
+                                                          ),
+                                                        ),
                                                     ],
                                                   ),
                                                 ),
@@ -650,6 +732,8 @@ class _DeliverInterventionPageState
                                                               totalItems:
                                                                   _controllers
                                                                       .length,
+                                                              checkDoseAdministration:
+                                                                  checkDoseAdministration,
                                                               onDelete:
                                                                   (index) {
                                                                 (form.control(
