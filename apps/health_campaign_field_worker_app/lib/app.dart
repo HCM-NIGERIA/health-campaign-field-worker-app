@@ -5,6 +5,7 @@ import 'package:attendance_management/blocs/app_localization.dart'
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:dio/dio.dart';
+import 'package:disable_battery_optimization/disable_battery_optimization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -54,6 +55,21 @@ class MainApplication extends StatefulWidget {
 
 class MainApplicationState extends State<MainApplication>
     with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    _requestDisableBatteryOptimization();
+  }
+
+  Future<void> _requestDisableBatteryOptimization() async {
+    bool isIgnoringBatteryOptimizations =
+        await DisableBatteryOptimization.isBatteryOptimizationDisabled ?? false;
+
+    if (!isIgnoringBatteryOptimizations) {
+      await DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
