@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../blocs/household_overview/household_overview.dart';
 import '../../../blocs/search_households/search_bloc_common_wrapper.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;
@@ -39,6 +40,16 @@ class _BeneficiaryAcknowledgementPageState
               children: [SchoolOverviewRoute()],
             ),
           );
+          // final wrapper = context
+          //           .read<HouseholdOverviewBloc>()
+          //           .state
+          //           .householdMemberWrapper;
+          //  context.router.popAndPush(
+          //         BeneficiaryWrapperRoute(
+          //           wrapper: wrapper,
+          //           children: [SchoolOverviewRoute()],
+          //         ),
+          //       );
         },
         enableViewHousehold: widget.enableViewSchool ?? false,
         secondaryLabel: localizations.translate(

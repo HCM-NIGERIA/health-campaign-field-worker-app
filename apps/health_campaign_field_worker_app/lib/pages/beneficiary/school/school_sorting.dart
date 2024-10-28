@@ -103,7 +103,7 @@ class _SchoolIndividualSortingPageState
 
   FormGroup buildForm() {
     return fb.group(<String, Object>{
-      _schoolSorting: FormControl<String>(value: Constants.studentTasksSort[1]),
+      _schoolSorting: FormControl<String>(value: Constants.studentTasksSort[0]),
     });
   }
 }

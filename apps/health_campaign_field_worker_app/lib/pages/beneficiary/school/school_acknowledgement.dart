@@ -44,8 +44,10 @@ class _HouseholdAcknowledgementPageState
                     .householdMemberWrapper;
 
                 final parent = context.router.parent() as StackRouter;
-                parent.popUntilRouteWithName(SchoolSelectionRoute.name);
-
+                //parent.popUntilRouteWithName(SchoolSelectionRoute.name);
+               // parent.popUntilRouteWithName(BeneficiaryWrapperRoute.name);
+                 parent.popUntilRouteWithName(HomeRoute.name);
+                
                 context.router.popAndPush(
                   BeneficiaryWrapperRoute(
                     wrapper: wrapper,

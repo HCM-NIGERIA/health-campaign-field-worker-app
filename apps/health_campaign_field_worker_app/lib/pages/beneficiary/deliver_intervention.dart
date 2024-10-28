@@ -691,6 +691,10 @@ class _DeliverInterventionPageState
                     TaskResourceAdditionalFields(version: 1, fields: [
                   AdditionalField(
                     _quantityWastedKey,
+                    
+                    // ((form.control(_quantityWastedRadioKey) as FormArray)
+                    //         .value)?[productvariantList.indexOf(e)])
+                    ((form.control(_quantityWastedRadioKey) as FormArray).value)?[productvariantList.indexOf(e)].key==false?0.0:
                     (((form.control(_quantityWastedKey) as FormArray)
                             .value)?[productvariantList.indexOf(e)])
                         .toString(),

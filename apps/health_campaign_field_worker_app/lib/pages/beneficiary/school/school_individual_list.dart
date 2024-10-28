@@ -256,8 +256,8 @@ class _SchoolIndividualListPageState
                                   } else if (searchController
                                       .value.text.isEmpty) {
                                     callReloadEvent(
-                                      offset: offset,
-                                      limit: limit,
+                                      offset: 0,
+                                      limit: 10,
                                     );
                                   }
                                 },
