@@ -126,7 +126,7 @@ class SearchByHeadBloc extends SearchHouseholdsBloc {
       ),
     );
 
-    houseHolds = excludeSchoolHouseholds(houseHolds, Constants.schoolType);
+    houseHolds = excludeHouseholdType(houseHolds, Constants.schoolType);
 
     if (houseHolds.isNotEmpty) {
       final projectBeneficiaries = await fetchProjectBeneficiary(

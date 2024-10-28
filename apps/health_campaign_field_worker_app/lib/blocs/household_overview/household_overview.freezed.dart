@@ -40,7 +40,13 @@ mixin _$HouseholdOverviewEvent {
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) =>
       throw _privateConstructorUsedError;
@@ -66,7 +72,14 @@ mixin _$HouseholdOverviewEvent {
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) =>
       throw _privateConstructorUsedError;
@@ -92,7 +105,14 @@ mixin _$HouseholdOverviewEvent {
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) =>
@@ -307,7 +327,13 @@ class _$HouseholdOverviewDeleteHouseholdEventImpl
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) {
     return deleteHousehold(projectId, householdModel, members,
@@ -337,7 +363,14 @@ class _$HouseholdOverviewDeleteHouseholdEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) {
     return deleteHousehold?.call(projectId, householdModel, members,
@@ -367,7 +400,14 @@ class _$HouseholdOverviewDeleteHouseholdEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) {
@@ -579,7 +619,13 @@ class _$HouseholdOverviewDeleteIndividualEventImpl
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) {
     return deleteIndividual(
@@ -609,7 +655,14 @@ class _$HouseholdOverviewDeleteIndividualEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) {
     return deleteIndividual?.call(
@@ -639,7 +692,14 @@ class _$HouseholdOverviewDeleteIndividualEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) {
@@ -848,7 +908,13 @@ class _$HouseholdOverviewSetAsHeadEventImpl
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) {
     return setAsHead(
@@ -878,7 +944,14 @@ class _$HouseholdOverviewSetAsHeadEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) {
     return setAsHead?.call(
@@ -908,7 +981,14 @@ class _$HouseholdOverviewSetAsHeadEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) {
@@ -1083,7 +1163,13 @@ class _$HouseholdOverviewSelectIndividualEventImpl
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) {
     return selectedIndividual(individualModel);
@@ -1112,7 +1198,14 @@ class _$HouseholdOverviewSelectIndividualEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) {
     return selectedIndividual?.call(individualModel);
@@ -1141,7 +1234,14 @@ class _$HouseholdOverviewSelectIndividualEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) {
@@ -1221,7 +1321,16 @@ abstract class _$$HouseholdOverviewReloadEventImplCopyWith<$Res> {
           $Res Function(_$HouseholdOverviewReloadEventImpl) then) =
       __$$HouseholdOverviewReloadEventImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String projectId, BeneficiaryType projectBeneficiaryType});
+  $Res call(
+      {String projectId,
+      BeneficiaryType projectBeneficiaryType,
+      HouseholdMemberWrapper? householdMemberWrapper,
+      int? limit,
+      int? offset,
+      String? taskSortOrder,
+      String? searchQuery});
+
+  $HouseholdMemberWrapperCopyWith<$Res>? get householdMemberWrapper;
 }
 
 /// @nodoc
@@ -1239,6 +1348,11 @@ class __$$HouseholdOverviewReloadEventImplCopyWithImpl<$Res>
   $Res call({
     Object? projectId = null,
     Object? projectBeneficiaryType = null,
+    Object? householdMemberWrapper = freezed,
+    Object? limit = freezed,
+    Object? offset = freezed,
+    Object? taskSortOrder = freezed,
+    Object? searchQuery = freezed,
   }) {
     return _then(_$HouseholdOverviewReloadEventImpl(
       projectId: null == projectId
@@ -1249,7 +1363,40 @@ class __$$HouseholdOverviewReloadEventImplCopyWithImpl<$Res>
           ? _value.projectBeneficiaryType
           : projectBeneficiaryType // ignore: cast_nullable_to_non_nullable
               as BeneficiaryType,
+      householdMemberWrapper: freezed == householdMemberWrapper
+          ? _value.householdMemberWrapper
+          : householdMemberWrapper // ignore: cast_nullable_to_non_nullable
+              as HouseholdMemberWrapper?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
+      offset: freezed == offset
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+      taskSortOrder: freezed == taskSortOrder
+          ? _value.taskSortOrder
+          : taskSortOrder // ignore: cast_nullable_to_non_nullable
+              as String?,
+      searchQuery: freezed == searchQuery
+          ? _value.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $HouseholdMemberWrapperCopyWith<$Res>? get householdMemberWrapper {
+    if (_value.householdMemberWrapper == null) {
+      return null;
+    }
+
+    return $HouseholdMemberWrapperCopyWith<$Res>(_value.householdMemberWrapper!,
+        (value) {
+      return _then(_value.copyWith(householdMemberWrapper: value));
+    });
   }
 }
 
@@ -1258,16 +1405,32 @@ class __$$HouseholdOverviewReloadEventImplCopyWithImpl<$Res>
 class _$HouseholdOverviewReloadEventImpl
     implements HouseholdOverviewReloadEvent {
   const _$HouseholdOverviewReloadEventImpl(
-      {required this.projectId, required this.projectBeneficiaryType});
+      {required this.projectId,
+      required this.projectBeneficiaryType,
+      this.householdMemberWrapper,
+      this.limit,
+      this.offset,
+      this.taskSortOrder,
+      this.searchQuery});
 
   @override
   final String projectId;
   @override
   final BeneficiaryType projectBeneficiaryType;
+  @override
+  final HouseholdMemberWrapper? householdMemberWrapper;
+  @override
+  final int? limit;
+  @override
+  final int? offset;
+  @override
+  final String? taskSortOrder;
+  @override
+  final String? searchQuery;
 
   @override
   String toString() {
-    return 'HouseholdOverviewEvent.reload(projectId: $projectId, projectBeneficiaryType: $projectBeneficiaryType)';
+    return 'HouseholdOverviewEvent.reload(projectId: $projectId, projectBeneficiaryType: $projectBeneficiaryType, householdMemberWrapper: $householdMemberWrapper, limit: $limit, offset: $offset, taskSortOrder: $taskSortOrder, searchQuery: $searchQuery)';
   }
 
   @override
@@ -1278,12 +1441,27 @@ class _$HouseholdOverviewReloadEventImpl
             (identical(other.projectId, projectId) ||
                 other.projectId == projectId) &&
             (identical(other.projectBeneficiaryType, projectBeneficiaryType) ||
-                other.projectBeneficiaryType == projectBeneficiaryType));
+                other.projectBeneficiaryType == projectBeneficiaryType) &&
+            (identical(other.householdMemberWrapper, householdMemberWrapper) ||
+                other.householdMemberWrapper == householdMemberWrapper) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            (identical(other.offset, offset) || other.offset == offset) &&
+            (identical(other.taskSortOrder, taskSortOrder) ||
+                other.taskSortOrder == taskSortOrder) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, projectId, projectBeneficiaryType);
+  int get hashCode => Object.hash(
+      runtimeType,
+      projectId,
+      projectBeneficiaryType,
+      householdMemberWrapper,
+      limit,
+      offset,
+      taskSortOrder,
+      searchQuery);
 
   @JsonKey(ignore: true)
   @override
@@ -1318,10 +1496,17 @@ class _$HouseholdOverviewReloadEventImpl
     required TResult Function(IndividualModel individualModel)
         selectedIndividual,
     required TResult Function(
-            String projectId, BeneficiaryType projectBeneficiaryType)
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)
         reload,
   }) {
-    return reload(projectId, projectBeneficiaryType);
+    return reload(projectId, projectBeneficiaryType, householdMemberWrapper,
+        limit, offset, taskSortOrder, searchQuery);
   }
 
   @override
@@ -1347,10 +1532,18 @@ class _$HouseholdOverviewReloadEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult? Function(IndividualModel individualModel)? selectedIndividual,
-    TResult? Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult? Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
   }) {
-    return reload?.call(projectId, projectBeneficiaryType);
+    return reload?.call(projectId, projectBeneficiaryType,
+        householdMemberWrapper, limit, offset, taskSortOrder, searchQuery);
   }
 
   @override
@@ -1376,12 +1569,20 @@ class _$HouseholdOverviewReloadEventImpl
             BeneficiaryType projectBeneficiaryType)?
         setAsHead,
     TResult Function(IndividualModel individualModel)? selectedIndividual,
-    TResult Function(String projectId, BeneficiaryType projectBeneficiaryType)?
+    TResult Function(
+            String projectId,
+            BeneficiaryType projectBeneficiaryType,
+            HouseholdMemberWrapper? householdMemberWrapper,
+            int? limit,
+            int? offset,
+            String? taskSortOrder,
+            String? searchQuery)?
         reload,
     required TResult orElse(),
   }) {
     if (reload != null) {
-      return reload(projectId, projectBeneficiaryType);
+      return reload(projectId, projectBeneficiaryType, householdMemberWrapper,
+          limit, offset, taskSortOrder, searchQuery);
     }
     return orElse();
   }
@@ -1438,12 +1639,21 @@ class _$HouseholdOverviewReloadEventImpl
 
 abstract class HouseholdOverviewReloadEvent implements HouseholdOverviewEvent {
   const factory HouseholdOverviewReloadEvent(
-          {required final String projectId,
-          required final BeneficiaryType projectBeneficiaryType}) =
-      _$HouseholdOverviewReloadEventImpl;
+      {required final String projectId,
+      required final BeneficiaryType projectBeneficiaryType,
+      final HouseholdMemberWrapper? householdMemberWrapper,
+      final int? limit,
+      final int? offset,
+      final String? taskSortOrder,
+      final String? searchQuery}) = _$HouseholdOverviewReloadEventImpl;
 
   String get projectId;
   BeneficiaryType get projectBeneficiaryType;
+  HouseholdMemberWrapper? get householdMemberWrapper;
+  int? get limit;
+  int? get offset;
+  String? get taskSortOrder;
+  String? get searchQuery;
   @JsonKey(ignore: true)
   _$$HouseholdOverviewReloadEventImplCopyWith<
           _$HouseholdOverviewReloadEventImpl>
@@ -1456,6 +1666,8 @@ mixin _$HouseholdOverviewState {
   HouseholdMemberWrapper get householdMemberWrapper =>
       throw _privateConstructorUsedError;
   IndividualModel? get selectedIndividual => throw _privateConstructorUsedError;
+  int? get offset => throw _privateConstructorUsedError;
+  int? get limit => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HouseholdOverviewStateCopyWith<HouseholdOverviewState> get copyWith =>
@@ -1471,7 +1683,9 @@ abstract class $HouseholdOverviewStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       HouseholdMemberWrapper householdMemberWrapper,
-      IndividualModel? selectedIndividual});
+      IndividualModel? selectedIndividual,
+      int? offset,
+      int? limit});
 
   $HouseholdMemberWrapperCopyWith<$Res> get householdMemberWrapper;
 }
@@ -1493,6 +1707,8 @@ class _$HouseholdOverviewStateCopyWithImpl<$Res,
     Object? loading = null,
     Object? householdMemberWrapper = null,
     Object? selectedIndividual = freezed,
+    Object? offset = freezed,
+    Object? limit = freezed,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
@@ -1507,6 +1723,14 @@ class _$HouseholdOverviewStateCopyWithImpl<$Res,
           ? _value.selectedIndividual
           : selectedIndividual // ignore: cast_nullable_to_non_nullable
               as IndividualModel?,
+      offset: freezed == offset
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 
@@ -1532,7 +1756,9 @@ abstract class _$$HouseholdOverviewStateImplCopyWith<$Res>
   $Res call(
       {bool loading,
       HouseholdMemberWrapper householdMemberWrapper,
-      IndividualModel? selectedIndividual});
+      IndividualModel? selectedIndividual,
+      int? offset,
+      int? limit});
 
   @override
   $HouseholdMemberWrapperCopyWith<$Res> get householdMemberWrapper;
@@ -1554,6 +1780,8 @@ class __$$HouseholdOverviewStateImplCopyWithImpl<$Res>
     Object? loading = null,
     Object? householdMemberWrapper = null,
     Object? selectedIndividual = freezed,
+    Object? offset = freezed,
+    Object? limit = freezed,
   }) {
     return _then(_$HouseholdOverviewStateImpl(
       loading: null == loading
@@ -1568,6 +1796,14 @@ class __$$HouseholdOverviewStateImplCopyWithImpl<$Res>
           ? _value.selectedIndividual
           : selectedIndividual // ignore: cast_nullable_to_non_nullable
               as IndividualModel?,
+      offset: freezed == offset
+          ? _value.offset
+          : offset // ignore: cast_nullable_to_non_nullable
+              as int?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -1578,7 +1814,9 @@ class _$HouseholdOverviewStateImpl implements _HouseholdOverviewState {
   const _$HouseholdOverviewStateImpl(
       {this.loading = false,
       required this.householdMemberWrapper,
-      this.selectedIndividual});
+      this.selectedIndividual,
+      this.offset,
+      this.limit});
 
   @override
   @JsonKey()
@@ -1587,10 +1825,14 @@ class _$HouseholdOverviewStateImpl implements _HouseholdOverviewState {
   final HouseholdMemberWrapper householdMemberWrapper;
   @override
   final IndividualModel? selectedIndividual;
+  @override
+  final int? offset;
+  @override
+  final int? limit;
 
   @override
   String toString() {
-    return 'HouseholdOverviewState(loading: $loading, householdMemberWrapper: $householdMemberWrapper, selectedIndividual: $selectedIndividual)';
+    return 'HouseholdOverviewState(loading: $loading, householdMemberWrapper: $householdMemberWrapper, selectedIndividual: $selectedIndividual, offset: $offset, limit: $limit)';
   }
 
   @override
@@ -1602,12 +1844,14 @@ class _$HouseholdOverviewStateImpl implements _HouseholdOverviewState {
             (identical(other.householdMemberWrapper, householdMemberWrapper) ||
                 other.householdMemberWrapper == householdMemberWrapper) &&
             (identical(other.selectedIndividual, selectedIndividual) ||
-                other.selectedIndividual == selectedIndividual));
+                other.selectedIndividual == selectedIndividual) &&
+            (identical(other.offset, offset) || other.offset == offset) &&
+            (identical(other.limit, limit) || other.limit == limit));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, loading, householdMemberWrapper, selectedIndividual);
+  int get hashCode => Object.hash(runtimeType, loading, householdMemberWrapper,
+      selectedIndividual, offset, limit);
 
   @JsonKey(ignore: true)
   @override
@@ -1619,10 +1863,11 @@ class _$HouseholdOverviewStateImpl implements _HouseholdOverviewState {
 
 abstract class _HouseholdOverviewState implements HouseholdOverviewState {
   const factory _HouseholdOverviewState(
-          {final bool loading,
-          required final HouseholdMemberWrapper householdMemberWrapper,
-          final IndividualModel? selectedIndividual}) =
-      _$HouseholdOverviewStateImpl;
+      {final bool loading,
+      required final HouseholdMemberWrapper householdMemberWrapper,
+      final IndividualModel? selectedIndividual,
+      final int? offset,
+      final int? limit}) = _$HouseholdOverviewStateImpl;
 
   @override
   bool get loading;
@@ -1630,6 +1875,10 @@ abstract class _HouseholdOverviewState implements HouseholdOverviewState {
   HouseholdMemberWrapper get householdMemberWrapper;
   @override
   IndividualModel? get selectedIndividual;
+  @override
+  int? get offset;
+  @override
+  int? get limit;
   @override
   @JsonKey(ignore: true)
   _$$HouseholdOverviewStateImplCopyWith<_$HouseholdOverviewStateImpl>

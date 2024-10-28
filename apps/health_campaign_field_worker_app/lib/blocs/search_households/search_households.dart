@@ -230,6 +230,7 @@ class SearchHouseholdsEvent with _$SearchHouseholdsEvent {
     required String searchText,
     required String projectId,
     required final bool isProximityEnabled,
+    String? excludeHouseholdType,
     double? latitude,
     double? longitude,
     double? maxRadius,
@@ -249,7 +250,7 @@ class SearchHouseholdsEvent with _$SearchHouseholdsEvent {
 
   const factory SearchHouseholdsEvent.searchByProximity({
     required double latitude,
-    required double longititude,
+    required double longitude,
     required String projectId,
     required double maxRadius,
     required int offset,
