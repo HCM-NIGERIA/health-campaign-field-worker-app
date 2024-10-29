@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 import '../../../blocs/beneficiary_registration/beneficiary_registration.dart';
+import '../../../blocs/household_overview/household_overview.dart';
 import '../../../models/data_model.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/environment_config.dart';
@@ -39,6 +40,12 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
     final theme = Theme.of(context);
     final bloc = context.read<BeneficiaryRegistrationBloc>();
     final router = context.router;
+    // return BlocListener<BeneficiaryRegistrationBloc,
+    //     BeneficiaryRegistrationState>(
+    //   listener: (context, state) {
+    //     // (context.router.parent() as StackRouter).pop();
+    //   },
+    //   child: Scaffold(
 
     return Scaffold(
       body: BlocBuilder<LocationBloc, LocationState>(
@@ -345,7 +352,7 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
         registrationDate,
         projectBeneficiaryModel,
         loading,
-      ) {
+      ) async {
         var household = householdModel.copyWith(
           memberCount: studentCount,
           address: addressModel,
@@ -395,7 +402,9 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
           ),
         );
 
-        (context.router.parent() as StackRouter).pop();
+        await Future.delayed(const Duration(microseconds: 200), () async {
+          (context.router.parent() as StackRouter).pop();
+        });
       },
     );
   }
