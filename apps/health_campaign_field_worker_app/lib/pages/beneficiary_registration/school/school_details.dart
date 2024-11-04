@@ -39,7 +39,6 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
     final theme = Theme.of(context);
     final bloc = context.read<BeneficiaryRegistrationBloc>();
     final router = context.router;
-    
 
     return Scaffold(
       body: BlocBuilder<LocationBloc, LocationState>(

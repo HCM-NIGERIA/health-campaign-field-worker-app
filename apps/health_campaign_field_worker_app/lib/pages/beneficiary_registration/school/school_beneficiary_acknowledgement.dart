@@ -40,7 +40,6 @@ class _BeneficiaryAcknowledgementPageState
               children: [SchoolOverviewRoute()],
             ),
           );
-          
         },
         enableViewHousehold: widget.enableViewSchool ?? false,
         secondaryLabel: localizations.translate(
