@@ -411,54 +411,6 @@ class _DeliverInterventionPageState
                                                         style: theme.textTheme
                                                             .displayMedium,
                                                       ),
-                                                      // if (context
-                                                      //         .beneficiaryType ==
-                                                      //     BeneficiaryType
-                                                      //         .individual)
-                                                      //   DigitStepper(
-                                                      //     activeStep:
-                                                      //         deliveryInterventionstate
-                                                      //                 .dose -
-                                                      //             1,
-                                                      //     stepRadius: 12.5,
-                                                      //     steps: steps,
-                                                      //     maxStepReached: 3,
-                                                      //     lineLength: (MediaQuery.of(
-                                                      //                     context)
-                                                      //                 .size
-                                                      //                 .width -
-                                                      //             12.5 *
-                                                      //                 2 *
-                                                      //                 steps
-                                                      //                     .length -
-                                                      //             50) /
-                                                      //         (steps.length - 1),
-                                                      //   ),
-                                                      // Solution Customizations
-                                                      // DigitDateFormPicker(
-                                                      //   isEnabled: false,
-                                                      //   formControlName:
-                                                      //       _dateOfAdministrationKey,
-                                                      //   label: localizations
-                                                      //       .translate(
-                                                      //     i18.householdDetails
-                                                      //         .dateOfRegistrationLabel,
-                                                      //   ),
-                                                      //   confirmText: localizations
-                                                      //       .translate(
-                                                      //     i18.common.coreCommonOk,
-                                                      //   ),
-                                                      //   cancelText: localizations
-                                                      //       .translate(
-                                                      //     i18.common
-                                                      //         .coreCommonCancel,
-                                                      //   ),
-                                                      //   isRequired: false,
-                                                      //   padding:
-                                                      //       const EdgeInsets.only(
-                                                      //     top: kPadding,
-                                                      //   ),
-                                                      // ),
                                                     ],
                                                   ),
                                                 ),
@@ -513,91 +465,9 @@ class _DeliverInterventionPageState
                                                               },
                                                             ))
                                                         .toList(),
-                                                    // Solution customization
-                                                    // Center(
-                                                    //   child: DigitIconButton(
-                                                    //     onPressed: () async {
-                                                    //       addController(form);
-                                                    //       setState(() {
-                                                    //         _controllers.add(
-                                                    //           _controllers
-                                                    //               .length,
-                                                    //         );
-                                                    //       });
-                                                    //     },
-                                                    //     icon: Icons.add_circle,
-                                                    //     iconText: localizations
-                                                    //         .translate(
-                                                    //       i18.deliverIntervention
-                                                    //           .resourceAddBeneficiary,
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
                                                   ],
                                                 ),
                                               ),
-                                              // DigitCard(
-                                              //   child: Column(
-                                              //     crossAxisAlignment:
-                                              //         CrossAxisAlignment.start,
-                                              //     mainAxisSize:
-                                              //         MainAxisSize.min,
-                                              //     children: [
-                                              //       Text(
-                                              //         localizations.translate(
-                                              //           i18.deliverIntervention
-                                              //               .deliveryCommentLabel,
-                                              //         ),
-                                              //         style: theme.textTheme
-                                              //             .headlineLarge,
-                                              //       ),
-                                              //       BlocBuilder<
-                                              //           AppInitializationBloc,
-                                              //           AppInitializationState>(
-                                              //         builder:
-                                              //             (context, state) {
-                                              //           if (state
-                                              //               is! AppInitialized) {
-                                              //             return const Offstage();
-                                              //           }
-
-                                              //           final deliveryCommentOptions = state
-                                              //                   .appConfiguration
-                                              //                   .deliveryCommentOptions ??
-                                              //               <DeliveryCommentOptions>[];
-
-                                              //           return DigitReactiveSearchDropdown<
-                                              //               String>(
-                                              //             label: localizations
-                                              //                 .translate(
-                                              //               i18.deliverIntervention
-                                              //                   .deliveryCommentLabel,
-                                              //             ),
-                                              //             form: form,
-                                              //             menuItems:
-                                              //                 deliveryCommentOptions
-                                              //                     .map((e) {
-                                              //               return e.code;
-                                              //             }).toList(),
-                                              //             formControlName:
-                                              //                 _deliveryCommentKey,
-                                              //             isRequired:
-                                              //                 isCommentRequired,
-                                              //             valueMapper: (value) =>
-                                              //                 localizations
-                                              //                     .translate(
-                                              //               value,
-                                              //             ),
-                                              //             emptyText: localizations
-                                              //                 .translate(i18
-                                              //                     .common
-                                              //                     .noMatchFound),
-                                              //           );
-                                              //         },
-                                              //       ),
-                                              //     ],
-                                              //   ),
-                                              // ),
                                             ],
                                           ),
                                         ],
@@ -691,9 +561,14 @@ class _DeliverInterventionPageState
                     TaskResourceAdditionalFields(version: 1, fields: [
                   AdditionalField(
                     _quantityWastedKey,
-                    (((form.control(_quantityWastedKey) as FormArray)
-                            .value)?[productvariantList.indexOf(e)])
-                        .toString(),
+                    ((form.control(_quantityWastedRadioKey) as FormArray)
+                                    .value)?[productvariantList.indexOf(e)]
+                                .key ==
+                            false
+                        ? 0.0
+                        : (((form.control(_quantityWastedKey) as FormArray)
+                                .value)?[productvariantList.indexOf(e)])
+                            .toString(),
                   ),
                 ]),
               ))

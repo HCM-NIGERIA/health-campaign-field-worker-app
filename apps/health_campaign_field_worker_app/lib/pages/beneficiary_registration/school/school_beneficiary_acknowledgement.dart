@@ -2,6 +2,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../blocs/household_overview/household_overview.dart';
 import '../../../blocs/search_households/search_bloc_common_wrapper.dart';
 import '../../../router/app_router.dart';
 import '../../../utils/i18_key_constants.dart' as i18;

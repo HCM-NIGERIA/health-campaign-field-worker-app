@@ -256,8 +256,8 @@ class _SchoolIndividualListPageState
                                   } else if (searchController
                                       .value.text.isEmpty) {
                                     callReloadEvent(
-                                      offset: offset,
-                                      limit: limit,
+                                      offset: 0,
+                                      limit: 10,
                                     );
                                   }
                                 },
@@ -343,22 +343,7 @@ class _SchoolIndividualListPageState
                                                               .clientReferenceId)
                                                       .toList()
                                                   : null;
-                                              // final ageInYears =
-                                              //     DigitDateUtils.calculateAge(
-                                              //   DigitDateUtils
-                                              //           .getFormattedDateToDateTime(
-                                              //         e.dateOfBirth!,
-                                              //       ) ??
-                                              //       DateTime.now(),
-                                              // ).years;
-                                              // final ageInMonths =
-                                              //     DigitDateUtils.calculateAge(
-                                              //   DigitDateUtils
-                                              //           .getFormattedDateToDateTime(
-                                              //         e.dateOfBirth!,
-                                              //       ) ??
-                                              //       DateTime.now(),
-                                              // ).months;
+
                                               final currentCycle = projectState
                                                   .projectType?.cycles
                                                   ?.firstWhereOrNull(

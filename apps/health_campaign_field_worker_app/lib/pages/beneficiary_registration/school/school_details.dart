@@ -345,7 +345,7 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
         registrationDate,
         projectBeneficiaryModel,
         loading,
-      ) {
+      ) async {
         var household = householdModel.copyWith(
           memberCount: studentCount,
           address: addressModel,
@@ -395,7 +395,9 @@ class _HouseHoldDetailsPageState extends LocalizedState<SchoolDetailsPage> {
           ),
         );
 
-        (context.router.parent() as StackRouter).pop();
+        await Future.delayed(const Duration(microseconds: 200), () async {
+          (context.router.parent() as StackRouter).pop();
+        });
       },
     );
   }
