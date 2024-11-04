@@ -40,16 +40,7 @@ class _BeneficiaryAcknowledgementPageState
               children: [SchoolOverviewRoute()],
             ),
           );
-          // final wrapper = context
-          //           .read<HouseholdOverviewBloc>()
-          //           .state
-          //           .householdMemberWrapper;
-          //  context.router.popAndPush(
-          //         BeneficiaryWrapperRoute(
-          //           wrapper: wrapper,
-          //           children: [SchoolOverviewRoute()],
-          //         ),
-          //       );
+          
         },
         enableViewHousehold: widget.enableViewSchool ?? false,
         secondaryLabel: localizations.translate(
