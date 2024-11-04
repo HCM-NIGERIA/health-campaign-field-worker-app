@@ -18,12 +18,14 @@ class ManageAttendancePage extends LocalizedStatefulWidget {
   final String projectId;
   final String userId;
   final String appVersion;
+  final String boundaryName;
 
   const ManageAttendancePage({
     required this.attendanceListeners,
     required this.projectId,
     required this.userId,
     required this.appVersion,
+    required this.boundaryName,
     super.key,
   });
 
@@ -72,13 +74,8 @@ class _ManageAttendancePageState extends State<ManageAttendancePage> {
                 list.add(RegisterCard(
                     attendanceBloc: attendanceBloc,
                     data: {
-                      t.translate(i18.attendance.campaignNameLabel):
-                          register.additionalDetails?[
-                              EnumValues.campaignName.toValue()],
-                      t.translate(i18.attendance.eventTypeLabel):
-                          register.additionalDetails?[
-                                  EnumValues.eventType.toValue()] ??
-                              t.translate(i18.common.coreCommonNA),
+                      t.translate(i18.attendance.registerNameLabel):
+                          register.name,
                       t.translate(i18.attendance.staffCountLabel):
                           register.attendees?.length ?? 0,
                       t.translate(i18.attendance.startDateLabel):
@@ -99,6 +96,14 @@ class _ManageAttendancePageState extends State<ManageAttendancePage> {
                               : t.translate(i18.common.inactive),
                       t.translate(i18.attendance.attendanceCompletionLabel):
                           calculateCompletedDays(attendanceRegisters[i]) ??
+                              t.translate(i18.common.coreCommonNA),
+                      t.translate(i18.attendance.boundaryNameLabel):
+                          register.additionalDetails?[
+                                  EnumValues.boundary.toValue()] ??
+                              widget.boundaryName,
+                      t.translate(i18.attendance.description):
+                          register.additionalDetails?[
+                                  EnumValues.description.toValue()] ??
                               t.translate(i18.common.coreCommonNA),
                     },
                     registers: attendanceRegisters,

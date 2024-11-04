@@ -467,6 +467,7 @@ class _HomePageState extends LocalizedState<HomePage> {
                   projectId: context.projectId,
                   userId: context.loggedInUserUuid,
                   appVersion: Constants().version,
+                  boundaryName: context.boundary.name!,
                 ),
                 settings: const RouteSettings(name: '/manage-attendance'),
               ),
@@ -513,8 +514,8 @@ class _HomePageState extends LocalizedState<HomePage> {
 
     final List<String> filteredLabels = homeItemsLabel
         .where((element) => state.actionsWrapper.actions
-            .map((e) => e.displayName)
-            .toList()
+                .map((e) => e.displayName)
+                .toList()
             .contains(element))
         .toList();
 
