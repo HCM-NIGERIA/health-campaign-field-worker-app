@@ -151,8 +151,6 @@ class PerformannceSummaryReportBloc
       // }
       if (dayVsHouseholdListMap.containsKey(date) &&
           dayVsHouseholdListMap[date] != null) {
-        // totatlHouseholdForADay += dayVsHouseholdListMap[date]!.length;
-
         for (var entry in dayVsHouseholdListMap[date]!.toList()) {
           bool isSchool = false;
 
@@ -174,7 +172,6 @@ class PerformannceSummaryReportBloc
             totatlHouseholdForADay++;
           }
         }
-       
       }
       if (dayVsTaskListMap.containsKey(date) &&
           dayVsTaskListMap[date] != null) {

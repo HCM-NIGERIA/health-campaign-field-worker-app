@@ -172,11 +172,10 @@ class HouseholdOverviewBloc
       // Check if a head of household was found.
       if (head == null) {
         // If head is not found, append the new data to the existing state.
-        
-      
+
         emit(state.copyWith(
           loading: false,
-           offset: members.isNotEmpty && members.length== (event.limit??10)
+          offset: members.isNotEmpty && members.length == (event.limit ?? 10)
               ? (event.offset ?? 0) + (event.limit ?? 10)
               : null,
           householdMemberWrapper: state.householdMemberWrapper.copyWith(
@@ -219,7 +218,7 @@ class HouseholdOverviewBloc
             referrals: referrals,
           ),
           loading: false,
-          offset: members.isNotEmpty && members.length== (event.limit??10)
+          offset: members.isNotEmpty && members.length == (event.limit ?? 10)
               ? (event.offset ?? 0) + (event.limit ?? 10)
               : null,
         ),
@@ -273,9 +272,10 @@ class HouseholdOverviewBloc
 
       emit(state.copyWith(
         loading: false,
-        offset: individuals.isNotEmpty && individuals.length== (event.limit??10)
-              ? (event.offset ?? 0) + (event.limit ?? 10)
-              : null,
+        offset:
+            individuals.isNotEmpty && individuals.length == (event.limit ?? 10)
+                ? (event.offset ?? 0) + (event.limit ?? 10)
+                : null,
         householdMemberWrapper: state.householdMemberWrapper.copyWith(
           members: event.offset == 0
               ? individuals
@@ -306,7 +306,6 @@ class HouseholdOverviewBloc
                 ],
         ),
         limit: event.limit,
-       // offset: event.offset! + event.limit!,
       ));
     }
   }

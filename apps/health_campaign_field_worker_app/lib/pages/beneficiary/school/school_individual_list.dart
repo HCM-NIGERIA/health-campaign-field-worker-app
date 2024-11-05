@@ -82,10 +82,6 @@ class _SchoolIndividualListPageState
                       if (scrollNotification is ScrollUpdateNotification) {
                         final metrics = scrollNotification.metrics;
                         if (metrics.atEdge && metrics.pixels != 0) {
-                          // setState(() {
-                          //   offset = (offset + limit);
-                          // });
-
                           if (state.offset != null) {
                             callReloadEvent(
                               offset: state.offset ?? 0,
@@ -378,7 +374,6 @@ class _SchoolIndividualListPageState
                                               return DigitCard(
                                                 child: MemberCard(
                                                   clearSearchName: () {
-                                                    searchController.text = "";
                                                     searchController.clear();
                                                   },
                                                   isAdverseEffect:
