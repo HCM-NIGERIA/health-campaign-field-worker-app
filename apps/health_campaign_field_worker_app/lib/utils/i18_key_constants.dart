@@ -1326,6 +1326,7 @@ class DeliverIntervention {
       'DELIVER_INTERVENTION_RESOURCE_DELIVERED_ERROR';
 
   String get householdRegistered => "PERFORMANCE_SUMMARY_HOUSEHOLD_DATA_LIST";
+  String get schoolRegistered => "PERFORMANCE_SUMMARY_SCHOOL_DATA_LIST";
   String get peoplePercentageTreatedLabel =>
       "PERFORMANCE_SUMMARY_INDIVIDUAL_DATA_LIST";
   String get peopleTreatedLabel => "PERFORMANCE_SUMMARY_TASK_DATA_LIST";

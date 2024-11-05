@@ -76,6 +76,7 @@ class _PerformamnceSummaryReportDetailsPageState
     ));
   }
 
+static const _schoolKey = 'schoolKey';
   static const _householdKey = 'householdKey';
   static const _treatedPercentageKey = 'treatedPercentageKey';
   static const _treatedKey = 'treatedKey';
@@ -127,6 +128,16 @@ class _PerformamnceSummaryReportDetailsPageState
                               key: _dateKey,
                               width: 90,
                             ),
+                            // school
+                             DigitGridColumn(
+                              label: localizations.translate(
+                                 i18.deliverIntervention.schoolRegistered,
+                                
+                              ),
+                              key: _schoolKey,
+                              width: 170,
+                            ),
+                            //
                             DigitGridColumn(
                               label: localizations.translate(
                                 i18.deliverIntervention.householdRegistered,
@@ -182,6 +193,11 @@ class _PerformamnceSummaryReportDetailsPageState
                                   DigitGridCell(
                                     key: _dateKey,
                                     value: entry.key,
+                                  ),
+                                   DigitGridCell(
+                                    key: _schoolKey,
+                                    value:
+                                        entry.value.schoolCount.toString(),
                                   ),
                                   DigitGridCell(
                                     key: _householdKey,
