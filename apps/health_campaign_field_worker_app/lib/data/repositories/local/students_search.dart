@@ -86,12 +86,12 @@ class StudentsSearchRepository extends LocalRepository {
         sql.householdMember.householdClientReferenceId.equals(houseId),
         if (nameQuery != null)
           buildOr([
-            sql.name.givenName.contains(
-              nameQuery,
-            ),
-            sql.name.familyName.contains(
-              nameQuery,
-            ),
+            // sql.name.givenName.contains(
+            //   nameQuery,
+            // ),
+            // sql.name.familyName.contains(
+            //   nameQuery,
+            // ),
             sql.name.givenName.contains(
               nameQuery,
             ),
@@ -141,7 +141,8 @@ class StudentsSearchRepository extends LocalRepository {
 
     var results = await (selectQuery).get();
 
-    List<IndividualModel> individuals = await getIndividuals(results);
+    List<IndividualModel> individuals =
+        await getIndividuals(results, individualAddress);
     List<ProjectBeneficiaryModel> projectBeneficiaries =
         await getProjectBeneficiaries(
       results,
@@ -155,12 +156,15 @@ class StudentsSearchRepository extends LocalRepository {
     };
   }
 
-  getIndividuals(List<TypedResult> results) {
+  getIndividuals(
+    List<TypedResult> results,
+    $AddressTable individualAddress,
+  ) {
     return results
         .map((e) {
           final individual = e.readTable(sql.individual);
           final name = e.readTableOrNull(sql.name);
-          final address = e.readTableOrNull(sql.address);
+          final address = e.readTableOrNull(individualAddress);
           final identifier = e.readTableOrNull(sql.identifier);
 
           return IndividualModel(

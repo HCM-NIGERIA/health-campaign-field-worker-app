@@ -36,6 +36,7 @@ class MemberCard extends StatelessWidget {
   final String? projectBeneficiaryClientReferenceId;
   final Color? backgroundColorType;
   final bool isAdverseEffect;
+  final VoidCallback? clearSearchName;
 
   const MemberCard({
     super.key,
@@ -58,7 +59,7 @@ class MemberCard extends StatelessWidget {
     this.isBeneficiaryReferred = false,
     this.sideEffects,
     this.backgroundColorType,
-    required this.isAdverseEffect,
+    required this.isAdverseEffect, this.clearSearchName,
   });
 
   @override
@@ -255,6 +256,7 @@ class MemberCard extends StatelessWidget {
                               // ),
                               onPressed: isAdverseEffect
                                   ? () async {
+                                    clearSearchName?.call();
                                       await context.router.push(
                                         SideEffectsRoute(
                                           tasks: tasks != null
@@ -265,6 +267,7 @@ class MemberCard extends StatelessWidget {
                                       );
                                     }
                                   : () {
+                                     clearSearchName?.call();
                                       final bloc =
                                           context.read<HouseholdOverviewBloc>();
 
@@ -287,12 +290,14 @@ class MemberCard extends StatelessWidget {
                                           .toList();
 
                                       if ((futureTaskList ?? []).isNotEmpty) {
+                                       
                                         context.router.push(
                                           RecordPastDeliveryDetailsRoute(
                                             tasks: tasks,
                                           ),
                                         );
                                       } else {
+                                        clearSearchName?.call();
                                         context.router
                                             .push(BeneficiaryDetailsRoute());
                                       }
