@@ -214,6 +214,10 @@ class Attendance {
 
   String get missedAttendanceDescription => "MISSED_ATTENDANCE_DESCRIPTION";
 
+  String get boundaryNameLabel => "BOUNDARY_NAME_LABEL";
+  String get description => "DESCRIPTION_TEXT";
+  String get registerNameLabel => "REGISTER_NAME_LABEL";
+
   String get halfDay => 'HALF_DAY';
   String get present => 'PRESENT';
   String get absent => 'ABSENT';
