@@ -142,6 +142,7 @@ class PerformannceSummaryReportBloc
     for (var date in availableDates) {
       // int totatlIndividualForADay = 0;
       int totatlHouseholdForADay = 0;
+      int totatlSchoolForADay = 0;
       int totalTaskForADay = 0;
 
       // if (dayVsIndividualListMap.containsKey(date) &&
@@ -150,7 +151,27 @@ class PerformannceSummaryReportBloc
       // }
       if (dayVsHouseholdListMap.containsKey(date) &&
           dayVsHouseholdListMap[date] != null) {
-        totatlHouseholdForADay += dayVsHouseholdListMap[date]!.length;
+        for (var entry in dayVsHouseholdListMap[date]!.toList()) {
+          bool isSchool = false;
+
+          // Get the additional details
+          HouseholdAdditionalFields additionalDetails = entry.additionalFields!;
+
+          // Check if any field contains the type "SCHOOL"
+          for (var field in additionalDetails.fields) {
+            if (field.key == "type" && field.value == "SCHOOL") {
+              isSchool = true;
+              break; // No need to check further once we find "SCHOOL"
+            }
+          }
+
+          // Increment the appropriate counter
+          if (isSchool) {
+            totatlSchoolForADay++;
+          } else {
+            totatlHouseholdForADay++;
+          }
+        }
       }
       if (dayVsTaskListMap.containsKey(date) &&
           dayVsTaskListMap[date] != null) {
@@ -194,6 +215,7 @@ class PerformannceSummaryReportBloc
       PerformanceSummary summary = PerformanceSummary(
         treatedPercentage: double.parse(treatedPercentage.toStringAsFixed(2)),
         householdCount: totatlHouseholdForADay,
+        schoolCount: totatlSchoolForADay,
         taskCount: totalTaskForADay,
         drugOne: drugOne,
         drugTwo: drugTwo,

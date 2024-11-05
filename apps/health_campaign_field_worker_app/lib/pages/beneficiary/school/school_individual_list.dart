@@ -82,13 +82,12 @@ class _SchoolIndividualListPageState
                       if (scrollNotification is ScrollUpdateNotification) {
                         final metrics = scrollNotification.metrics;
                         if (metrics.atEdge && metrics.pixels != 0) {
-                          setState(() {
-                            offset = (offset + limit);
-                          });
-                          callReloadEvent(
-                            offset: offset,
-                            limit: limit,
-                          );
+                          if (state.offset != null) {
+                            callReloadEvent(
+                              offset: state.offset ?? 0,
+                              limit: limit,
+                            );
+                          }
                         }
                       }
                       // Return true to allow the notification to continue to be dispatched to further ancestors.
@@ -146,7 +145,7 @@ class _SchoolIndividualListPageState
                               ),
                             );
                             callReloadEvent(
-                              offset: 0,
+                              offset: wrapper.members.length,
                               limit: 10,
                             );
                           },
@@ -374,6 +373,9 @@ class _SchoolIndividualListPageState
 
                                               return DigitCard(
                                                 child: MemberCard(
+                                                  clearSearchName: () {
+                                                    searchController.clear();
+                                                  },
                                                   isAdverseEffect:
                                                       !recordedSideEffect(
                                                             context

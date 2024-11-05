@@ -86,21 +86,9 @@ class StudentsSearchRepository extends LocalRepository {
         sql.householdMember.householdClientReferenceId.equals(houseId),
         if (nameQuery != null)
           buildOr([
-            sql.name.givenName.contains(
-              nameQuery,
-            ),
-            sql.name.familyName.contains(
-              nameQuery,
-            ),
-            sql.name.givenName.contains(
-              nameQuery,
-            ),
-            sql.name.familyName.contains(
-              nameQuery,
-            ),
-            sql.name.otherNames.equals(
-              nameQuery,
-            ),
+            sql.name.givenName.contains(nameQuery),
+            sql.name.familyName.contains(nameQuery),
+            sql.name.otherNames.equals(nameQuery),
           ]),
       ]))
       ..orderBy([
@@ -141,26 +129,57 @@ class StudentsSearchRepository extends LocalRepository {
 
     var results = await (selectQuery).get();
 
-    List<IndividualModel> individuals = await getIndividuals(results);
+    // Now retrieve unique tasks for each projectBeneficiaryId
+    var latestTasks = results
+        .groupListsBy((result) =>
+            result.readTable(sql.projectBeneficiary).clientReferenceId)
+        .map((projectBeneficiaryId, taskResults) => MapEntry(
+              projectBeneficiaryId,
+              sortBy == null
+                  ? taskResults.last
+                  : sortBy == Constants.studentTasksSort[0]
+                      ? taskResults.first
+                      : taskResults
+                          .last, // 'first' because tasks are already ordered by latest time
+            ))
+        .values
+        .toList();
+
+    // Fetch unique individuals
+    List<IndividualModel> individuals =
+        await getIndividuals(results, individualAddress);
+    var uniqueIndividuals = {
+      for (var ind in individuals) ind.clientReferenceId: ind,
+    }.values.toList();
+
+// Fetch unique project beneficiaries
     List<ProjectBeneficiaryModel> projectBeneficiaries =
-        await getProjectBeneficiaries(
-      results,
-    );
-    var tasks = getTasks(results, taskAddress);
+        await getProjectBeneficiaries(results);
+    var uniqueProjectBeneficiaries = {
+      for (var pb in projectBeneficiaries) pb.clientReferenceId: pb,
+    }.values.toList();
+
+    var tasks = latestTasks
+        .map((e) => getTasks([e], taskAddress))
+        .expand((t) => t)
+        .toList();
 
     return {
-      'individuals': individuals,
-      'projectBeneficiaries': projectBeneficiaries,
+      'individuals': uniqueIndividuals,
+      'projectBeneficiaries': uniqueProjectBeneficiaries,
       'tasks': tasks,
     };
   }
 
-  getIndividuals(List<TypedResult> results) {
+  getIndividuals(
+    List<TypedResult> results,
+    $AddressTable individualAddress,
+  ) {
     return results
         .map((e) {
           final individual = e.readTable(sql.individual);
           final name = e.readTableOrNull(sql.name);
-          final address = e.readTableOrNull(sql.address);
+          final address = e.readTableOrNull(individualAddress);
           final identifier = e.readTableOrNull(sql.identifier);
 
           return IndividualModel(
