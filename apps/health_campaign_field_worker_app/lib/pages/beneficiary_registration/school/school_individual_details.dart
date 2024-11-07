@@ -561,33 +561,35 @@ class _SchoolIndividualDetailsPageState
                                 },
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                kPadding / 2,
-                                kPadding,
-                                kPadding / 2,
-                                0,
-                              ),
-                              child: DigitTextFormField(
-                                keyboardType: TextInputType.number,
-                                formControlName: _mobileNumberKey,
-                                label: localizations.translate(
-                                  i18.individualDetails.mobileNumberLabelText,
+                            if (widget.isHeadOfHousehold) ...[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  kPadding / 2,
+                                  kPadding,
+                                  kPadding / 2,
+                                  0,
                                 ),
-                                maxLength: 11,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp("[0-9]"),
+                                child: DigitTextFormField(
+                                  keyboardType: TextInputType.number,
+                                  formControlName: _mobileNumberKey,
+                                  label: localizations.translate(
+                                    i18.individualDetails.mobileNumberLabelText,
                                   ),
-                                ],
-                                validationMessages: {
-                                  'mobileNumber': (object) =>
-                                      localizations.translate(i18
-                                          .individualDetails
-                                          .mobileNumberInvalidFormatValidationMessage),
-                                },
+                                  maxLength: 11,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp("[0-9]"),
+                                    ),
+                                  ],
+                                  validationMessages: {
+                                    'mobileNumber': (object) =>
+                                        localizations.translate(i18
+                                            .individualDetails
+                                            .mobileNumberInvalidFormatValidationMessage),
+                                  },
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         if (!widget.isHeadOfHousehold) ...[
@@ -672,6 +674,12 @@ class _SchoolIndividualDetailsPageState
                             options: Constants.yesNo,
                             errorMessage: '',
                             onValueChange: (value) {
+                              if (value.key) {
+                                form.control(_parentknownKey).value = "";
+                              } else {
+                                form.control(_parentknownKey).value =
+                                    widget.headName;
+                              }
                               setState(() {
                                 showParent = value.key;
                               });
@@ -793,7 +801,9 @@ class _SchoolIndividualDetailsPageState
           ? null
           : Gender.values
               .byName(form.control(_genderKey).value.toString().toLowerCase()),
-      mobileNumber: form.control(_mobileNumberKey).value,
+      mobileNumber: widget.isHeadOfHousehold
+          ? form.control(_mobileNumberKey).value
+          : null,
       dateOfBirth: dobString,
       identifiers: [
         identifier.copyWith(
@@ -938,10 +948,14 @@ class _SchoolIndividualDetailsPageState
               },
             ),
       ),
-      _mobileNumberKey:
-          FormControl<String>(value: individual?.mobileNumber, validators: [
-        CustomValidator.validMobileNumber,
-      ]),
+      _mobileNumberKey: FormControl<String>(
+        value: individual?.mobileNumber,
+        validators: widget.isHeadOfHousehold
+            ? [
+                CustomValidator.validMobileNumber,
+              ]
+            : [],
+      ),
       if (!widget.isHeadOfHousehold)
         ..._buildStudentFields(
           height,

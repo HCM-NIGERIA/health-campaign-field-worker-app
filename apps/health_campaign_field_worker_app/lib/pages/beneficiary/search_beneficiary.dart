@@ -181,8 +181,7 @@ class _SearchBeneficiaryPageState
                                           SearchHouseholdsEvent
                                               .searchByProximity(
                                             latitude: locationState.latitude!,
-                                            longitude:
-                                                locationState.longitude!,
+                                            longitude: locationState.longitude!,
                                             projectId: context.projectId,
                                             maxRadius: appConfig.maxRadius!,
                                             offset: offset,
@@ -210,63 +209,64 @@ class _SearchBeneficiaryPageState
                                       }
                                     },
                                   ),
-                                  locationState.latitude != null
-                                      ? Row(
-                                          children: [
-                                            Switch(
-                                              value: isProximityEnabled,
-                                              onChanged: (value) {
-                                                searchController.clear();
-                                                setState(() {
-                                                  isProximityEnabled = value;
-                                                  lat = locationState.latitude!;
-                                                  long =
-                                                      locationState.longitude!;
-                                                  offset = 0;
-                                                  limit = 10;
-                                                });
+                                  // comment as the serach by proximity not required
+                                  // locationState.latitude != null
+                                  //     ? Row(
+                                  //         children: [
+                                  //           Switch(
+                                  //             value: isProximityEnabled,
+                                  //             onChanged: (value) {
+                                  //               searchController.clear();
+                                  //               setState(() {
+                                  //                 isProximityEnabled = value;
+                                  //                 lat = locationState.latitude!;
+                                  //                 long =
+                                  //                     locationState.longitude!;
+                                  //                 offset = 0;
+                                  //                 limit = 10;
+                                  //               });
 
-                                                if (locationState
-                                                        .hasPermissions &&
-                                                    value &&
-                                                    locationState.latitude !=
-                                                        null &&
-                                                    locationState.longitude !=
-                                                        null &&
-                                                    appConfig.maxRadius !=
-                                                        null &&
-                                                    isProximityEnabled) {
-                                                  blocWrapper
-                                                      .proximitySearchBloc
-                                                      .add(
-                                                    SearchHouseholdsEvent
-                                                        .searchByProximity(
-                                                      latitude: locationState
-                                                          .latitude!,
-                                                      longitude: locationState
-                                                          .longitude!,
-                                                      projectId:
-                                                          context.projectId,
-                                                      maxRadius:
-                                                          appConfig.maxRadius!,
-                                                      offset: offset,
-                                                      limit: limit,
-                                                    ),
-                                                  );
-                                                } else {
-                                                  blocWrapper.clearEvent();
-                                                }
-                                              },
-                                            ),
-                                            Text(
-                                              localizations.translate(
-                                                i18.searchBeneficiary
-                                                    .proximityLabel,
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : const Offstage(),
+                                  //               if (locationState
+                                  //                       .hasPermissions &&
+                                  //                   value &&
+                                  //                   locationState.latitude !=
+                                  //                       null &&
+                                  //                   locationState.longitude !=
+                                  //                       null &&
+                                  //                   appConfig.maxRadius !=
+                                  //                       null &&
+                                  //                   isProximityEnabled) {
+                                  //                 blocWrapper
+                                  //                     .proximitySearchBloc
+                                  //                     .add(
+                                  //                   SearchHouseholdsEvent
+                                  //                       .searchByProximity(
+                                  //                     latitude: locationState
+                                  //                         .latitude!,
+                                  //                     longitude: locationState
+                                  //                         .longitude!,
+                                  //                     projectId:
+                                  //                         context.projectId,
+                                  //                     maxRadius:
+                                  //                         appConfig.maxRadius!,
+                                  //                     offset: offset,
+                                  //                     limit: limit,
+                                  //                   ),
+                                  //                 );
+                                  //               } else {
+                                  //                 blocWrapper.clearEvent();
+                                  //               }
+                                  //             },
+                                  //           ),
+                                  //           Text(
+                                  //             localizations.translate(
+                                  //               i18.searchBeneficiary
+                                  //                   .proximityLabel,
+                                  //             ),
+                                  //           ),
+                                  //         ],
+                                  //       )
+                                  //     : const Offstage(),
                                 ],
                               );
                             },

@@ -21,28 +21,41 @@ class _SelectBeneficiaryTypeState
     extends LocalizedState<SelectBeneficiaryPage> {
   @override
   Widget build(BuildContext context) {
-    return ScrollableContent(
-      header: Column(
-        children: [
-          const BackNavigationHelpHeaderWidget(),
-          Text(
-            localizations
-                .translate(i18.searchBeneficiary.selectBeneficiaryType),
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-        ],
-      ),
+    return CustomScrollView(
       slivers: [
-        SliverGrid(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return homeItems.elementAt(index);
-            },
-            childCount: homeItems.length,
-          ),
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 145,
-            childAspectRatio: 104 / 128,
+        const SliverToBoxAdapter(
+          child: BackNavigationHelpHeaderWidget(),
+        ),
+        SliverToBoxAdapter(
+          child: DigitCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  localizations
+                      .translate(i18.searchBeneficiary.selectBeneficiaryType),
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ), // Add spacing between the text and grid
+
+                // Grid inside the card
+                GridView.builder(
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Disable grid scrolling
+                  shrinkWrap: true, // Let grid size itself inside the card
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 145,
+                    childAspectRatio: 104 / 128,
+                  ),
+                  itemCount: homeItems.length,
+                  itemBuilder: (context, index) {
+                    return homeItems.elementAt(index);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],
