@@ -436,15 +436,6 @@ class _InventoryReportDetailsPageState
                                                           width: 100,
                                                         ),
                                                         DigitGridColumn(
-                                                          label: localizations
-                                                              .translate(
-                                                            i18.inventoryReportDetails
-                                                                .waybillLabel,
-                                                          ),
-                                                          key: waybillKey,
-                                                          width: 100,
-                                                        ),
-                                                        DigitGridColumn(
                                                           label: quantityLabel,
                                                           key: quantityKey,
                                                           width: 100,
@@ -455,6 +446,15 @@ class _InventoryReportDetailsPageState
                                                           key:
                                                               transactingPartyKey,
                                                           width: 200,
+                                                        ),
+                                                        DigitGridColumn(
+                                                          label: localizations
+                                                              .translate(
+                                                            i18.inventoryReportDetails
+                                                                .waybillLabel,
+                                                          ),
+                                                          key: waybillKey,
+                                                          width: 100,
                                                         ),
                                                         DigitGridColumn(
                                                           label: localizations
@@ -476,6 +476,7 @@ class _InventoryReportDetailsPageState
                                                         ),
                                                       ],
                                                       rows: [
+                                                        // start
                                                         for (final entry in data
                                                             .entries) ...[
                                                           for (final model
@@ -486,15 +487,6 @@ class _InventoryReportDetailsPageState
                                                                   key: dateKey,
                                                                   value:
                                                                       entry.key,
-                                                                ),
-                                                                DigitGridCell(
-                                                                  key:
-                                                                      waybillKey,
-                                                                  value: model
-                                                                          .waybillNumber ??
-                                                                      model
-                                                                          .waybillNumber ??
-                                                                      '',
                                                                 ),
                                                                 DigitGridCell(
                                                                   key:
@@ -509,6 +501,15 @@ class _InventoryReportDetailsPageState
                                                                   value: facilityMap[
                                                                               model.transactingPartyId]
                                                                           ?.name ??
+                                                                      '',
+                                                                ),
+                                                                DigitGridCell(
+                                                                  key:
+                                                                      waybillKey,
+                                                                  value: model
+                                                                          .waybillNumber ??
+                                                                      model
+                                                                          .waybillNumber ??
                                                                       '',
                                                                 ),
                                                                 DigitGridCell(
@@ -540,19 +541,21 @@ class _InventoryReportDetailsPageState
                                                                         ).format(
                                                                           DateTime
                                                                               .fromMillisecondsSinceEpoch(
-                                                                          int.parse(model.additionalFields?.fields
-                                                                                  .firstWhereOrNull(
-                                                                                    (element) => element.key == expiryDateKey,
-                                                                                  )
-                                                                                  ?.value
-                                                                                  .toString() ??
-                                                                              '0'),
-                                                                        ))
+                                                                            int.parse(model.additionalFields?.fields
+                                                                                    .firstWhereOrNull(
+                                                                                      (element) => element.key == expiryDateKey,
+                                                                                    )
+                                                                                    ?.value
+                                                                                    .toString() ??
+                                                                                '0'),
+                                                                          ),
+                                                                        )
                                                                       : '',
                                                                 ),
                                                               ],
                                                             ),
                                                         ],
+                                                        //end
                                                       ],
                                                     ),
                                                   );

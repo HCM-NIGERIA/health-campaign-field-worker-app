@@ -37,7 +37,7 @@ class MemberCard extends StatelessWidget {
   final Color? backgroundColorType;
   final bool isAdverseEffect;
   final VoidCallback? clearSearchName;
-
+  final bool? isSchool;
   const MemberCard({
     super.key,
     required this.individual,
@@ -59,7 +59,9 @@ class MemberCard extends StatelessWidget {
     this.isBeneficiaryReferred = false,
     this.sideEffects,
     this.backgroundColorType,
-    required this.isAdverseEffect, this.clearSearchName,
+    required this.isAdverseEffect,
+    this.clearSearchName,
+    this.isSchool = false,
   });
 
   @override
@@ -183,7 +185,11 @@ class MemberCard extends StatelessWidget {
                       child: DigitIconButton(
                         icon: Icons.info,
                         iconText: localizations.translate(
-                          i18.householdOverView.householdOverViewHeadIconLabel,
+                          (isSchool != null && isSchool == true)
+                              ? i18
+                                  .householdOverView.schoolOverViewHeadIconLabel
+                              : i18.householdOverView
+                                  .householdOverViewHeadIconLabel,
                         ),
                         iconSize: 20,
                         iconTextColor:
@@ -256,7 +262,7 @@ class MemberCard extends StatelessWidget {
                               // ),
                               onPressed: isAdverseEffect
                                   ? () async {
-                                    clearSearchName?.call();
+                                      clearSearchName?.call();
                                       await context.router.push(
                                         SideEffectsRoute(
                                           tasks: tasks != null
@@ -267,7 +273,7 @@ class MemberCard extends StatelessWidget {
                                       );
                                     }
                                   : () {
-                                     clearSearchName?.call();
+                                      clearSearchName?.call();
                                       final bloc =
                                           context.read<HouseholdOverviewBloc>();
 
@@ -290,7 +296,6 @@ class MemberCard extends StatelessWidget {
                                           .toList();
 
                                       if ((futureTaskList ?? []).isNotEmpty) {
-                                       
                                         context.router.push(
                                           RecordPastDeliveryDetailsRoute(
                                             tasks: tasks,
