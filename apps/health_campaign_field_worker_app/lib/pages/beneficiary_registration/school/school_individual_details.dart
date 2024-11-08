@@ -675,7 +675,38 @@ class _SchoolIndividualDetailsPageState
                             errorMessage: '',
                             onValueChange: (value) {
                               if (value.key) {
-                                form.control(_parentknownKey).value = "";
+                                final individual =
+                                    state.mapOrNull<IndividualModel>(
+                                  editIndividual: (value) {
+                                    if (value.projectBeneficiaryModel?.tag !=
+                                        null) {
+                                      context.read<ScannerBloc>().add(
+                                            ScannerScanEvent([], [
+                                              value.projectBeneficiaryModel!
+                                                  .tag!,
+                                            ]),
+                                          );
+                                    }
+
+                                    return value.individualModel;
+                                  },
+                                );
+
+                                final radioValue =
+                                    individual?.additionalFields?.fields
+                                        .firstWhereOrNull(
+                                          (element) =>
+                                              element.key == "radioKey",
+                                        )
+                                        ?.value;
+
+                                form.control(_parentknownKey).value =
+                                    radioValue != null && radioValue
+                                        ? individual?.additionalFields?.fields
+                                            .firstWhereOrNull((element) =>
+                                                element.key == "parentName")
+                                            ?.value
+                                        : "";
                               } else {
                                 form.control(_parentknownKey).value =
                                     widget.headName;
@@ -829,6 +860,11 @@ class _SchoolIndividualDetailsPageState
                   ((form.control(_parentknownKey).value as String) ?? "")
                       .trim(),
                 ),
+                AdditionalField(
+                  "radioKey",
+                  (((form.control(radioKey).value as KeyValue).key) ??
+                      Constants.yesNo[1].label),
+                ),
               ],
             )
           : IndividualAdditionalFields(
@@ -892,6 +928,16 @@ class _SchoolIndividualDetailsPageState
         return value.individualModel;
       },
     );
+
+    final parentKnown = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == "parentName")
+        ?.value;
+
+    final radioKeyKnown = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == "radioKey")
+        ?.value;
+
+    showParent = (radioKeyKnown ?? false);
 
     final searchQuery = state.mapOrNull<String>(
       create: (value) {
@@ -960,6 +1006,8 @@ class _SchoolIndividualDetailsPageState
         ..._buildStudentFields(
           height,
           disabilityType,
+          parentKnown,
+          radioKeyKnown,
         ),
     });
   }
@@ -967,6 +1015,8 @@ class _SchoolIndividualDetailsPageState
   Map<String, FormControl<Object?>> _buildStudentFields(
     String? height,
     String? disabilityType,
+    String? parentName,
+    bool? radioKnown,
   ) {
     return {
       _heightKey: _buildFormControl<String>(
@@ -978,11 +1028,13 @@ class _SchoolIndividualDetailsPageState
         validators: [Validators.required],
       ),
       radioKey: _buildFormControl<KeyValue>(
-        value: Constants.yesNo[1],
+        value: (radioKnown != null && radioKnown)
+            ? Constants.yesNo[0]
+            : Constants.yesNo[1],
         validators: [Validators.required],
       ),
       _parentknownKey: _buildFormControl<String>(
-        value: widget.headName,
+        value: parentName ?? widget.headName,
         validators: [Validators.required],
       ),
     };

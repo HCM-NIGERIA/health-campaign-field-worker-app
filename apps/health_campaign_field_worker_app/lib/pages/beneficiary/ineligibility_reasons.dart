@@ -119,12 +119,12 @@ class _IneligibilityReasonsPageState
                                                         action: (ctx) {
                                                           isReasonSubmitted =
                                                               true;
-                                                          final dynamic reason =
+                                                          final KeyValue reason =
                                                               form
                                                                   .control(
                                                                     _ineligibleReason,
                                                                   )
-                                                                  .value;
+                                                                  .value as KeyValue;
 
                                                           final clientReferenceId =
                                                               IdGen
@@ -188,7 +188,7 @@ class _IneligibilityReasonsPageState
                                                                         ),
                                                                         AdditionalField(
                                                                           'ineligibleReasons',
-                                                                          reason
+                                                                          reason.key
                                                                               .toString(),
                                                                         ),
                                                                       ],

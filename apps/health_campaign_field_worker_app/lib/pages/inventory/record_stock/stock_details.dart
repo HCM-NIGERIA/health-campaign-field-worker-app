@@ -705,7 +705,7 @@ class _StockDetailsPageState extends LocalizedState<StockDetailsPage> {
                                         child: Center(
                                           child: Text(
                                             localizations.translate(
-                                                i18.common.coreCommonSubmit),
+                                                i18.common.coreCommonSubmit,),
                                           ),
                                         ),
                                       ),
