@@ -922,7 +922,7 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
           controller: controller[index],
           validator: (value) {
             if (((value == null || value == '') && item.required == true)) {
-              return localizations.translate("${item.code}_REQUIRED");
+              return localizations.translate(i18.common.corecommonRequired);
             }
             if (item.regex != null) {
               return (RegExp(item.regex!).hasMatch(value!))
