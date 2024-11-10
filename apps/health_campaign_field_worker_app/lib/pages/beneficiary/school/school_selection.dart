@@ -64,60 +64,31 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
       builder: (context, form, child) {
         return Scaffold(
           bottomNavigationBar: Padding(
-              padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
-              child: DigitElevatedButton(
-                onPressed: form.valid && !searchHouseholdsState.loading
-                    ? () {
-                        if (!form.valid) return;
-                        final bloc = context.read<SearchBlocWrapper>();
+            padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+            child: DigitElevatedButton(
+              onPressed: form.valid && !searchHouseholdsState.loading
+                  ? () {
+                      if (!form.valid) return;
+                      final bloc = context.read<SearchBlocWrapper>();
 
-                        bloc.searchBySchoolName
-                            .add(SearchHouseholdsEvent.searchBySchool(
-                          searchText: form.control(_schoolName).value,
-                          projectId: context.projectId,
-                          boundaryCode: context.boundaryOrNull!.code!,
-                          limit: 10,
-                          offset: 0,
-                        ));
-                      }
-                    : null,
-                child: !searchHouseholdsState.loading
-                    ? Text(
-                        localizations
-                            .translate(i18.householdDetails.actionLabel),
-                      )
-                    : const CircularProgressIndicator(),
-              ),
+                      bloc.searchBySchoolName
+                          .add(SearchHouseholdsEvent.searchBySchool(
+                        searchText: form.control(_schoolName).value,
+                        projectId: context.projectId,
+                        boundaryCode: context.boundaryOrNull!.code!,
+                        limit: 10,
+                        offset: 0,
+                      ));
+                    }
+                  : null,
+              child: !searchHouseholdsState.loading
+                  ? Text(
+                      localizations.translate(i18.householdDetails.actionLabel),
+                    )
+                  : const CircularProgressIndicator(),
             ),
+          ),
           body: Column(
-           // backgroundColor: Colors.white,
-           // header: const BackNavigationHelpHeaderWidget(),
-            // footer: Padding(
-            //   padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
-            //   child: DigitElevatedButton(
-            //     onPressed: form.valid && !searchHouseholdsState.loading
-            //         ? () {
-            //             if (!form.valid) return;
-            //             final bloc = context.read<SearchBlocWrapper>();
-
-            //             bloc.searchBySchoolName
-            //                 .add(SearchHouseholdsEvent.searchBySchool(
-            //               searchText: form.control(_schoolName).value,
-            //               projectId: context.projectId,
-            //               boundaryCode: context.boundaryOrNull!.code!,
-            //               limit: 10,
-            //               offset: 0,
-            //             ));
-            //           }
-            //         : null,
-            //     child: !searchHouseholdsState.loading
-            //         ? Text(
-            //             localizations
-            //                 .translate(i18.householdDetails.actionLabel),
-            //           )
-            //         : const CircularProgressIndicator(),
-            //   ),
-            // ),
             children: [
               const BackNavigationHelpHeaderWidget(),
               BlocListener<SearchBySchoolBloc, SearchHouseholdsState>(
@@ -158,16 +129,14 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        localizations
-                            .translate(i18.schoolDetails.selectSchool),
+                        localizations.translate(i18.schoolDetails.selectSchool),
                         style: Theme.of(context).textTheme.displayMedium,
                       ),
                       DigitDropdown<String>(
                         label: localizations.translate(
                           i18.schoolDetails.selectSchool,
                         ),
-                        valueMapper: (value) =>
-                            localizations.translate(value),
+                        valueMapper: (value) => localizations.translate(value),
                         initialValue: context.schoolsList.firstOrNull,
                         menuItems: context.schoolsList
                             .map(
