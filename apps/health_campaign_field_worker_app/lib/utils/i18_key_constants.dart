@@ -971,6 +971,7 @@ class BeneficiaryDetails {
   String get beneficiaryDoseNo => 'BENEFICIARY_DETAILS_DOSE_NO';
   String get beneficiaryDose => 'BENEFICIARY_DETAILS_DOSE';
   String get beneficiaryDeliveryText => 'DELIVERY';
+  String get tabletOf => 'BENEFICIARY_TABLET_OF';
   String get beneficiaryStatus => 'BENEFICIARY_DETAILS_STATUS';
   String get beneficiaryResources => 'BENEFICIARY_DETAILS_RESOURCES';
   String get beneficiaryQuantity => 'BENEFICIARY_DETAILS_QUANTITY';
@@ -1237,6 +1238,8 @@ class HouseholdOverView {
 
   String get householdOverViewHeadIconLabel =>
       'HOUSEHOLD_OVER_VIEW_HEAD_ICON_LABEL';
+      String get schoolOverViewHeadIconLabel =>
+      'SCHOOL_OVER_VIEW_HEAD_ICON_LABEL';
 
   String get householdOverViewNotDeliveredIconLabel =>
       'HOUSEHOLD_OVER_VIEW_NOT_DELIVERED_ICON_LABEL';

@@ -63,35 +63,34 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
       form: _form,
       builder: (context, form, child) {
         return Scaffold(
-          body: ScrollableContent(
-            backgroundColor: Colors.white,
-            header: const BackNavigationHelpHeaderWidget(),
-            footer: Padding(
-              padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
-              child: DigitElevatedButton(
-                onPressed: form.valid && !searchHouseholdsState.loading
-                    ? () {
-                        if (!form.valid) return;
-                        final bloc = context.read<SearchBlocWrapper>();
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
+            child: DigitElevatedButton(
+              onPressed: form.valid && !searchHouseholdsState.loading
+                  ? () {
+                      if (!form.valid) return;
+                      final bloc = context.read<SearchBlocWrapper>();
 
-                        bloc.searchBySchoolName
-                            .add(SearchHouseholdsEvent.searchBySchool(
-                          searchText: form.control(_schoolName).value,
-                          projectId: context.projectId,
-                          boundaryCode: context.boundaryOrNull!.code!,
-                          limit: 10,
-                          offset: 0,
-                        ));
-                      }
-                    : null,
-                child: !searchHouseholdsState.loading
-                    ? Text(
-                        localizations.translate(i18.householdDetails.actionLabel),
-                      )
-                    : const CircularProgressIndicator(),
-              ),
+                      bloc.searchBySchoolName
+                          .add(SearchHouseholdsEvent.searchBySchool(
+                        searchText: form.control(_schoolName).value,
+                        projectId: context.projectId,
+                        boundaryCode: context.boundaryOrNull!.code!,
+                        limit: 10,
+                        offset: 0,
+                      ));
+                    }
+                  : null,
+              child: !searchHouseholdsState.loading
+                  ? Text(
+                      localizations.translate(i18.householdDetails.actionLabel),
+                    )
+                  : const CircularProgressIndicator(),
             ),
+          ),
+          body: Column(
             children: [
+              const BackNavigationHelpHeaderWidget(),
               BlocListener<SearchBySchoolBloc, SearchHouseholdsState>(
                 listener: (context, state) {
                   if (!state.loading) {
@@ -108,7 +107,8 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
                       DigitToast.show(
                         context,
                         options: DigitToastOptions(
-                          i18.schoolDetails.notRegistered,
+                          localizations
+                              .translate(i18.schoolDetails.notRegistered),
                           true,
                           theme,
                         ),
@@ -124,43 +124,38 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
                     }
                   }
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(kPadding),
-                  child: DigitCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          localizations
-                              .translate(i18.schoolDetails.selectSchool),
-                          style: Theme.of(context).textTheme.displayMedium,
+                child: DigitCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        localizations.translate(i18.schoolDetails.selectSchool),
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                      DigitDropdown<String>(
+                        label: localizations.translate(
+                          i18.schoolDetails.selectSchool,
                         ),
-                        DigitDropdown<String>(
-                          label: localizations.translate(
-                            i18.schoolDetails.selectSchool,
-                          ),
-                          valueMapper: (value) =>
-                              localizations.translate(value),
-                          initialValue: context.schoolsList.firstOrNull,
-                          menuItems: context.schoolsList
-                              .map(
-                                (e) => e,
-                              )
-                              .toList(),
-                          formControlName: _schoolName,
-                          isRequired: true,
-                          onChanged: (value) {
-                            form.control(_schoolName).value = value;
-                            form.markAllAsTouched();
-                          },
-                          validationMessages: {
-                            'required': (object) => localizations.translate(
-                                  i18.common.corecommonRequired,
-                                ),
-                          },
-                        ),
-                      ],
-                    ),
+                        valueMapper: (value) => localizations.translate(value),
+                        initialValue: context.schoolsList.firstOrNull,
+                        menuItems: context.schoolsList
+                            .map(
+                              (e) => e,
+                            )
+                            .toList(),
+                        formControlName: _schoolName,
+                        isRequired: true,
+                        onChanged: (value) {
+                          form.control(_schoolName).value = value;
+                          form.markAllAsTouched();
+                        },
+                        validationMessages: {
+                          'required': (object) => localizations.translate(
+                                i18.common.corecommonRequired,
+                              ),
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),

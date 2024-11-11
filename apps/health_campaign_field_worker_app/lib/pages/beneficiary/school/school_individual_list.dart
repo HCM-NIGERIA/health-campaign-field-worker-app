@@ -655,6 +655,8 @@ class _SchoolIndividualListPageState
                                                   localizations: localizations,
                                                   projectBeneficiaryClientReferenceId:
                                                       projectBeneficiaryId,
+
+                                                      isSchool: true,
                                                 ),
                                               );
                                             },

@@ -31,11 +31,16 @@ class DigitIntegerFormPicker extends StatelessWidget {
       return LabeledField(
           padding: const EdgeInsets.only(top: kPadding * 2),
           label: label,
-          child: ReactiveTextField(
-            formControlName: formControlName,
-            decoration: InputDecoration(labelText: hint),
-            keyboardType: TextInputType.number,
-            readOnly: readOnly,
+          child: Container(
+            color: readOnly
+                ? const Color.fromRGBO(0, 0, 0, 0.16)
+                : Colors.transparent,
+            child: ReactiveTextField(
+              formControlName: formControlName,
+              decoration: InputDecoration(labelText: hint),
+              keyboardType: TextInputType.number,
+              readOnly: readOnly,
+            ),
           ));
     }
 

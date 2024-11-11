@@ -561,33 +561,35 @@ class _SchoolIndividualDetailsPageState
                                 },
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                kPadding / 2,
-                                kPadding,
-                                kPadding / 2,
-                                0,
-                              ),
-                              child: DigitTextFormField(
-                                keyboardType: TextInputType.number,
-                                formControlName: _mobileNumberKey,
-                                label: localizations.translate(
-                                  i18.individualDetails.mobileNumberLabelText,
+                            if (widget.isHeadOfHousehold) ...[
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  kPadding / 2,
+                                  kPadding,
+                                  kPadding / 2,
+                                  0,
                                 ),
-                                maxLength: 11,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp("[0-9]"),
+                                child: DigitTextFormField(
+                                  keyboardType: TextInputType.number,
+                                  formControlName: _mobileNumberKey,
+                                  label: localizations.translate(
+                                    i18.individualDetails.mobileNumberLabelText,
                                   ),
-                                ],
-                                validationMessages: {
-                                  'mobileNumber': (object) =>
-                                      localizations.translate(i18
-                                          .individualDetails
-                                          .mobileNumberInvalidFormatValidationMessage),
-                                },
+                                  maxLength: 11,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                      RegExp("[0-9]"),
+                                    ),
+                                  ],
+                                  validationMessages: {
+                                    'mobileNumber': (object) =>
+                                        localizations.translate(i18
+                                            .individualDetails
+                                            .mobileNumberInvalidFormatValidationMessage),
+                                  },
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         if (!widget.isHeadOfHousehold) ...[
@@ -672,6 +674,43 @@ class _SchoolIndividualDetailsPageState
                             options: Constants.yesNo,
                             errorMessage: '',
                             onValueChange: (value) {
+                              if (value.key) {
+                                final individual =
+                                    state.mapOrNull<IndividualModel>(
+                                  editIndividual: (value) {
+                                    if (value.projectBeneficiaryModel?.tag !=
+                                        null) {
+                                      context.read<ScannerBloc>().add(
+                                            ScannerScanEvent([], [
+                                              value.projectBeneficiaryModel!
+                                                  .tag!,
+                                            ]),
+                                          );
+                                    }
+
+                                    return value.individualModel;
+                                  },
+                                );
+
+                                final radioValue =
+                                    individual?.additionalFields?.fields
+                                        .firstWhereOrNull(
+                                          (element) =>
+                                              element.key == "radioKey",
+                                        )
+                                        ?.value;
+
+                                form.control(_parentknownKey).value =
+                                    radioValue != null && radioValue
+                                        ? individual?.additionalFields?.fields
+                                            .firstWhereOrNull((element) =>
+                                                element.key == "parentName")
+                                            ?.value
+                                        : "";
+                              } else {
+                                form.control(_parentknownKey).value =
+                                    widget.headName;
+                              }
                               setState(() {
                                 showParent = value.key;
                               });
@@ -793,7 +832,9 @@ class _SchoolIndividualDetailsPageState
           ? null
           : Gender.values
               .byName(form.control(_genderKey).value.toString().toLowerCase()),
-      mobileNumber: form.control(_mobileNumberKey).value,
+      mobileNumber: widget.isHeadOfHousehold
+          ? form.control(_mobileNumberKey).value
+          : null,
       dateOfBirth: dobString,
       identifiers: [
         identifier.copyWith(
@@ -818,6 +859,11 @@ class _SchoolIndividualDetailsPageState
                   "parentName",
                   ((form.control(_parentknownKey).value as String) ?? "")
                       .trim(),
+                ),
+                AdditionalField(
+                  "radioKey",
+                  (((form.control(radioKey).value as KeyValue).key) ??
+                      Constants.yesNo[1].label),
                 ),
               ],
             )
@@ -883,6 +929,16 @@ class _SchoolIndividualDetailsPageState
       },
     );
 
+    final parentKnown = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == "parentName")
+        ?.value;
+
+    final radioKeyKnown = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == "radioKey")
+        ?.value;
+
+    showParent = (radioKeyKnown ?? false);
+
     final searchQuery = state.mapOrNull<String>(
       create: (value) {
         return value.searchQuery;
@@ -938,14 +994,20 @@ class _SchoolIndividualDetailsPageState
               },
             ),
       ),
-      _mobileNumberKey:
-          FormControl<String>(value: individual?.mobileNumber, validators: [
-        CustomValidator.validMobileNumber,
-      ]),
+      _mobileNumberKey: FormControl<String>(
+        value: individual?.mobileNumber,
+        validators: widget.isHeadOfHousehold
+            ? [
+                CustomValidator.validMobileNumber,
+              ]
+            : [],
+      ),
       if (!widget.isHeadOfHousehold)
         ..._buildStudentFields(
           height,
           disabilityType,
+          parentKnown,
+          radioKeyKnown,
         ),
     });
   }
@@ -953,6 +1015,8 @@ class _SchoolIndividualDetailsPageState
   Map<String, FormControl<Object?>> _buildStudentFields(
     String? height,
     String? disabilityType,
+    String? parentName,
+    bool? radioKnown,
   ) {
     return {
       _heightKey: _buildFormControl<String>(
@@ -964,11 +1028,13 @@ class _SchoolIndividualDetailsPageState
         validators: [Validators.required],
       ),
       radioKey: _buildFormControl<KeyValue>(
-        value: Constants.yesNo[1],
+        value: (radioKnown != null && radioKnown)
+            ? Constants.yesNo[0]
+            : Constants.yesNo[1],
         validators: [Validators.required],
       ),
       _parentknownKey: _buildFormControl<String>(
-        value: widget.headName,
+        value: parentName ?? widget.headName,
         validators: [Validators.required],
       ),
     };
