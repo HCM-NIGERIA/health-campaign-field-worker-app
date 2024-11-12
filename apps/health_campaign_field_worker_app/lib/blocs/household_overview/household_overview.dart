@@ -218,7 +218,7 @@ class HouseholdOverviewBloc
             referrals: referrals,
           ),
           loading: false,
-          offset: members.isNotEmpty && members.length == (event.limit ?? 10)
+          offset: members.isNotEmpty
               ? (event.offset ?? 0) + (event.limit ?? 10)
               : null,
         ),
@@ -272,37 +272,46 @@ class HouseholdOverviewBloc
 
       emit(state.copyWith(
         loading: false,
-        offset:
-            individuals.isNotEmpty && individuals.length == (event.limit ?? 10)
-                ? (event.offset ?? 0) + (event.limit ?? 10)
-                : null,
+        offset: individuals.isNotEmpty
+            ? (event.offset ?? 0) + (event.limit ?? 10)
+            : null,
         householdMemberWrapper: state.householdMemberWrapper.copyWith(
           members: event.offset == 0
               ? individuals
               : [
-                  ...state.householdMemberWrapper.members ?? [],
-                  ...individuals,
+                  ...{
+                    ...state.householdMemberWrapper.members ?? [],
+                    ...individuals,
+                  },
                 ],
           projectBeneficiaries: event.offset == 0
               ? projectBeneficiaries
               : [
-                  ...state.householdMemberWrapper.projectBeneficiaries ?? [],
-                  ...projectBeneficiaries,
+                  ...{
+                    ...state.householdMemberWrapper.projectBeneficiaries ?? [],
+                    ...projectBeneficiaries,
+                  },
                 ],
           tasks: event.offset == 0
               ? tasks
-              : [...?state.householdMemberWrapper.tasks, ...tasks],
+              : [
+                  ...{...?state.householdMemberWrapper.tasks, ...tasks},
+                ],
           sideEffects: event.offset == 0
               ? sideEffects
               : [
-                  ...?state.householdMemberWrapper.sideEffects,
-                  ...sideEffects,
+                  ...{
+                    ...?state.householdMemberWrapper.sideEffects,
+                    ...sideEffects,
+                  },
                 ],
           referrals: event.offset == 0
               ? referrals
               : [
-                  ...?state.householdMemberWrapper.referrals,
-                  ...referrals,
+                  ...{
+                    ...?state.householdMemberWrapper.referrals,
+                    ...referrals,
+                  },
                 ],
         ),
         limit: event.limit,
