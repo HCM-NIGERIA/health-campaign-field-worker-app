@@ -10,6 +10,7 @@ import '../../data/local_store/no_sql/schema/oplog.dart';
 import '../../data/network_manager.dart';
 import '../../models/bandwidth/bandwidth_model.dart';
 import '../../models/data_model.dart';
+import '../../utils/utils.dart';
 
 part 'sync.freezed.dart';
 
@@ -39,56 +40,17 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
     int? length = event.count;
     emit(const SyncState.loading());
     try {
-      length ??= (await isar.opLogs
-                  .filter()
-                  .createdByEqualTo(event.createdBy)
-                  .syncedUpEqualTo(false)
-                  .findAll())
-              .where((element) {
-            switch (element.entityType) {
-              case DataModelType.household:
-              case DataModelType.individual:
-              case DataModelType.householdMember:
-              case DataModelType.projectBeneficiary:
-              case DataModelType.task:
-              case DataModelType.stock:
-              case DataModelType.stockReconciliation:
-              case DataModelType.service:
-              case DataModelType.complaints:
-              case DataModelType.sideEffect:
-              case DataModelType.referral:
-              case DataModelType.hFReferral:
-              case DataModelType.attendance:
-                return true;
-              default:
-                return false;
-            }
-          }).length +
-          (await isar.opLogs
-                  .filter()
-                  .createdByEqualTo(event.createdBy)
-                  .syncedUpEqualTo(true)
-                  .syncedDownEqualTo(false)
-                  .findAll())
-              .where((element) {
-            switch (element.entityType) {
-              case DataModelType.household:
-              case DataModelType.householdMember:
-              case DataModelType.individual:
-              case DataModelType.projectBeneficiary:
-              case DataModelType.task:
-              case DataModelType.stock:
-              case DataModelType.stockReconciliation:
-              case DataModelType.complaints:
-              case DataModelType.sideEffect:
-              case DataModelType.referral:
-              case DataModelType.hFReferral:
-              case DataModelType.attendance:
-                return true;
-              default:
-                return false;
-            }
-          }).length;
+      length ??= getSyncCount(isar.opLogs
+              .filter()
+              .createdByEqualTo(event.createdBy)
+              .syncedUpEqualTo(false)
+              .findAllSync()) +
+          getSyncCount(isar.opLogs
+              .filter()
+              .createdByEqualTo(event.createdBy)
+              .syncedUpEqualTo(true)
+              .syncedDownEqualTo(false)
+              .findAllSync());
     } catch (_) {
       rethrow;
     } finally {
