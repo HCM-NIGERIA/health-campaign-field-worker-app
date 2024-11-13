@@ -107,6 +107,13 @@ class StudentsSearchRepository extends LocalRepository {
                 : OrderingMode.asc, // 'administeredSuccess' last
           ),
         if (sortBy != null &&
+            sortBy == Constants.studentTasksSort[0]) // sort by task created
+          OrderingTerm(
+            expression:
+                sql.task.clientCreatedTime, // Returns boolean: true/false
+            mode: OrderingMode.desc, // 'administeredSuccess' last
+          ),
+        if (sortBy != null &&
             sortBy ==
                 Constants.studentTasksSort[1]) // sort by beneficiary created
           OrderingTerm(
