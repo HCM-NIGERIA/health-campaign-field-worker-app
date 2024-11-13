@@ -252,9 +252,14 @@ class HouseholdOverviewBloc
       }
 
       List<IndividualModel> individuals = results['individuals'];
-      List<TaskModel> tasks = results['tasks'];
       List<ProjectBeneficiaryModel> projectBeneficiaries =
           results['projectBeneficiaries'];
+
+      final tasks = await taskDataRepository.search(TaskSearchModel(
+        projectBeneficiaryClientReferenceId:
+            projectBeneficiaries.map((e) => e.clientReferenceId).toList(),
+        projectId: event.projectId,
+      ));
 
       // Search for adverse events associated with tasks.
       final sideEffects =
