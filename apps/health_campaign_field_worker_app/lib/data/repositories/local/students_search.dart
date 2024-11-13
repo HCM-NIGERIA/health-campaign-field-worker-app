@@ -107,13 +107,6 @@ class StudentsSearchRepository extends LocalRepository {
                 : OrderingMode.asc, // 'administeredSuccess' last
           ),
         if (sortBy != null &&
-            sortBy == Constants.studentTasksSort[0]) // sort by task created
-          OrderingTerm(
-            expression:
-                sql.task.clientCreatedTime, // Returns boolean: true/false
-            mode: OrderingMode.desc, // 'administeredSuccess' last
-          ),
-        if (sortBy != null &&
             sortBy ==
                 Constants.studentTasksSort[1]) // sort by beneficiary created
           OrderingTerm(
@@ -129,22 +122,6 @@ class StudentsSearchRepository extends LocalRepository {
 
     var results = await (selectQuery).get();
 
-    // Now retrieve unique tasks for each projectBeneficiaryId
-    var latestTasks = results
-        .groupListsBy((result) =>
-            result.readTable(sql.projectBeneficiary).clientReferenceId)
-        .map((projectBeneficiaryId, taskResults) => MapEntry(
-              projectBeneficiaryId,
-              sortBy == null
-                  ? taskResults.last
-                  : sortBy == Constants.studentTasksSort[0]
-                      ? taskResults.first
-                      : taskResults
-                          .last, // 'first' because tasks are already ordered by latest time
-            ))
-        .values
-        .toList();
-
     // Fetch unique individuals
     List<IndividualModel> individuals =
         await getIndividuals(results, individualAddress);
@@ -152,22 +129,16 @@ class StudentsSearchRepository extends LocalRepository {
       for (var ind in individuals) ind.clientReferenceId: ind,
     }.values.toList();
 
-// Fetch unique project beneficiaries
+    // Fetch unique project beneficiaries
     List<ProjectBeneficiaryModel> projectBeneficiaries =
         await getProjectBeneficiaries(results);
     var uniqueProjectBeneficiaries = {
       for (var pb in projectBeneficiaries) pb.clientReferenceId: pb,
     }.values.toList();
 
-    var tasks = latestTasks
-        .map((e) => getTasks([e], taskAddress))
-        .expand((t) => t)
-        .toList();
-
     return {
       'individuals': uniqueIndividuals,
       'projectBeneficiaries': uniqueProjectBeneficiaries,
-      'tasks': tasks,
     };
   }
 
@@ -310,153 +281,6 @@ class StudentsSearchRepository extends LocalRepository {
         })
         .where((element) => element.isDeleted != true)
         .toList();
-  }
-
-  List<TaskModel> getTasks(
-    List<TypedResult> results,
-    $AddressTable taskAddress,
-  ) {
-    // Filter out results where the task is null
-    final taskResults = results
-        .map((e) => e.readTableOrNull(sql.task))
-        .where((task) => task != null)
-        .toList();
-
-    if (taskResults.isEmpty) {
-      return [];
-    }
-
-    // Map valid task entries to TaskModel objects
-    return results.where((e) => e.readTableOrNull(sql.task) != null).map((e) {
-      final task = e.readTableOrNull(sql.task)!;
-      final resources = e.readTableOrNull(sql.taskResource);
-      final address = e.readTableOrNull(taskAddress);
-
-      return TaskModel(
-        id: task.id,
-        createdBy: task.createdBy,
-        clientReferenceId: task.clientReferenceId,
-        rowVersion: task.rowVersion,
-        tenantId: task.tenantId,
-        isDeleted: task.isDeleted,
-        projectId: task.projectId,
-        projectBeneficiaryId: task.projectBeneficiaryId,
-        projectBeneficiaryClientReferenceId:
-            task.projectBeneficiaryClientReferenceId,
-        createdDate: task.createdDate,
-        additionalFields: task.additionalFields == null
-            ? null
-            : TaskAdditionalFieldsMapper.fromJson(task.additionalFields!),
-        address: address == null
-            ? null
-            : AddressModel(
-                id: address.id,
-                relatedClientReferenceId: task.clientReferenceId,
-                tenantId: address.tenantId,
-                doorNo: address.doorNo,
-                latitude: address.latitude,
-                longitude: address.longitude,
-                landmark: address.landmark,
-                locationAccuracy: address.locationAccuracy,
-                addressLine1: address.addressLine1,
-                addressLine2: address.addressLine2,
-                city: address.city,
-                pincode: address.pincode,
-                type: address.type,
-                locality: address.localityBoundaryCode != null
-                    ? LocalityModel(
-                        code: address.localityBoundaryCode!,
-                        name: address.localityBoundaryName,
-                      )
-                    : null,
-                rowVersion: address.rowVersion,
-                auditDetails: _buildAuditDetails(
-                  task.auditCreatedBy,
-                  task.auditCreatedTime,
-                  task.auditModifiedBy,
-                  task.auditModifiedTime,
-                ),
-                clientAuditDetails: _buildClientAuditDetails(
-                  task.clientCreatedBy,
-                  task.clientCreatedTime,
-                  task.clientModifiedBy,
-                  task.clientModifiedTime,
-                ),
-              ),
-        status: task.status,
-        auditDetails: _buildAuditDetails(
-          task.auditCreatedBy,
-          task.auditCreatedTime,
-          task.auditModifiedBy,
-          task.auditModifiedTime,
-        ),
-        clientAuditDetails: _buildClientAuditDetails(
-          task.clientCreatedBy,
-          task.clientCreatedTime,
-          task.clientModifiedBy,
-          task.clientModifiedTime,
-        ),
-        resources: resources == null
-            ? []
-            : [
-                TaskResourceModel(
-                  taskclientReferenceId: task.clientReferenceId,
-                  clientReferenceId: resources.clientReferenceId,
-                  id: resources.id,
-                  tenantId: task.tenantId,
-                  isDelivered: resources.isDelivered,
-                  productVariantId: resources.productVariantId,
-                  taskId: resources.taskId,
-                  deliveryComment: resources.deliveryComment,
-                  quantity: resources.quantity,
-                  rowVersion: resources.rowVersion,
-                  auditDetails: _buildAuditDetails(
-                    resources.auditCreatedBy,
-                    resources.auditCreatedTime,
-                    resources.auditModifiedBy,
-                    resources.auditModifiedTime,
-                  ),
-                  additionalFields: resources.additionalFields == null
-                      ? null
-                      : TaskResourceAdditionalFieldsMapper.fromJson(
-                          resources.additionalFields!,
-                        ),
-                ),
-              ],
-      );
-    }).toList();
-  }
-
-  AuditDetails? _buildAuditDetails(
-    String? createdBy,
-    int? createdTime,
-    String? modifiedBy,
-    int? modifiedTime,
-  ) {
-    return (createdBy != null && createdTime != null)
-        ? AuditDetails(
-            createdBy: createdBy,
-            createdTime: createdTime,
-            lastModifiedBy: modifiedBy,
-            lastModifiedTime: modifiedTime,
-          )
-        : null;
-  }
-
-  ClientAuditDetails? _buildClientAuditDetails(
-    String? createdBy,
-    int? createdTime,
-    String? modifiedBy,
-    int? modifiedTime,
-  ) {
-    return (createdBy != null && createdTime != null)
-        ? ClientAuditDetails(
-            createdBy: createdBy,
-            createdTime: createdTime,
-            lastModifiedBy: modifiedBy,
-            lastModifiedTime: modifiedTime,
-          )
-        : null;
   }
 
   getProjectBeneficiaries(List<TypedResult> results) {
