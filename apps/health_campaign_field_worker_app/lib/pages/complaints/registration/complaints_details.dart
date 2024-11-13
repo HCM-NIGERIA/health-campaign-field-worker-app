@@ -453,10 +453,6 @@ class _ComplaintsDetailsPageState
                                       i18.individualDetails
                                           .mobileNumberInvalidFormatValidationMessage,
                                     ),
-                                'minLength': (object) =>
-                                    localizations.translate(
-                                      i18.complaints.validationMinLengthError,
-                                    ),
                                 'maxLength': (object) => localizations
                                     .translate(i18.common.maxCharsRequired)
                                     .replaceAll('{}', '11'),
@@ -544,7 +540,6 @@ class _ComplaintsDetailsPageState
         validators: [
           CustomValidator.validMobileNumber,
           Validators.maxLength(11),
-          Validators.minLength(11),
         ],
       ),
       _complaintDescription: FormControl<String>(
