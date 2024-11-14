@@ -464,6 +464,14 @@ class MemberCard extends StatelessWidget {
                                                           )
                                                               ? addSchoolAdditionalType()
                                                               : addHouseHoldAdditionalType(),
+                                                          if (isHouseHoldSchool(
+                                                            reloadState.state
+                                                                .householdMemberWrapper,
+                                                          ))
+                                                            addSchoolName(
+                                                              reloadState.state
+                                                                  .householdMemberWrapper,
+                                                            ),
                                                         ],
                                                       ),
                                                       address: individual

@@ -700,15 +700,4 @@ class _DeliverInterventionPageState
       ]),
     });
   }
-
-  addSchoolName(HouseholdMemberWrapper wrapper) {
-    String schoolName = wrapper.household.additionalFields!.fields
-        .where(
-          (element) => element.key == Constants.schoolNameKey,
-        )
-        .firstOrNull!
-        .value;
-
-    return AdditionalField(Constants.schoolNameKey, schoolName);
-  }
 }
