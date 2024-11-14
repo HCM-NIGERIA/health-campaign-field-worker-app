@@ -28,125 +28,127 @@ class StudentsSearchRepository extends LocalRepository {
     required int limit,
     required int offset,
   }) async {
-    var selectQuery = sql.select(sql.householdMember).join([]);
-    final individualAddress = sql.address.createAlias('individualAddress');
-    final taskAddress = sql.address.createAlias('taskAddress');
+    return retryLocalCallOperation(() async {
+      var selectQuery = sql.select(sql.householdMember).join([]);
+      final individualAddress = sql.address.createAlias('individualAddress');
+      final taskAddress = sql.address.createAlias('taskAddress');
 
-    selectQuery = selectQuery.join([
-      leftOuterJoin(
-        sql.individual,
-        sql.individual.clientReferenceId.equalsExp(
-          sql.householdMember.individualClientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        individualAddress,
-        individualAddress.relatedClientReferenceId.equalsExp(
-          sql.individual.clientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        sql.name,
-        sql.name.individualClientReferenceId.equalsExp(
-          sql.individual.clientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        sql.identifier,
-        sql.identifier.clientReferenceId.equalsExp(
-          sql.individual.clientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        sql.projectBeneficiary,
-        sql.projectBeneficiary.beneficiaryClientReferenceId.equalsExp(
-          sql.individual.clientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        sql.task,
-        sql.task.projectBeneficiaryClientReferenceId.isInExp(
-          [sql.projectBeneficiary.clientReferenceId],
-        ),
-      ),
-      leftOuterJoin(
-        taskAddress,
-        taskAddress.relatedClientReferenceId.equalsExp(
-          sql.task.clientReferenceId,
-        ),
-      ),
-      leftOuterJoin(
-        sql.taskResource,
-        sql.taskResource.taskclientReferenceId.equalsExp(
-          sql.task.clientReferenceId,
-        ),
-      ),
-    ])
-      ..where(buildAnd([
-        sql.householdMember.householdClientReferenceId.equals(houseId),
-        if (nameQuery != null)
-          buildOr([
-            sql.name.givenName.contains(nameQuery),
-            sql.name.familyName.contains(nameQuery),
-            sql.name.otherNames.equals(nameQuery),
-          ]),
-      ]))
-      ..orderBy([
-        if (nameQuery != null)
-          OrderingTerm(
-            expression: sql.individual.clientReferenceId,
-            mode: OrderingMode.desc,
+      selectQuery = selectQuery.join([
+        leftOuterJoin(
+          sql.individual,
+          sql.individual.clientReferenceId.equalsExp(
+            sql.householdMember.individualClientReferenceId,
           ),
-        if (sortBy != null)
-          // Prioritize tasks with 'administeredSuccess' status based on sort order
-          OrderingTerm(
-            expression: sql.task.status.equals(Status.administeredSuccess
-                .toValue()), // Returns boolean: true/false
-            mode: sortBy == Constants.studentTasksSort[0]
-                ? OrderingMode.desc // 'administeredSuccess' first
-                : OrderingMode.asc, // 'administeredSuccess' last
+        ),
+        leftOuterJoin(
+          individualAddress,
+          individualAddress.relatedClientReferenceId.equalsExp(
+            sql.individual.clientReferenceId,
           ),
-        if (sortBy != null &&
-            sortBy == Constants.studentTasksSort[0]) // sort by task created
-          OrderingTerm(
-            expression:
-                sql.task.clientCreatedTime, // Returns boolean: true/false
-            mode: OrderingMode.desc, // 'administeredSuccess' last
+        ),
+        leftOuterJoin(
+          sql.name,
+          sql.name.individualClientReferenceId.equalsExp(
+            sql.individual.clientReferenceId,
           ),
-        if (sortBy != null &&
-            sortBy ==
-                Constants.studentTasksSort[1]) // sort by beneficiary created
-          OrderingTerm(
-            expression: sql.projectBeneficiary
-                .clientCreatedTime, // Returns boolean: true/false
-            mode: OrderingMode.desc, // 'administeredSuccess' last
+        ),
+        leftOuterJoin(
+          sql.identifier,
+          sql.identifier.clientReferenceId.equalsExp(
+            sql.individual.clientReferenceId,
           ),
-      ]);
+        ),
+        leftOuterJoin(
+          sql.projectBeneficiary,
+          sql.projectBeneficiary.beneficiaryClientReferenceId.equalsExp(
+            sql.individual.clientReferenceId,
+          ),
+        ),
+        leftOuterJoin(
+          sql.task,
+          sql.task.projectBeneficiaryClientReferenceId.isInExp(
+            [sql.projectBeneficiary.clientReferenceId],
+          ),
+        ),
+        leftOuterJoin(
+          taskAddress,
+          taskAddress.relatedClientReferenceId.equalsExp(
+            sql.task.clientReferenceId,
+          ),
+        ),
+        leftOuterJoin(
+          sql.taskResource,
+          sql.taskResource.taskclientReferenceId.equalsExp(
+            sql.task.clientReferenceId,
+          ),
+        ),
+      ])
+        ..where(buildAnd([
+          sql.householdMember.householdClientReferenceId.equals(houseId),
+          if (nameQuery != null)
+            buildOr([
+              sql.name.givenName.contains(nameQuery),
+              sql.name.familyName.contains(nameQuery),
+              sql.name.otherNames.equals(nameQuery),
+            ]),
+        ]))
+        ..orderBy([
+          if (nameQuery != null)
+            OrderingTerm(
+              expression: sql.individual.clientReferenceId,
+              mode: OrderingMode.desc,
+            ),
+          if (sortBy != null)
+            // Prioritize tasks with 'administeredSuccess' status based on sort order
+            OrderingTerm(
+              expression: sql.task.status.equals(Status.administeredSuccess
+                  .toValue()), // Returns boolean: true/false
+              mode: sortBy == Constants.studentTasksSort[0]
+                  ? OrderingMode.desc // 'administeredSuccess' first
+                  : OrderingMode.asc, // 'administeredSuccess' last
+            ),
+          if (sortBy != null &&
+              sortBy == Constants.studentTasksSort[0]) // sort by task created
+            OrderingTerm(
+              expression:
+                  sql.task.clientCreatedTime, // Returns boolean: true/false
+              mode: OrderingMode.desc, // 'administeredSuccess' last
+            ),
+          if (sortBy != null &&
+              sortBy ==
+                  Constants.studentTasksSort[1]) // sort by beneficiary created
+            OrderingTerm(
+              expression: sql.projectBeneficiary
+                  .clientCreatedTime, // Returns boolean: true/false
+              mode: OrderingMode.desc, // 'administeredSuccess' last
+            ),
+        ]);
 
-    if (limit != null && offset != null) {
-      selectQuery.limit(limit!, offset: offset);
-    }
+      if (limit != null && offset != null) {
+        selectQuery.limit(limit!, offset: offset);
+      }
 
-    var results = await (selectQuery).get();
+      var results = await (selectQuery).get();
 
-    // Fetch unique individuals
-    List<IndividualModel> individuals =
-        await getIndividuals(results, individualAddress);
-    var uniqueIndividuals = {
-      for (var ind in individuals) ind.clientReferenceId: ind,
-    }.values.toList();
+      // Fetch unique individuals
+      List<IndividualModel> individuals =
+          await getIndividuals(results, individualAddress);
+      var uniqueIndividuals = {
+        for (var ind in individuals) ind.clientReferenceId: ind,
+      }.values.toList();
 
-    // Fetch unique project beneficiaries
-    List<ProjectBeneficiaryModel> projectBeneficiaries =
-        await getProjectBeneficiaries(results);
-    var uniqueProjectBeneficiaries = {
-      for (var pb in projectBeneficiaries) pb.clientReferenceId: pb,
-    }.values.toList();
+      // Fetch unique project beneficiaries
+      List<ProjectBeneficiaryModel> projectBeneficiaries =
+          await getProjectBeneficiaries(results);
+      var uniqueProjectBeneficiaries = {
+        for (var pb in projectBeneficiaries) pb.clientReferenceId: pb,
+      }.values.toList();
 
-    return {
-      'individuals': uniqueIndividuals,
-      'projectBeneficiaries': uniqueProjectBeneficiaries,
-    };
+      return {
+        'individuals': uniqueIndividuals,
+        'projectBeneficiaries': uniqueProjectBeneficiaries,
+      };
+    });
   }
 
   getIndividuals(

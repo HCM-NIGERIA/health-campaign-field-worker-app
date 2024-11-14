@@ -16,19 +16,21 @@ class ProjectStaffLocalRepository
     bool createOpLog = false,
     DataOperation dataOperation = DataOperation.create,
   }) async {
-    final companion = entity.companion;
-    await sql.batch((batch) {
-      batch.insert(
-        sql.projectStaff,
-        companion,
-        mode: InsertMode.insertOrReplace,
+    return retryLocalCallOperation(() async {
+      final companion = entity.companion;
+      await sql.batch((batch) {
+        batch.insert(
+          sql.projectStaff,
+          companion,
+          mode: InsertMode.insertOrReplace,
+        );
+      });
+
+      await super.create(
+        entity,
+        createOpLog: createOpLog,
       );
     });
-
-    await super.create(
-      entity,
-      createOpLog: createOpLog,
-    );
   }
 
   @override
@@ -36,32 +38,34 @@ class ProjectStaffLocalRepository
     ProjectStaffSearchModel query, [
     String? userId,
   ]) async {
-    final selectQuery = sql.select(sql.projectStaff).join([]);
-    final results = await (selectQuery
-          ..where(buildAnd([
-            if (query.id != null)
-              sql.projectStaff.id.equals(
-                query.id!,
-              ),
-          ])))
-        .get();
+    return retryLocalCallOperation(() async {
+      final selectQuery = sql.select(sql.projectStaff).join([]);
+      final results = await (selectQuery
+            ..where(buildAnd([
+              if (query.id != null)
+                sql.projectStaff.id.equals(
+                  query.id!,
+                ),
+            ])))
+          .get();
 
-    return results.map((e) {
-      final data = e.readTable(sql.projectStaff);
+      return results.map((e) {
+        final data = e.readTable(sql.projectStaff);
 
-      return ProjectStaffModel(
-        id: data.id,
-        tenantId: data.tenantId,
-        rowVersion: data.rowVersion,
-        projectId: data.projectId,
-        channel: data.channel,
-        endDate: data.endDate,
-        isDeleted: data.isDeleted,
-        staffId: data.staffId,
-        startDate: data.startDate,
-        userId: data.userId,
-      );
-    }).toList();
+        return ProjectStaffModel(
+          id: data.id,
+          tenantId: data.tenantId,
+          rowVersion: data.rowVersion,
+          projectId: data.projectId,
+          channel: data.channel,
+          endDate: data.endDate,
+          isDeleted: data.isDeleted,
+          staffId: data.staffId,
+          startDate: data.startDate,
+          userId: data.userId,
+        );
+      }).toList();
+    });
   }
 
   @override
