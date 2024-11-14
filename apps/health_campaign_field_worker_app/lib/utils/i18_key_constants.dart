@@ -1238,8 +1238,7 @@ class HouseholdOverView {
 
   String get householdOverViewHeadIconLabel =>
       'HOUSEHOLD_OVER_VIEW_HEAD_ICON_LABEL';
-      String get schoolOverViewHeadIconLabel =>
-      'SCHOOL_OVER_VIEW_HEAD_ICON_LABEL';
+  String get schoolOverViewHeadIconLabel => 'SCHOOL_OVER_VIEW_HEAD_ICON_LABEL';
 
   String get householdOverViewNotDeliveredIconLabel =>
       'HOUSEHOLD_OVER_VIEW_NOT_DELIVERED_ICON_LABEL';
@@ -1264,7 +1263,6 @@ class HouseholdOverView {
 
   String get householdOverViewAddActionText =>
       'HOUSEHOLD_OVER_VIEW__ADD_ACTION_TEXT';
-
 }
 
 class MemberCard {
@@ -1308,6 +1306,7 @@ class DeliverIntervention {
   const DeliverIntervention();
 
   String get wasDrugWasted => 'DELIVER_INTERVENTION_WAS_QUANTITY_WASTED_LABEL';
+  String get bloodInUrine => 'DELIVER_INTERVENTION_BLOOD_IN_URINE_LABEL';
   String get enterDrugQTYWasted =>
       'DELIVER_INTERVENTION_ENTER_QUANTITY_WASTED_LABEL';
 

@@ -579,74 +579,70 @@ class _IndividualDetailsPageState
                             ),
                           ],
                         ),
-                        if (!widget.isHeadOfHousehold) ...[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              kPadding / 2,
-                              0,
-                              kPadding / 2,
-                              0,
-                            ),
-                            child: DigitTextFormField(
-                              keyboardType: TextInputType.number,
-                              isRequired: true,
-                              formControlName: _heightKey,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9]"),
-                                ),
-                              ],
-                              label: localizations.translate(
-                                i18.individualDetails.heightLabelText,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            kPadding / 2,
+                            0,
+                            kPadding / 2,
+                            0,
+                          ),
+                          child: DigitTextFormField(
+                            keyboardType: TextInputType.number,
+                            isRequired: true,
+                            formControlName: _heightKey,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp("[0-9]"),
                               ),
-                              maxLength: 3,
-                              validationMessages: {
-                                'required': (object) => localizations
-                                    .translate(i18.common.corecommonRequired),
-                              },
+                            ],
+                            label: localizations.translate(
+                              i18.individualDetails.heightLabelText,
                             ),
+                            maxLength: 3,
+                            validationMessages: {
+                              'required': (object) => localizations
+                                  .translate(i18.common.corecommonRequired),
+                            },
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              kPadding / 2,
-                              0,
-                              kPadding / 2,
-                              0,
-                            ),
-                            child: BlocBuilder<AppInitializationBloc,
-                                AppInitializationState>(
-                              builder: (context, state) {
-                                if (state is! AppInitialized) {
-                                  return const Offstage();
-                                }
-
-                                final disabilityTypes =
-                                    state.appConfiguration.disabilityTypes ??
-                                        <DisabilityTypes>[];
-
-                                return DigitReactiveDropdown<String>(
-                                  label: localizations.translate(
-                                    i18.deliverIntervention.disabilityLabel,
-                                  ),
-                                  isRequired: true,
-                                  valueMapper: (value) =>
-                                      localizations.translate(value),
-                                  initialValue:
-                                      disabilityTypes.firstOrNull?.code,
-                                  menuItems: disabilityTypes.map((e) {
-                                    return e.code;
-                                  }).toList(),
-                                  formControlName: _disabilityTypeKey,
-                                  validationMessages: {
-                                    'required': (object) =>
-                                        localizations.translate(
-                                            i18.common.corecommonRequired),
-                                  },
-                                );
-                              },
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            kPadding / 2,
+                            0,
+                            kPadding / 2,
+                            0,
                           ),
-                        ],
+                          child: BlocBuilder<AppInitializationBloc,
+                              AppInitializationState>(
+                            builder: (context, state) {
+                              if (state is! AppInitialized) {
+                                return const Offstage();
+                              }
+
+                              final disabilityTypes =
+                                  state.appConfiguration.disabilityTypes ??
+                                      <DisabilityTypes>[];
+
+                              return DigitReactiveDropdown<String>(
+                                label: localizations.translate(
+                                  i18.deliverIntervention.disabilityLabel,
+                                ),
+                                isRequired: true,
+                                valueMapper: (value) =>
+                                    localizations.translate(value),
+                                initialValue: disabilityTypes.firstOrNull?.code,
+                                menuItems: disabilityTypes.map((e) {
+                                  return e.code;
+                                }).toList(),
+                                formControlName: _disabilityTypeKey,
+                                validationMessages: {
+                                  'required': (object) => localizations
+                                      .translate(i18.common.corecommonRequired),
+                                },
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -730,13 +726,9 @@ class _IndividualDetailsPageState
       ),
     );
 
-    final disabilityType = widget.isHeadOfHousehold
-        ? null
-        : form.control(_disabilityTypeKey).value;
+    final disabilityType = form.control(_disabilityTypeKey).value;
 
-    final height = widget.isHeadOfHousehold
-        ? ""
-        : form.control(_heightKey).value as String;
+    final height = form.control(_heightKey).value as String;
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -823,17 +815,13 @@ class _IndividualDetailsPageState
       },
     );
 
-    final disabilityType = widget.isHeadOfHousehold
-        ? null
-        : individual?.additionalFields?.fields
-            .firstWhereOrNull((element) => element.key == _disabilityTypeKey)
-            ?.value;
+    final disabilityType = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == _disabilityTypeKey)
+        ?.value;
 
-    final height = widget.isHeadOfHousehold
-        ? null
-        : individual?.additionalFields?.fields
-            .firstWhereOrNull((element) => element.key == _heightKey)
-            ?.value;
+    final height = individual?.additionalFields?.fields
+        .firstWhereOrNull((element) => element.key == _heightKey)
+        ?.value;
 
     return fb.group(<String, Object>{
       _individualNameKey: FormControl<String>(
@@ -878,7 +866,7 @@ class _IndividualDetailsPageState
       ),
       _heightKey: FormControl<String>(
         value: height,
-        validators: widget.isHeadOfHousehold ? [] : [Validators.required],
+        validators: [Validators.required],
       ),
       _mobileNumberKey:
           FormControl<String>(value: individual?.mobileNumber, validators: [
@@ -886,11 +874,9 @@ class _IndividualDetailsPageState
       ]),
       _disabilityTypeKey: FormControl<String>(
         value: disabilityType,
-        validators: widget.isHeadOfHousehold
-            ? []
-            : [
-                Validators.required,
-              ],
+        validators: [
+          Validators.required,
+        ],
       ),
     });
   }
