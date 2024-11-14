@@ -592,74 +592,73 @@ class _SchoolIndividualDetailsPageState
                             ],
                           ],
                         ),
-                        if (!widget.isHeadOfHousehold) ...[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              kPadding / 2,
-                              0,
-                              kPadding / 2,
-                              0,
-                            ),
-                            child: DigitTextFormField(
-                              keyboardType: TextInputType.number,
-                              isRequired: true,
-                              formControlName: _heightKey,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9]"),
-                                ),
-                              ],
-                              label: localizations.translate(
-                                i18.individualDetails.heightLabelText,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            kPadding / 2,
+                            0,
+                            kPadding / 2,
+                            0,
+                          ),
+                          child: DigitTextFormField(
+                            keyboardType: TextInputType.number,
+                            isRequired: true,
+                            formControlName: _heightKey,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp("[0-9]"),
                               ),
-                              maxLength: 3,
-                              validationMessages: {
-                                'required': (object) => localizations
-                                    .translate(i18.common.corecommonRequired),
-                              },
+                            ],
+                            label: localizations.translate(
+                              i18.individualDetails.heightLabelText,
                             ),
+                            maxLength: 3,
+                            validationMessages: {
+                              'required': (object) => localizations
+                                  .translate(i18.common.corecommonRequired),
+                            },
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              kPadding / 2,
-                              0,
-                              kPadding / 2,
-                              0,
-                            ),
-                            child: BlocBuilder<AppInitializationBloc,
-                                AppInitializationState>(
-                              builder: (context, state) {
-                                if (state is! AppInitialized) {
-                                  return const Offstage();
-                                }
-
-                                final disabilityTypes =
-                                    state.appConfiguration.disabilityTypes ??
-                                        <DisabilityTypes>[];
-
-                                return DigitReactiveDropdown<String>(
-                                  label: localizations.translate(
-                                    i18.deliverIntervention.disabilityLabel,
-                                  ),
-                                  isRequired: true,
-                                  valueMapper: (value) =>
-                                      localizations.translate(value),
-                                  initialValue:
-                                      disabilityTypes.firstOrNull?.code,
-                                  menuItems: disabilityTypes.map((e) {
-                                    return e.code;
-                                  }).toList(),
-                                  formControlName: _disabilityTypeKey,
-                                  validationMessages: {
-                                    'required': (object) =>
-                                        localizations.translate(
-                                          i18.common.corecommonRequired,
-                                        ),
-                                  },
-                                );
-                              },
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            kPadding / 2,
+                            0,
+                            kPadding / 2,
+                            0,
                           ),
+                          child: BlocBuilder<AppInitializationBloc,
+                              AppInitializationState>(
+                            builder: (context, state) {
+                              if (state is! AppInitialized) {
+                                return const Offstage();
+                              }
+
+                              final disabilityTypes =
+                                  state.appConfiguration.disabilityTypes ??
+                                      <DisabilityTypes>[];
+
+                              return DigitReactiveDropdown<String>(
+                                label: localizations.translate(
+                                  i18.deliverIntervention.disabilityLabel,
+                                ),
+                                isRequired: true,
+                                valueMapper: (value) =>
+                                    localizations.translate(value),
+                                initialValue: disabilityTypes.firstOrNull?.code,
+                                menuItems: disabilityTypes.map((e) {
+                                  return e.code;
+                                }).toList(),
+                                formControlName: _disabilityTypeKey,
+                                validationMessages: {
+                                  'required': (object) =>
+                                      localizations.translate(
+                                        i18.common.corecommonRequired,
+                                      ),
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        if (!widget.isHeadOfHousehold) ...[
                           DigitRadioButtonList<KeyValue>(
                             labelStyle: DigitTheme
                                 .instance.mobileTheme.textTheme.bodyLarge,
@@ -814,13 +813,9 @@ class _SchoolIndividualDetailsPageState
       ),
     );
 
-    final disabilityType = !(widget.isHeadOfHousehold)
-        ? form.control(_disabilityTypeKey).value
-        : null;
+    final disabilityType = form.control(_disabilityTypeKey).value;
 
-    final height = !(widget.isHeadOfHousehold)
-        ? form.control(_heightKey).value as String
-        : '';
+    final height = form.control(_heightKey).value as String;
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -855,16 +850,18 @@ class _SchoolIndividualDetailsPageState
                   height.length == 1 ? '0$height' : height,
                 ),
                 addSchoolAdditionalType(),
-                AdditionalField(
-                  "parentName",
-                  ((form.control(_parentknownKey).value as String) ?? "")
-                      .trim(),
-                ),
-                AdditionalField(
-                  "radioKey",
-                  (((form.control(radioKey).value as KeyValue).key) ??
-                      Constants.yesNo[1].label),
-                ),
+                if (!widget.isHeadOfHousehold)
+                  AdditionalField(
+                    "parentName",
+                    ((form.control(_parentknownKey).value as String) ?? "")
+                        .trim(),
+                  ),
+                if (!widget.isHeadOfHousehold)
+                  AdditionalField(
+                    "radioKey",
+                    (((form.control(radioKey).value as KeyValue).key) ??
+                        Constants.yesNo[1].label),
+                  ),
               ],
             )
           : IndividualAdditionalFields(
@@ -1002,23 +999,6 @@ class _SchoolIndividualDetailsPageState
               ]
             : [],
       ),
-      if (!widget.isHeadOfHousehold)
-        ..._buildStudentFields(
-          height,
-          disabilityType,
-          parentKnown,
-          radioKeyKnown,
-        ),
-    });
-  }
-
-  Map<String, FormControl<Object?>> _buildStudentFields(
-    String? height,
-    String? disabilityType,
-    String? parentName,
-    bool? radioKnown,
-  ) {
-    return {
       _heightKey: _buildFormControl<String>(
         value: height,
         validators: [Validators.required],
@@ -1027,6 +1007,19 @@ class _SchoolIndividualDetailsPageState
         value: disabilityType,
         validators: [Validators.required],
       ),
+      if (!widget.isHeadOfHousehold)
+        ..._buildStudentFields(
+          parentKnown,
+          radioKeyKnown,
+        ),
+    });
+  }
+
+  Map<String, FormControl<Object?>> _buildStudentFields(
+    String? parentName,
+    bool? radioKnown,
+  ) {
+    return {
       radioKey: _buildFormControl<KeyValue>(
         value: (radioKnown != null && radioKnown)
             ? Constants.yesNo[0]
