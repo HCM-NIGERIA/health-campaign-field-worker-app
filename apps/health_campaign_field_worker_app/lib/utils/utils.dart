@@ -11,6 +11,7 @@ import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ import '../blocs/search_households/project_beneficiaries_downsync.dart';
 import '../blocs/search_households/search_households.dart';
 import '../data/local_store/app_shared_preferences.dart';
 import '../data/local_store/no_sql/schema/localization.dart';
+import '../data/local_store/no_sql/schema/oplog.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../models/data_model.dart';
 import '../models/project_type/project_type_model.dart';
@@ -416,6 +418,26 @@ bool checkEligibilityForAgeAndSideEffect(
   return false;
 }
 
+Future<T> retryLocalCallOperation<T>(Future<T> Function() operation,
+    {int maxRetries = 5,
+    Duration retryDelay = const Duration(seconds: 1)}) async {
+  int retryCount = 0;
+  while (retryCount < maxRetries) {
+    try {
+      return await operation();
+    } catch (e) {
+      if (e is SqliteException && e.extendedResultCode == 5) {
+        retryCount++;
+        await Future.delayed(retryDelay); // Wait before retrying
+      } else {
+        rethrow; // Exit loop on unexpected errors
+      }
+    }
+  }
+  throw Exception(
+      'Failed to complete the database operation after $maxRetries retries.');
+}
+
 Cycle? getCurrentCycle(ProjectType? projectType) {
   final currentCycle = projectType?.cycles?.firstWhereOrNull(
     (e) =>
@@ -557,6 +579,50 @@ bool recordedSideEffect(
   }
 
   return false;
+}
+
+int getSyncCount(List<OpLog> oplogs) {
+  int count = oplogs.where((element) {
+    if (element.syncedDown == false && element.syncedUp == true) {
+      switch (element.entityType) {
+        case DataModelType.household:
+        case DataModelType.individual:
+        case DataModelType.householdMember:
+        case DataModelType.projectBeneficiary:
+        case DataModelType.task:
+        case DataModelType.stock:
+        case DataModelType.stockReconciliation:
+        case DataModelType.sideEffect:
+        case DataModelType.referral:
+        case DataModelType.hFReferral:
+        case DataModelType.attendance:
+          return true;
+        default:
+          return false;
+      }
+    } else {
+      switch (element.entityType) {
+        case DataModelType.household:
+        case DataModelType.individual:
+        case DataModelType.householdMember:
+        case DataModelType.projectBeneficiary:
+        case DataModelType.task:
+        case DataModelType.stock:
+        case DataModelType.stockReconciliation:
+        case DataModelType.service:
+        case DataModelType.complaints:
+        case DataModelType.sideEffect:
+        case DataModelType.referral:
+        case DataModelType.hFReferral:
+        case DataModelType.attendance:
+          return true;
+        default:
+          return false;
+      }
+    }
+  }).length;
+
+  return count;
 }
 
 bool isCurrentTimeBeforeEndTime(int startEpochMillis, int hoursToAdd) {
