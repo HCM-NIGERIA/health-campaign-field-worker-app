@@ -97,6 +97,19 @@ class _ResourceBeneficiaryCardState
           DigitRadioButtonList<KeyValue>(
             labelStyle: DigitTheme.instance.mobileTheme.textTheme.bodyLarge,
             labelText: localizations.translate(
+              i18.deliverIntervention.bloodInUrine,
+            ),
+            isEnabled: true,
+            formControlName: 'bloodInUrineRadio.${widget.cardIndex}',
+            valueMapper: (value) {
+              return localizations.translate(value.label);
+            },
+            options: Constants.yesNo,
+            errorMessage: '',
+          ),
+          DigitRadioButtonList<KeyValue>(
+            labelStyle: DigitTheme.instance.mobileTheme.textTheme.bodyLarge,
+            labelText: localizations.translate(
               i18.deliverIntervention.wasDrugWasted,
             ),
             isEnabled: true,

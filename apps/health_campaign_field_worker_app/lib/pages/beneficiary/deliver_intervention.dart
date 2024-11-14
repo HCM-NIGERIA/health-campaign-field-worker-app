@@ -46,6 +46,7 @@ class _DeliverInterventionPageState
   static const _doseAdministrationKey = 'doseAdministered';
   static const _dateOfAdministrationKey = 'dateOfAdministration';
   static const _quantityWastedRadioKey = 'quantityWastedRadio';
+  static const _bloodInUrineRadioKey = 'bloodInUrineRadio';
 
   final clickedStatus = ValueNotifier<bool>(false);
   // Variable to track dose administration status
@@ -570,6 +571,12 @@ class _DeliverInterventionPageState
                                 .value)?[productvariantList.indexOf(e)])
                             .toString(),
                   ),
+                  AdditionalField(
+                    _bloodInUrineRadioKey,
+                    ((form.control(_bloodInUrineRadioKey) as FormArray)
+                            .value)?[productvariantList.indexOf(e)]
+                        .key,
+                  ),
                 ]),
               ))
           .toList(),
@@ -694,6 +701,11 @@ class _DeliverInterventionPageState
         ),
       ]),
       _quantityWastedRadioKey: FormArray<KeyValue>([
+        ..._controllers.map(
+          (e) => FormControl<KeyValue>(value: Constants.yesNo[1]),
+        ),
+      ]),
+      _bloodInUrineRadioKey: FormArray<KeyValue>([
         ..._controllers.map(
           (e) => FormControl<KeyValue>(value: Constants.yesNo[1]),
         ),
