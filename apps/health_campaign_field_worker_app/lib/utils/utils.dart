@@ -1030,6 +1030,17 @@ bool isHouseHoldSchool(HouseholdMemberWrapper wrapper) {
   return isSchool;
 }
 
+addSchoolName(HouseholdMemberWrapper wrapper) {
+  String schoolName = wrapper.household.additionalFields!.fields
+      .where(
+        (element) => element.key == Constants.schoolNameKey,
+      )
+      .firstOrNull!
+      .value;
+
+  return AdditionalField(Constants.schoolNameKey, schoolName);
+}
+
 addSchoolAdditionalType() {
   return const AdditionalField(
     Constants.houseHoldBeneficiaryType,

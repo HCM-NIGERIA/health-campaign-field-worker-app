@@ -115,6 +115,10 @@ class _HouseHoldDetailsPageState extends LocalizedState<HouseHoldDetailsPage> {
                                 'projectId',
                                 context.projectId,
                               ),
+                              const AdditionalField(
+                                Constants.houseHoldBeneficiaryType,
+                                Constants.houseHoldType,
+                              ),
                             ],
                           ),
                         );

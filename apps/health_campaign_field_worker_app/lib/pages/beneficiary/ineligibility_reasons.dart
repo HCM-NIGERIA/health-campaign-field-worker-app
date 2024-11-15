@@ -67,6 +67,9 @@ class _IneligibilityReasonsPageState
                   return BlocBuilder<DeliverInterventionBloc,
                       DeliverInterventionState>(
                     builder: (context, deliveryState) {
+                      final householdMemberWrapper =
+                          state.householdMemberWrapper;
+
                       return Scaffold(
                         body: state.loading
                             ? const Center(child: CircularProgressIndicator())
@@ -119,12 +122,13 @@ class _IneligibilityReasonsPageState
                                                         action: (ctx) {
                                                           isReasonSubmitted =
                                                               true;
-                                                          final KeyValue reason =
-                                                              form
-                                                                  .control(
-                                                                    _ineligibleReason,
-                                                                  )
-                                                                  .value as KeyValue;
+                                                          final KeyValue
+                                                              reason = form
+                                                                      .control(
+                                                                        _ineligibleReason,
+                                                                      )
+                                                                      .value
+                                                                  as KeyValue;
 
                                                           final clientReferenceId =
                                                               IdGen
@@ -188,9 +192,19 @@ class _IneligibilityReasonsPageState
                                                                         ),
                                                                         AdditionalField(
                                                                           'ineligibleReasons',
-                                                                          reason.key
+                                                                          reason
+                                                                              .key
                                                                               .toString(),
                                                                         ),
+                                                                        isHouseHoldSchool(householdMemberWrapper!)
+                                                                            ? addSchoolAdditionalType()
+                                                                            : addHouseHoldAdditionalType(),
+                                                                        if (isHouseHoldSchool(
+                                                                          householdMemberWrapper,
+                                                                        ))
+                                                                          addSchoolName(
+                                                                            householdMemberWrapper,
+                                                                          ),
                                                                       ],
                                                                     ),
                                                                     address: widget
@@ -251,11 +265,10 @@ class _IneligibilityReasonsPageState
                                                       },
                                                     ).then(
                                                       (value) {
-                                                       
                                                         !isHouseHoldSchool(
-                                                                reloadState
-                                                                    .state
-                                                                    .householdMemberWrapper,)
+                                                          reloadState.state
+                                                              .householdMemberWrapper,
+                                                        )
                                                             ? context.router
                                                                 .popAndPush(
                                                                 HouseholdAcknowledgementRoute(
