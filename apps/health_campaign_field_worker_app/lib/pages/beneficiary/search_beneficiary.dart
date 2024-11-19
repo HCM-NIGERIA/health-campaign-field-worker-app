@@ -168,6 +168,10 @@ class _SearchBeneficiaryPageState
                                     onChanged: (value) {
                                       blocWrapper.clearEvent();
                                       if (value.isEmpty) {
+                                        // setting offset as zero as someone clears the search bar
+                                        setState(() {
+                                          offset = 0;
+                                        });
                                         blocWrapper.clearEvent();
                                       }
                                       if (value.trim().length < 3 &&
