@@ -161,9 +161,16 @@ class SearchByHeadBloc extends SearchHouseholdsBloc {
       final groupedHouseholds = allhouseholdMembers
           .groupListsBy((element) => element.householdClientReferenceId);
 
+      // list of valid household ids after excluding the type based on the exclude type param
+      final validHouseholdsId =
+          houseHolds.map((e) => e.clientReferenceId).toSet();
+
       // Iterate through grouped households and retrieve additional data.
       for (final entry in groupedHouseholds.entries) {
         final householdId = entry.key;
+
+        // if current householdId not present in valid houseHolds ids set then continue
+        if (!validHouseholdsId.contains(householdId)) continue;
 
         final exisitingHousehold = state.householdMembers.firstWhereOrNull(
           (element) => element.household.clientReferenceId == householdId,
