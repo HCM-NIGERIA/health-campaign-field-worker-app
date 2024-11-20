@@ -167,6 +167,10 @@ class _SearchBeneficiaryPageState
                                         TextCapitalization.words,
                                     onChanged: (value) {
                                       blocWrapper.clearEvent();
+                                      // setting offset as zero onChange
+                                      setState(() {
+                                        offset = 0;
+                                      });
                                       if (value.isEmpty) {
                                         blocWrapper.clearEvent();
                                       }
@@ -189,6 +193,7 @@ class _SearchBeneficiaryPageState
                                           ),
                                         );
                                       } else {
+                                        blocWrapper.clearEvent();
                                         blocWrapper.searchByHeadBloc.add(
                                           SearchHouseholdsEvent
                                               .searchByHouseholdHead(
