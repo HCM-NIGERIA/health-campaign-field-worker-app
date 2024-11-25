@@ -71,15 +71,20 @@ class AttendanceIndividualBloc
             if (e.status == -1) {
               status = 1;
             } else if (e.status == 1) {
-              if (event.isSingleSession) {
-                status = 0.5;
-              } else {
-                status = 0;
-              }
-            } else if (event.isSingleSession && e.status == 0.5) {
               status = 0;
-            } else {
-              status = 1;
+            }
+            // Info : updated logic to have Present and Absent
+            // else if (e.status == 1) {
+            //   if (event.isSingleSession) {
+            //     status = 0.5;
+            //   } else {
+            //     status = 0;
+            //   }
+            // } else if (event.isSingleSession && e.status == 0.5) {
+            //   status = 0;
+            // }
+            else {
+              status = -1;
             }
             return e.copyWith(status: status);
           }
