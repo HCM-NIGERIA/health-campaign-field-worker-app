@@ -307,55 +307,19 @@ class _SearchBeneficiaryPageState
                   child: Column(
                     children: [
                       DigitElevatedButton(
-                        onPressed: () async {
-                          final shouldSubmit = await DigitDialog.show(
-                            context,
-                            options: DigitDialogOptions(
-                              titleText: localizations.translate(
-                                i18.deliverIntervention.dialogTitle,
-                              ),
-                              content: Text(localizations.translate(
-                                i18.deliverIntervention.dialogContent,
-                              )),
-                              primaryAction: DigitDialogActions(
-                                label: localizations.translate(
-                                  i18.checklist.checklistDialogPrimaryAction,
-                                ),
-                                action: (ctx) {
-                                  Navigator.of(
-                                    context,
-                                    rootNavigator: true,
-                                  ).pop(true);
-                                },
-                              ),
-                              secondaryAction: DigitDialogActions(
-                                label: localizations.translate(
-                                  i18.common.coreCommonCancel,
-                                ),
-                                action: (context) {
-                                  Navigator.of(
-                                    context,
-                                    rootNavigator: true,
-                                  ).pop(false);
-                                },
-                              ),
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          // context.read<ScannerBloc>().add(
+                          //       const ScannerEvent.handleScanner([], []),
+                          //     );
+                          context.router
+                              .push(BeneficiaryRegistrationWrapperRoute(
+                            initialState: BeneficiaryRegistrationCreateState(
+                              searchQuery: searchController.text,
                             ),
-                          );
-
-                          if (shouldSubmit ?? false) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            // context.read<ScannerBloc>().add(
-                            //       const ScannerEvent.handleScanner([], []),
-                            //     );
-                            context.router
-                                .push(BeneficiaryRegistrationWrapperRoute(
-                              initialState: BeneficiaryRegistrationCreateState(
-                                searchQuery: searchController.text,
-                              ),
-                            ));
-                            searchController.clear();
-                            blocWrapper.clearEvent();
-                          }
+                          ));
+                          searchController.clear();
+                          blocWrapper.clearEvent();
                         },
                         child: Center(
                           child: Text(localizations.translate(

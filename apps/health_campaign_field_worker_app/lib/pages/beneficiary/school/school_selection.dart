@@ -67,53 +67,18 @@ class _SchoolSelectionPageState extends LocalizedState<SchoolSelectionPage> {
             padding: const EdgeInsets.fromLTRB(kPadding, 0, kPadding, 0),
             child: DigitElevatedButton(
               onPressed: form.valid && !searchHouseholdsState.loading
-                  ? () async {
-                      final shouldSubmit = await DigitDialog.show(
-                        context,
-                        options: DigitDialogOptions(
-                          titleText: localizations.translate(
-                            i18.deliverIntervention.dialogTitle,
-                          ),
-                          content: Text(localizations.translate(
-                            i18.deliverIntervention.dialogContent,
-                          )),
-                          primaryAction: DigitDialogActions(
-                            label: localizations.translate(
-                              i18.checklist.checklistDialogPrimaryAction,
-                            ),
-                            action: (ctx) {
-                              Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(true);
-                            },
-                          ),
-                          secondaryAction: DigitDialogActions(
-                            label: localizations.translate(
-                              i18.common.coreCommonCancel,
-                            ),
-                            action: (context) {
-                              Navigator.of(
-                                context,
-                                rootNavigator: true,
-                              ).pop(false);
-                            },
-                          ),
-                        ),
-                      );
-                      if (shouldSubmit ?? false) {
-                        if (!form.valid) return;
-                        final bloc = context.read<SearchBlocWrapper>();
+                  ? () {
+                      if (!form.valid) return;
+                      final bloc = context.read<SearchBlocWrapper>();
 
-                        bloc.searchBySchoolName
-                            .add(SearchHouseholdsEvent.searchBySchool(
-                          searchText: form.control(_schoolName).value,
-                          projectId: context.projectId,
-                          boundaryCode: context.boundaryOrNull!.code!,
-                          limit: 10,
-                          offset: 0,
-                        ));
-                      }
+                      bloc.searchBySchoolName
+                          .add(SearchHouseholdsEvent.searchBySchool(
+                        searchText: form.control(_schoolName).value,
+                        projectId: context.projectId,
+                        boundaryCode: context.boundaryOrNull!.code!,
+                        limit: 10,
+                        offset: 0,
+                      ));
                     }
                   : null,
               child: !searchHouseholdsState.loading

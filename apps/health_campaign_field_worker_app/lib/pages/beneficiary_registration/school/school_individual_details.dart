@@ -213,38 +213,7 @@ class _SchoolIndividualDetailsPageState
                                       ),
                                     );
                                   } else {
-                                    final submit = await DigitDialog.show<bool>(
-                                      context,
-                                      options: DigitDialogOptions(
-                                        titleText: localizations.translate(
-                                          i18.deliverIntervention.dialogTitle,
-                                        ),
-                                        contentText: localizations.translate(
-                                          i18.deliverIntervention.dialogContent,
-                                        ),
-                                        primaryAction: DigitDialogActions(
-                                          label: localizations.translate(
-                                            i18.common.coreCommonSubmit,
-                                          ),
-                                          action: (context) {
-                                            clickedStatus.value = true;
-                                            Navigator.of(
-                                              context,
-                                              rootNavigator: true,
-                                            ).pop(true);
-                                          },
-                                        ),
-                                        secondaryAction: DigitDialogActions(
-                                          label: localizations.translate(
-                                            i18.common.coreCommonCancel,
-                                          ),
-                                          action: (context) => Navigator.of(
-                                            context,
-                                            rootNavigator: true,
-                                          ).pop(false),
-                                        ),
-                                      ),
-                                    );
+                                    final submit = await getSubmitStatus();
 
                                     if (submit ?? false) {
                                       if (context.mounted) {
@@ -339,7 +308,7 @@ class _SchoolIndividualDetailsPageState
                                   addressModel,
                                   householdModel,
                                   loading,
-                                ) {
+                                ) async {
                                   final individual = _getIndividualModel(
                                     context,
                                     form: form,
@@ -362,21 +331,26 @@ class _SchoolIndividualDetailsPageState
                                         ),
                                       );
                                     } else {
-                                      bloc.add(
-                                        BeneficiaryRegistrationAddMemberEvent(
-                                          beneficiaryType:
-                                              context.beneficiaryType,
-                                          householdModel: householdModel,
-                                          individualModel: individual,
-                                          addressModel: addressModel,
-                                          userUuid: userId,
-                                          projectId: context.projectId,
-                                          tag: scannerBloc
-                                                  .state.qrcodes.isNotEmpty
-                                              ? scannerBloc.state.qrcodes.first
-                                              : null,
-                                        ),
-                                      );
+                                      final submit = await getSubmitStatus();
+
+                                      if (submit ?? false) {
+                                        bloc.add(
+                                          BeneficiaryRegistrationAddMemberEvent(
+                                            beneficiaryType:
+                                                context.beneficiaryType,
+                                            householdModel: householdModel,
+                                            individualModel: individual,
+                                            addressModel: addressModel,
+                                            userUuid: userId,
+                                            projectId: context.projectId,
+                                            tag: scannerBloc
+                                                    .state.qrcodes.isNotEmpty
+                                                ? scannerBloc
+                                                    .state.qrcodes.first
+                                                : null,
+                                          ),
+                                        );
+                                      }
                                     }
                                   }
                                 },
@@ -1031,5 +1005,40 @@ class _SchoolIndividualDetailsPageState
         validators: [Validators.required],
       ),
     };
+  }
+
+  Future<bool?> getSubmitStatus() async {
+    return await DigitDialog.show<bool>(
+      context,
+      options: DigitDialogOptions(
+        titleText: localizations.translate(
+          i18.deliverIntervention.dialogTitle,
+        ),
+        contentText: localizations.translate(
+          i18.deliverIntervention.dialogContent,
+        ),
+        primaryAction: DigitDialogActions(
+          label: localizations.translate(
+            i18.common.coreCommonSubmit,
+          ),
+          action: (context) {
+            clickedStatus.value = true;
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pop(true);
+          },
+        ),
+        secondaryAction: DigitDialogActions(
+          label: localizations.translate(
+            i18.common.coreCommonCancel,
+          ),
+          action: (context) => Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(false),
+        ),
+      ),
+    );
   }
 }
