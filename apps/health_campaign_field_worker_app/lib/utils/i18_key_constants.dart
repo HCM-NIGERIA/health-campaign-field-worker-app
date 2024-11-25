@@ -922,9 +922,6 @@ class SearchBeneficiary {
 
   String get beneficiaryAddActionLabel => 'BENEFICIARY_ADD_ACTION_LABEL';
 
-  String get dialogHeadingText => 'BENEFICIARY_ADD_DIALOG_HEADING';
-  String get dialogContentText => 'BENEFICIARY_ADD_DIALOG_CONTENT';
-
   String get iconLabel => 'ICON_LABEL';
 
   String get yearsAbbr => 'YEARS_ABBR';
