@@ -655,8 +655,7 @@ class _SchoolIndividualListPageState
                                                   localizations: localizations,
                                                   projectBeneficiaryClientReferenceId:
                                                       projectBeneficiaryId,
-
-                                                      isSchool: true,
+                                                  isSchool: true,
                                                 ),
                                               );
                                             },
@@ -666,7 +665,7 @@ class _SchoolIndividualListPageState
                                               description:
                                                   localizations.translate(
                                                 i18.searchBeneficiary
-                                                    .beneficiaryInfoDescription,
+                                                    .studentInfoDescription,
                                               ),
                                               title: localizations.translate(
                                                 i18.searchBeneficiary

@@ -916,6 +916,8 @@ class SearchBeneficiary {
 
   String get beneficiaryInfoDescription => 'BENEFICIARY_INFO_DESCRIPTION';
 
+  String get studentInfoDescription => 'STUDENT_INFO_DESCRIPTION';
+
   String get beneficiaryInfoTitle => 'BENEFICIARY_INFO_TITLE';
 
   String get beneficiaryAddActionLabel => 'BENEFICIARY_ADD_ACTION_LABEL';
