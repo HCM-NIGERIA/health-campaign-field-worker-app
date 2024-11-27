@@ -23,5 +23,13 @@ enum BeneficiaryType {
   ivermectin,
   @MappableValue("ALBENDAZOLE")
   albendazole,
+  @MappableValue("SETTLEMENT-INDIVIDUAL")
+  settlementIndividual,
+  @MappableValue("SCHOOL-INDIVIDUAL")
+  schoolIndividual,
+  @MappableValue("SETTLEMENT-PRODUCT")
+  settlementProduct,
+  @MappableValue("SCHOOL-PRODUCT")
+  schoolProduct,
   ;
 }
