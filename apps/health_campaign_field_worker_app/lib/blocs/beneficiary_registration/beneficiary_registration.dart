@@ -254,7 +254,7 @@ class BeneficiaryRegistrationBloc
                   if (age != null)
                     AdditionalField(
                       AdditionalFieldsType.age.toValue(),
-                      age.years * 12 + age.months,
+                      "0${age.years * 12 + age.months}",
                     ),
                 ],
               ),
@@ -526,7 +526,7 @@ class BeneficiaryRegistrationBloc
                   if (age != null)
                     AdditionalField(
                       AdditionalFieldsType.age.toValue(),
-                      age.years * 12 + age.months,
+                      "0${age.years * 12 + age.months}",
                     ),
                 ],
               ),
