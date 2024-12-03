@@ -493,24 +493,62 @@ class _SideEffectsPageState extends LocalizedState<SideEffectsPage> {
   }
 
   checkIfTaskHouseHoldType(TaskModel task) {
+    List<AdditionalField> additionalFileds = [];
+    if (task.additionalFields!.fields
+        .where(
+          (element) =>
+              element.key ==
+              AdditionalFieldsType.individualClientreferenceId.toValue(),
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) =>
+                element.key ==
+                AdditionalFieldsType.individualClientreferenceId.toValue(),
+          )
+          .firstOrNull!);
+    }
+    if (task.additionalFields!.fields
+        .where(
+          (element) => element.key == AdditionalFieldsType.age.toValue(),
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) => element.key == AdditionalFieldsType.age.toValue(),
+          )
+          .firstOrNull!);
+    }
+    if (task.additionalFields!.fields
+        .where(
+          (element) => element.key == AdditionalFieldsType.gender.toValue(),
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) => element.key == AdditionalFieldsType.gender.toValue(),
+          )
+          .firstOrNull!);
+    }
     if (task.additionalFields!.fields
         .where((element) =>
             element.key == Constants.houseHoldBeneficiaryType &&
             element.value == Constants.houseHoldType)
         .isNotEmpty) {
-      return [
+      additionalFileds.add(
         task.additionalFields!.fields
             .where(
               (element) => element.key == Constants.houseHoldBeneficiaryType,
             )
             .firstOrNull!,
-      ];
+      );
     } else if (task.additionalFields!.fields
         .where((element) =>
             element.key == Constants.houseHoldBeneficiaryType &&
             element.value == Constants.schoolType)
         .isNotEmpty) {
-      return [
+      additionalFileds.addAll([
         task.additionalFields!.fields
             .where(
               (element) => element.value == Constants.schoolType,
@@ -519,7 +557,9 @@ class _SideEffectsPageState extends LocalizedState<SideEffectsPage> {
         task.additionalFields!.fields
             .where((element) => element.key == Constants.schoolNameKey)
             .firstOrNull!,
-      ];
+      ]);
     }
+
+    return additionalFileds;
   }
 }

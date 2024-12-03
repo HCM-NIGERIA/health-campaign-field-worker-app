@@ -1,4 +1,5 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:health_campaign_field_worker_app/blocs/search_households/search_bloc_common_wrapper.dart';
@@ -395,6 +396,19 @@ class MemberCard extends StatelessWidget {
                                               rootNavigator: true,
                                             ).pop();
 
+                                            DigitDOBAge? age = individual
+                                                        .dateOfBirth !=
+                                                    null
+                                                ? DigitDateUtils.calculateAge(
+                                                    DigitDateUtils
+                                                            .getFormattedDateToDateTime(
+                                                          individual
+                                                              .dateOfBirth!,
+                                                        ) ??
+                                                        DateTime.now(),
+                                                  )
+                                                : null;
+
                                             context
                                                 .read<DeliverInterventionBloc>()
                                                 .add(
@@ -440,6 +454,31 @@ class MemberCard extends StatelessWidget {
                                                                 .beneficiaryRefused
                                                                 .toValue(),
                                                           ),
+                                                          AdditionalField(
+                                                            AdditionalFieldsType
+                                                                .individualClientreferenceId
+                                                                .toValue(),
+                                                            individual
+                                                                .clientReferenceId,
+                                                          ),
+                                                          if (individual
+                                                                  .gender !=
+                                                              null)
+                                                            AdditionalField(
+                                                              AdditionalFieldsType
+                                                                  .gender
+                                                                  .toValue(),
+                                                              individual
+                                                                  .gender!.name,
+                                                            ),
+                                                          if (age != null)
+                                                            AdditionalField(
+                                                              AdditionalFieldsType
+                                                                  .age
+                                                                  .toValue(),
+                                                              age.years * 12 +
+                                                                  age.months,
+                                                            ),
                                                           isHouseHoldSchool(
                                                             reloadState.state
                                                                 .householdMemberWrapper,

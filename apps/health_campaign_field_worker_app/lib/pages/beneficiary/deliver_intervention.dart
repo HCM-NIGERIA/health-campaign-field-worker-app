@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_stepper.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
@@ -535,6 +536,26 @@ class _DeliverInterventionPageState
         ((form.control(_resourceDeliveredKey) as FormArray).value
             as List<ProductVariantModel?>);
     final deliveryComment = form.control(_deliveryCommentKey).value as String?;
+
+    final projectBeneficiary = wrapper?.projectBeneficiaries
+        .where((element) =>
+            element.clientReferenceId == projectBeneficiaryClientReferenceId)
+        .firstOrNull;
+    final individual = wrapper?.members
+        .where((element) =>
+            element.clientReferenceId ==
+            projectBeneficiary?.beneficiaryClientReferenceId)
+        .firstOrNull;
+
+    DigitDOBAge? age = individual != null && individual.dateOfBirth != null
+        ? DigitDateUtils.calculateAge(
+            DigitDateUtils.getFormattedDateToDateTime(
+                  individual.dateOfBirth!,
+                ) ??
+                DateTime.now(),
+          )
+        : null;
+
     // Update the task with information from the form and other context
     task = task.copyWith(
       projectId: context.projectId,
@@ -628,6 +649,21 @@ class _DeliverInterventionPageState
             AdditionalField(
               AdditionalFieldsType.deliveryComment.toValue(),
               deliveryComment,
+            ),
+          if (individual != null)
+            AdditionalField(
+              AdditionalFieldsType.individualClientreferenceId.toValue(),
+              individual.clientReferenceId,
+            ),
+          if (individual?.gender != null)
+            AdditionalField(
+              AdditionalFieldsType.gender.toValue(),
+              individual!.gender!.name,
+            ),
+          if (age != null)
+            AdditionalField(
+              AdditionalFieldsType.age.toValue(),
+              age.years * 12 + age.months,
             ),
           isHouseHoldSchool(wrapper!)
               ? addSchoolAdditionalType()

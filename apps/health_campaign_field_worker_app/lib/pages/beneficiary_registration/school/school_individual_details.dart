@@ -72,6 +72,7 @@ class _SchoolIndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
+    DateTime before18Years = DateTime(now.year - 18, now.month, now.day);
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -471,6 +472,9 @@ class _SchoolIndividualDetailsPageState
                                   i18.individualDetails.yearsAndMonthsErrorText,
                                 ),
                                 initialDate: before150Years,
+                                finalDate: widget.isHeadOfHousehold
+                                    ? before18Years
+                                    : DateTime.now(),
                                 onChangeOfFormControl: (formControl) {
                                   // Handle changes to the control's value here
                                   final value = formControl.value;
