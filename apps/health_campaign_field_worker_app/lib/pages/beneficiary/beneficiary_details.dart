@@ -38,9 +38,6 @@ class _BeneficiaryDetailsPageState
     super.initState();
   }
 
-  static const _disabilityTypeKey = 'disabilityType';
-  static const _heightKey = 'height';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -313,7 +310,7 @@ class _BeneficiaryDetailsPageState
                                     final height = state.selectedIndividual
                                         ?.additionalFields?.fields
                                         .firstWhereOrNull((element) =>
-                                            element.key == _heightKey)
+                                            element.key == Constants.heightKey)
                                         ?.value;
 
                                     return height;
@@ -326,7 +323,8 @@ class _BeneficiaryDetailsPageState
                                         ?.additionalFields
                                         ?.fields
                                         .firstWhereOrNull((element) =>
-                                            element.key == _disabilityTypeKey)
+                                            element.key ==
+                                            Constants.disabilityTypeKey)
                                         ?.value;
 
                                     return localizations

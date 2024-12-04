@@ -54,8 +54,6 @@ class _SchoolIndividualDetailsPageState
   static const maxLength = 200;
   final clickedStatus = ValueNotifier<bool>(false);
   DateTime now = DateTime.now();
-  static const _disabilityTypeKey = 'disabilityType';
-  static const _heightKey = 'height';
   static const radioKey = "parentKnown";
   static const _type = 'type';
 
@@ -580,7 +578,7 @@ class _SchoolIndividualDetailsPageState
                           child: DigitTextFormField(
                             keyboardType: TextInputType.number,
                             isRequired: true,
-                            formControlName: _heightKey,
+                            formControlName: Constants.heightKey,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                 RegExp("[0-9]"),
@@ -625,7 +623,7 @@ class _SchoolIndividualDetailsPageState
                                 menuItems: disabilityTypes.map((e) {
                                   return e.code;
                                 }).toList(),
-                                formControlName: _disabilityTypeKey,
+                                formControlName: Constants.disabilityTypeKey,
                                 validationMessages: {
                                   'required': (object) =>
                                       localizations.translate(
@@ -791,9 +789,9 @@ class _SchoolIndividualDetailsPageState
       ),
     );
 
-    final disabilityType = form.control(_disabilityTypeKey).value;
+    final disabilityType = form.control(Constants.disabilityTypeKey).value;
 
-    final height = form.control(_heightKey).value as String;
+    final height = form.control(Constants.heightKey).value as String;
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -820,11 +818,11 @@ class _SchoolIndividualDetailsPageState
               version: 1,
               fields: [
                 AdditionalField(
-                  _disabilityTypeKey,
+                  Constants.disabilityTypeKey,
                   disabilityType,
                 ),
                 AdditionalField(
-                  _heightKey,
+                  Constants.heightKey,
                   height.length == 1 ? '0$height' : height,
                 ),
                 addSchoolAdditionalType(),
@@ -921,11 +919,12 @@ class _SchoolIndividualDetailsPageState
     );
 
     final disabilityType = individual?.additionalFields?.fields
-        .firstWhereOrNull((element) => element.key == _disabilityTypeKey)
+        .firstWhereOrNull(
+            (element) => element.key == Constants.disabilityTypeKey)
         ?.value;
 
     final height = individual?.additionalFields?.fields
-        .firstWhereOrNull((element) => element.key == _heightKey)
+        .firstWhereOrNull((element) => element.key == Constants.heightKey)
         ?.value;
 
     return fb.group(<String, Object>{
@@ -977,11 +976,11 @@ class _SchoolIndividualDetailsPageState
               ]
             : [],
       ),
-      _heightKey: _buildFormControl<String>(
+      Constants.heightKey: _buildFormControl<String>(
         value: height,
         validators: [Validators.required],
       ),
-      _disabilityTypeKey: _buildFormControl<String>(
+      Constants.disabilityTypeKey: _buildFormControl<String>(
         value: disabilityType,
         validators: [Validators.required],
       ),
