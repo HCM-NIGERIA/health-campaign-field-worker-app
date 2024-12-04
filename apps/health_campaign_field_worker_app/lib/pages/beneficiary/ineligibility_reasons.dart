@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_divider.dart';
 import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +134,41 @@ class _IneligibilityReasonsPageState
                                                           final clientReferenceId =
                                                               IdGen
                                                                   .i.identifier;
+
+                                                          final projectBeneficiary =
+                                                              householdMemberWrapper
+                                                                  .projectBeneficiaries
+                                                                  .where((element) =>
+                                                                      element
+                                                                          .clientReferenceId ==
+                                                                      widget
+                                                                          .projectBeneficiaryClientRefId)
+                                                                  .firstOrNull;
+                                                          final individual = householdMemberWrapper
+                                                              .members
+                                                              .where((element) =>
+                                                                  element
+                                                                      .clientReferenceId ==
+                                                                  projectBeneficiary
+                                                                      ?.beneficiaryClientReferenceId)
+                                                              .firstOrNull;
+
+                                                          DigitDOBAge? age = individual !=
+                                                                      null &&
+                                                                  individual
+                                                                          .dateOfBirth !=
+                                                                      null
+                                                              ? DigitDateUtils
+                                                                  .calculateAge(
+                                                                  DigitDateUtils
+                                                                          .getFormattedDateToDateTime(
+                                                                        individual
+                                                                            .dateOfBirth!,
+                                                                      ) ??
+                                                                      DateTime
+                                                                          .now(),
+                                                                )
+                                                              : null;
                                                           context
                                                               .read<
                                                                   DeliverInterventionBloc>()
@@ -196,6 +232,24 @@ class _IneligibilityReasonsPageState
                                                                               .key
                                                                               .toString(),
                                                                         ),
+                                                                        if (individual !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.individualClientreferenceId.toValue(),
+                                                                            individual.clientReferenceId,
+                                                                          ),
+                                                                        if (individual?.gender !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.gender.toValue(),
+                                                                            individual!.gender!.name,
+                                                                          ),
+                                                                        if (age !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.age.toValue(),
+                                                                            "0${age.years * 12 + age.months}",
+                                                                          ),
                                                                         isHouseHoldSchool(householdMemberWrapper!)
                                                                             ? addSchoolAdditionalType()
                                                                             : addHouseHoldAdditionalType(),

@@ -68,6 +68,10 @@
     {
       "name": "longitude",
       "value": "longitude"
+    },
+    {
+      "name": "individualClientreferenceId",
+      "value": "individualClientreferenceId"
     }
   ],
   "isEnum": true

@@ -401,10 +401,10 @@ class _ChecklistViewPageState extends LocalizedState<ChecklistViewPage> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
-                              '${localizations.translate(
+                              localizations.translate(
                                 value.selectedServiceDefinition!.code
                                     .toString(),
-                              )} ${localizations.translate(i18.checklist.checklist)}',
+                              ),
                               style: theme.textTheme.displayMedium,
                               textAlign: TextAlign.left,
                             ),
