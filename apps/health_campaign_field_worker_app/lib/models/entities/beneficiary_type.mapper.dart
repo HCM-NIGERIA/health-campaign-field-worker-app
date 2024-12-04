@@ -27,6 +27,8 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
     switch (value) {
       case "INDIVIDUAL":
         return BeneficiaryType.individual;
+      case "SCHOOL":
+        return BeneficiaryType.school;
       case "HOUSEHOLD":
         return BeneficiaryType.household;
       case "PRODUCT":
@@ -41,6 +43,14 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return BeneficiaryType.ivermectin;
       case "ALBENDAZOLE":
         return BeneficiaryType.albendazole;
+      case "SETTLEMENT-INDIVIDUAL":
+        return BeneficiaryType.settlementIndividual;
+      case "SCHOOL-INDIVIDUAL":
+        return BeneficiaryType.schoolIndividual;
+      case "SETTLEMENT-PRODUCT":
+        return BeneficiaryType.settlementProduct;
+      case "SCHOOL-PRODUCT":
+        return BeneficiaryType.schoolProduct;
       default:
         throw MapperException.unknownEnumValue(value);
     }
@@ -51,6 +61,8 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
     switch (self) {
       case BeneficiaryType.individual:
         return "INDIVIDUAL";
+      case BeneficiaryType.school:
+        return "SCHOOL";
       case BeneficiaryType.household:
         return "HOUSEHOLD";
       case BeneficiaryType.product:
@@ -65,6 +77,14 @@ class BeneficiaryTypeMapper extends EnumMapper<BeneficiaryType> {
         return "IVERMECTIN";
       case BeneficiaryType.albendazole:
         return "ALBENDAZOLE";
+      case BeneficiaryType.settlementIndividual:
+        return "SETTLEMENT-INDIVIDUAL";
+      case BeneficiaryType.schoolIndividual:
+        return "SCHOOL-INDIVIDUAL";
+      case BeneficiaryType.settlementProduct:
+        return "SETTLEMENT-PRODUCT";
+      case BeneficiaryType.schoolProduct:
+        return "SCHOOL-PRODUCT";
     }
   }
 }

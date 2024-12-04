@@ -73,15 +73,7 @@ class _BeneficiaryProgressBarState extends State<BeneficiaryProgressBar> {
 
   @override
   Widget build(BuildContext context) {
-    // Solution Customization
-    // final selectedProject = context.selectedProject;
-    // final beneficiaryType = context.beneficiaryType;
-
-    // final targetModel = selectedProject.targets?.firstWhereOrNull(
-    //   (element) => element.beneficiaryType == beneficiaryType,
-    // );
-
-    final target = 100;
+    const target = 100;
 
     return DigitCard(
       child: ProgressIndicatorContainer(

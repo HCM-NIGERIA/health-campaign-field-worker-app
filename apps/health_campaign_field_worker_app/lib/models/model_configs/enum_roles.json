@@ -40,6 +40,10 @@
     {
       "name": "Community Supervisor",
       "value": "COMMUNITY_SUPERVISOR"
+    },
+    {
+      "name": "Attendance Staff",
+      "value": "ATTENDANCE_STAFF"
     }
   ],
   "isEnum": true

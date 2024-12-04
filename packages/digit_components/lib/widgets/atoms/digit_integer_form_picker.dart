@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class DigitIntegerFormPicker extends StatelessWidget {
-  final int? minimum;
-  final int? maximum;
+  final double? minimum;
+  final double? maximum;
   final bool incrementer;
   final String? hint;
   final String label;
@@ -31,11 +31,16 @@ class DigitIntegerFormPicker extends StatelessWidget {
       return LabeledField(
           padding: const EdgeInsets.only(top: kPadding * 2),
           label: label,
-          child: ReactiveTextField(
-            formControlName: formControlName,
-            decoration: InputDecoration(labelText: hint),
-            keyboardType: TextInputType.number,
-            readOnly: readOnly,
+          child: Container(
+            color: readOnly
+                ? const Color.fromRGBO(0, 0, 0, 0.16)
+                : Colors.transparent,
+            child: ReactiveTextField(
+              formControlName: formControlName,
+              decoration: InputDecoration(labelText: hint),
+              keyboardType: TextInputType.number,
+              readOnly: readOnly,
+            ),
           ));
     }
 

@@ -32,6 +32,26 @@
     {
       "name": "albendazole",
       "value": "ALBENDAZOLE"
+    },
+    {
+      "name": "school",
+      "value": "SCHOOL"
+    },
+    {
+      "name": "settlementIndividual",
+      "value": "SETTLEMENT-INDIVIDUAL"
+    },
+    {
+      "name": "schoolIndividual",
+      "value": "SCHOOL-INDIVIDUAL"
+    },
+    {
+      "name": "settlementProduct",
+      "value": "SETTLEMENT-PRODUCT"
+    },
+    {
+      "name": "schoolProduct",
+      "value": "SCHOOL-PRODUCT"
     }
   ],
   "isEnum": true

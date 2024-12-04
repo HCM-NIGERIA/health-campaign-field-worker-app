@@ -113,7 +113,7 @@ class MdmsRepository {
     app_configuration.AppConfigPrimaryWrapperModel result,
     PGRServiceDefinitions pgrServiceDefinitions,
     Isar isar,
-  ) async {
+  ) {
     final appConfiguration = AppConfiguration();
 
     final data = result.rowVersions?.rowVersionslist;
@@ -286,6 +286,16 @@ class MdmsRepository {
       return symptomTypes;
     }).toList();
 
+    appConfiguration.symptomsTypesSchisto =
+        result.symptomsTypesSchisto?.symptomsTypeSchistoList?.map((e) {
+      final symptomTypes = SymptomsTypes()
+        ..name = e.name
+        ..code = e.code
+        ..active = e.active;
+
+      return symptomTypes;
+    }).toList();
+
     appConfiguration.referralReasons =
         result.referralReasons?.referralReasonList?.map((e) {
       final reasonTypes = ReferralReasons()
@@ -306,6 +316,17 @@ class MdmsRepository {
       return reasonTypes;
     }).toList();
 
+    appConfiguration.ineligibilityReasonsSchisto = result
+        .ineligibilityReasonsSchisto?.ineligibilityReasonsSchistoList
+        ?.map((e) {
+      final reasonTypes = IneligibilityReasons()
+        ..name = e.name
+        ..code = e.code
+        ..active = e.active;
+
+      return reasonTypes;
+    }).toList();
+
     appConfiguration.disabilityTypes =
         result.disabilityTypes?.disabilityTypesList?.map((e) {
       final reasonTypes = DisabilityTypes()
@@ -316,9 +337,9 @@ class MdmsRepository {
       return reasonTypes;
     }).toList();
 
-    await isar.writeTxn(() async {
-      await isar.appConfigurations.put(appConfiguration);
-      await isar.rowVersionLists.putAll(rowVersionList);
+    isar.writeTxnSync(() {
+      isar.appConfigurations.putSync(appConfiguration);
+      isar.rowVersionLists.putAllSync(rowVersionList);
     });
   }
 

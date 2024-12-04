@@ -1,6 +1,9 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/blocs/search_households/search_bloc_common_wrapper.dart';
+import 'package:health_campaign_field_worker_app/blocs/search_households/search_households.dart';
 
 import '../../blocs/delivery_intervention/deliver_intervention.dart';
 import '../../blocs/household_overview/household_overview.dart';
@@ -32,7 +35,10 @@ class MemberCard extends StatelessWidget {
   final bool isBeneficiaryIneligible;
   final bool isBeneficiaryReferred;
   final String? projectBeneficiaryClientReferenceId;
-
+  final Color? backgroundColorType;
+  final bool isAdverseEffect;
+  final VoidCallback? clearSearchName;
+  final bool? isSchool;
   const MemberCard({
     super.key,
     required this.individual,
@@ -53,6 +59,10 @@ class MemberCard extends StatelessWidget {
     this.isBeneficiaryIneligible = false,
     this.isBeneficiaryReferred = false,
     this.sideEffects,
+    this.backgroundColorType,
+    required this.isAdverseEffect,
+    this.clearSearchName,
+    this.isSchool = false,
   });
 
   @override
@@ -62,7 +72,8 @@ class MemberCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DigitTheme.instance.colorScheme.background,
+        color:
+            backgroundColorType ?? DigitTheme.instance.colorScheme.background,
         border: Border.all(
           color: DigitTheme.instance.colorScheme.outline,
           width: 1,
@@ -232,38 +243,53 @@ class MemberCard extends StatelessWidget {
                               //   left: kPadding / 2,
                               //   right: kPadding / 2,
                               // ),
-                              onPressed: () {
-                                final bloc =
-                                    context.read<HouseholdOverviewBloc>();
+                              onPressed: isAdverseEffect
+                                  ? () async {
+                                      clearSearchName?.call();
+                                      await context.router.push(
+                                        SideEffectsRoute(
+                                          tasks: tasks != null
+                                              ? [tasks!.last]
+                                              : [],
+                                          fromSurvey: false,
+                                        ),
+                                      );
+                                    }
+                                  : () {
+                                      clearSearchName?.call();
+                                      final bloc =
+                                          context.read<HouseholdOverviewBloc>();
 
-                                bloc.add(
-                                  HouseholdOverviewEvent.selectedIndividual(
-                                    individualModel: individual,
-                                  ),
-                                );
-                                bloc.add(HouseholdOverviewReloadEvent(
-                                  projectId: context.projectId,
-                                  projectBeneficiaryType:
-                                      context.beneficiaryType,
-                                ));
+                                      bloc.add(
+                                        HouseholdOverviewEvent
+                                            .selectedIndividual(
+                                          individualModel: individual,
+                                        ),
+                                      );
+                                      bloc.add(HouseholdOverviewReloadEvent(
+                                        projectId: context.projectId,
+                                        projectBeneficiaryType:
+                                            context.beneficiaryType,
+                                      ));
 
-                                final futureTaskList = tasks
-                                    ?.where((task) =>
-                                        task.status ==
-                                        Status.delivered.toValue())
-                                    .toList();
+                                      final futureTaskList = tasks
+                                          ?.where((task) =>
+                                              task.status ==
+                                              Status.delivered.toValue())
+                                          .toList();
 
-                                if ((futureTaskList ?? []).isNotEmpty) {
-                                  context.router.push(
-                                    RecordPastDeliveryDetailsRoute(
-                                      tasks: tasks,
-                                    ),
-                                  );
-                                } else {
-                                  context.router
-                                      .push(BeneficiaryDetailsRoute());
-                                }
-                              },
+                                      if ((futureTaskList ?? []).isNotEmpty) {
+                                        context.router.push(
+                                          RecordPastDeliveryDetailsRoute(
+                                            tasks: tasks,
+                                          ),
+                                        );
+                                      } else {
+                                        clearSearchName?.call();
+                                        context.router
+                                            .push(BeneficiaryDetailsRoute());
+                                      }
+                                    },
                               child: Center(
                                 child: Text(
                                   allDosesDelivered(
@@ -276,10 +302,15 @@ class MemberCard extends StatelessWidget {
                                             tasks,
                                             context.selectedCycle,
                                           )
-                                      ? localizations.translate(
-                                          i18.householdOverView
-                                              .viewDeliveryLabel,
-                                        )
+                                      ? isAdverseEffect
+                                          ? localizations.translate(
+                                              i18.householdOverView
+                                                  .addAdverseEffect,
+                                            )
+                                          : localizations.translate(
+                                              i18.householdOverView
+                                                  .viewDeliveryLabel,
+                                            )
                                       : localizations.translate(
                                           i18.householdOverView
                                               .householdOverViewActionText,
@@ -358,10 +389,26 @@ class MemberCard extends StatelessWidget {
                                             )
                                         ? null
                                         : () {
+                                            final reloadState = context
+                                                .read<HouseholdOverviewBloc>();
                                             Navigator.of(
                                               context,
                                               rootNavigator: true,
                                             ).pop();
+
+                                            DigitDOBAge? age = individual
+                                                        .dateOfBirth !=
+                                                    null
+                                                ? DigitDateUtils.calculateAge(
+                                                    DigitDateUtils
+                                                            .getFormattedDateToDateTime(
+                                                          individual
+                                                              .dateOfBirth!,
+                                                        ) ??
+                                                        DateTime.now(),
+                                                  )
+                                                : null;
+
                                             context
                                                 .read<DeliverInterventionBloc>()
                                                 .add(
@@ -407,6 +454,45 @@ class MemberCard extends StatelessWidget {
                                                                 .beneficiaryRefused
                                                                 .toValue(),
                                                           ),
+                                                          AdditionalField(
+                                                            AdditionalFieldsType
+                                                                .individualClientreferenceId
+                                                                .toValue(),
+                                                            individual
+                                                                .clientReferenceId,
+                                                          ),
+                                                          if (individual
+                                                                  .gender !=
+                                                              null)
+                                                            AdditionalField(
+                                                              AdditionalFieldsType
+                                                                  .gender
+                                                                  .toValue(),
+                                                              individual
+                                                                  .gender!.name,
+                                                            ),
+                                                          if (age != null)
+                                                            AdditionalField(
+                                                              AdditionalFieldsType
+                                                                  .age
+                                                                  .toValue(),
+                                                              age.years * 12 +
+                                                                  age.months,
+                                                            ),
+                                                          isHouseHoldSchool(
+                                                            reloadState.state
+                                                                .householdMemberWrapper,
+                                                          )
+                                                              ? addSchoolAdditionalType()
+                                                              : addHouseHoldAdditionalType(),
+                                                          if (isHouseHoldSchool(
+                                                            reloadState.state
+                                                                .householdMemberWrapper,
+                                                          ))
+                                                            addSchoolName(
+                                                              reloadState.state
+                                                                  .householdMemberWrapper,
+                                                            ),
                                                         ],
                                                       ),
                                                       address: individual
@@ -416,10 +502,11 @@ class MemberCard extends StatelessWidget {
                                                     context.boundary,
                                                   ),
                                                 );
-                                            final reloadState = context
-                                                .read<HouseholdOverviewBloc>();
+
                                             Future.delayed(
-                                              const Duration(milliseconds: 500),
+                                              const Duration(
+                                                milliseconds: 1000,
+                                              ),
                                               () {
                                                 reloadState.add(
                                                   HouseholdOverviewReloadEvent(
@@ -431,50 +518,25 @@ class MemberCard extends StatelessWidget {
                                                 );
                                               },
                                             ).then(
-                                              (value) => context.router.push(
-                                                HouseholdAcknowledgementRoute(
-                                                  enableViewHousehold: true,
-                                                ),
-                                              ),
+                                              (value) {
+                                                !isHouseHoldSchool(reloadState
+                                                        .state
+                                                        .householdMemberWrapper)
+                                                    ? context.router.push(
+                                                        HouseholdAcknowledgementRoute(
+                                                          enableViewHousehold:
+                                                              true,
+                                                        ),
+                                                      )
+                                                    : context.router.push(
+                                                        SchoolAcknowledgementRoute(
+                                                          enableViewSchool:
+                                                              true,
+                                                        ),
+                                                      );
+                                              },
                                             );
                                           },
-                                  ),
-                                  const SizedBox(
-                                    height: kPadding * 2,
-                                  ),
-                                  DigitOutLineButton(
-                                    label: localizations.translate(
-                                      i18.memberCard.referBeneficiaryLabel,
-                                    ),
-                                    buttonStyle: OutlinedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.zero,
-                                      ),
-                                      backgroundColor: Colors.white,
-                                      side: BorderSide(
-                                        width: 1.0,
-                                        color: theme.colorScheme.secondary,
-                                      ),
-                                      minimumSize: Size(
-                                        MediaQuery.of(context).size.width /
-                                            1.25,
-                                        50,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      Navigator.of(
-                                        context,
-                                        rootNavigator: true,
-                                      ).pop();
-                                      await context.router.push(
-                                        ReferBeneficiaryRoute(
-                                          projectBeneficiaryClientRefId:
-                                              projectBeneficiaryClientReferenceId ??
-                                                  '',
-                                          individual: individual,
-                                        ),
-                                      );
-                                    },
                                   ),
                                   const SizedBox(
                                     height: kPadding * 2,
@@ -523,44 +585,6 @@ class MemberCard extends StatelessWidget {
                                             );
                                           },
                                   ),
-                                  // Solution customization
-                                  // DigitOutLineButton(
-                                  //   label: localizations.translate(
-                                  //     i18.memberCard.recordAdverseEventsLabel,
-                                  //   ),
-                                  //   buttonStyle: OutlinedButton.styleFrom(
-                                  //     shape: const RoundedRectangleBorder(
-                                  //       borderRadius: BorderRadius.zero,
-                                  //     ),
-                                  //     backgroundColor: Colors.white,
-                                  //     side: BorderSide(
-                                  //       width: 1.0,
-                                  //       color: tasks != null &&
-                                  //               (tasks ?? []).isNotEmpty
-                                  //           ? theme.colorScheme.secondary
-                                  //           : theme.colorScheme.outline,
-                                  //     ),
-                                  //     minimumSize: Size(
-                                  //       MediaQuery.of(context).size.width /
-                                  //           1.25,
-                                  //       50,
-                                  //     ),
-                                  //   ),
-                                  //   onPressed: tasks != null &&
-                                  //           (tasks ?? []).isNotEmpty
-                                  //       ? () async {
-                                  //           Navigator.of(
-                                  //             context,
-                                  //             rootNavigator: true,
-                                  //           ).pop();
-                                  //           await context.router.push(
-                                  //             SideEffectsRoute(
-                                  //               tasks: tasks!,
-                                  //             ),
-                                  //           );
-                                  //         }
-                                  //       : null,
-                                  // ),
                                 ],
                               ),
                             );

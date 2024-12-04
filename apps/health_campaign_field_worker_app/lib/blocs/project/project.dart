@@ -216,7 +216,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       try {
         if (context.loggedInUserRoles
             .where(
-              (role) => role.code == RolesType.districtSupervisor.toValue(),
+              (role) => role.code == RolesType.attendanceStaff.toValue(),
             )
             .toList()
             .isNotEmpty) {
@@ -225,39 +225,41 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
               userUuid: [projectStaff.userId.toString()],
             ),
           );
-          final attendanceRegisters = await attendanceRemoteRepository.search(
-            HCMAttendanceSearchModel(
-              staffId: individual.first.id,
-              referenceId: projectStaff.projectId,
-            ),
-          );
-          await attendanceLocalRepository.bulkCreate(attendanceRegisters);
+          if (individual.isNotEmpty) {
+            final attendanceRegisters = await attendanceRemoteRepository.search(
+              HCMAttendanceSearchModel(
+                staffId: individual.first.id,
+                referenceId: projectStaff.projectId,
+              ),
+            );
+            await attendanceLocalRepository.bulkCreate(attendanceRegisters);
 
-          for (final register in attendanceRegisters) {
-            if (register.attendanceRegister.attendees != null &&
-                (register.attendanceRegister.attendees ?? []).isNotEmpty) {
-              try {
-                final individuals = await individualRemoteRepository.search(
-                  IndividualSearchModel(
-                    id: register.attendanceRegister.attendees!
-                        .map((e) => e.individualId!)
-                        .toList(),
-                  ),
-                );
-                await individualLocalRepository.bulkCreate(individuals);
-                final logs = await attendanceLogRemoteRepository.search(
-                  HCMAttendanceLogSearchModel(
-                    registerId: register.attendanceRegister.id,
-                  ),
-                );
-                await attendanceLogLocalRepository.bulkCreate(logs);
-              } catch (_) {
-                emit(state.copyWith(
-                  loading: false,
-                  syncError: ProjectSyncErrorType.project,
-                ));
+            for (final register in attendanceRegisters) {
+              if (register.attendanceRegister.attendees != null &&
+                  (register.attendanceRegister.attendees ?? []).isNotEmpty) {
+                try {
+                  final individuals = await individualRemoteRepository.search(
+                    IndividualSearchModel(
+                      id: register.attendanceRegister.attendees!
+                          .map((e) => e.individualId!)
+                          .toList(),
+                    ),
+                  );
+                  await individualLocalRepository.bulkCreate(individuals);
+                  final logs = await attendanceLogRemoteRepository.search(
+                    HCMAttendanceLogSearchModel(
+                      registerId: register.attendanceRegister.id,
+                    ),
+                  );
+                  await attendanceLogLocalRepository.bulkCreate(logs);
+                } catch (_) {
+                  emit(state.copyWith(
+                    loading: false,
+                    syncError: ProjectSyncErrorType.project,
+                  ));
 
-                return;
+                  return;
+                }
               }
             }
           }
@@ -403,6 +405,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       ProjectFacilitySearchModel(
         projectId: projects.map((e) => e.id).toList(),
       ),
+      limit: 2000,
     );
 
     String? parentProjectId;
@@ -427,6 +430,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         FacilitySearchModel(
           id: null,
         ),
+        limit: 2000,
       );
 
       await facilityLocalRepository.bulkCreate(facilities);
@@ -592,10 +596,10 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           rowVersion.version = element.version;
           rowVersionList.add(rowVersion);
         }
-        await isar.writeTxn(() async {
-          await isar.rowVersionLists.clear();
+        isar.writeTxnSync(() {
+          isar.rowVersionLists.clear();
 
-          await isar.rowVersionLists.putAll(rowVersionList);
+          isar.rowVersionLists.putAllSync(rowVersionList);
         });
       } else {
         boundaries = await boundaryLocalRepository.search(

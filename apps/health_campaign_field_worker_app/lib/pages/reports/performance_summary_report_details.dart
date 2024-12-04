@@ -1,36 +1,23 @@
-import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import '../../blocs/facility/facility.dart';
 import '../../blocs/performanceSummaryReport/performance_summary_report.dart';
-import '../../blocs/product_variant/product_variant.dart';
-import '../../blocs/stock_reconciliation/stock_reconciliation.dart';
-import '../../data/repositories/local/household.dart';
-import '../../data/repositories/local/individual.dart';
-import '../../data/repositories/local/task.dart';
 import '../../models/data_model.dart';
 import '../../router/app_router.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
-import '../../widgets/component_wrapper/facility_bloc_wrapper.dart';
-import '../../widgets/component_wrapper/product_variant_bloc_wrapper.dart';
 import '../../widgets/header/back_navigation_help_header.dart';
-import '../../widgets/inventory/no_facilities_assigned_dialog.dart';
 import '../../widgets/localized.dart';
 import '../../widgets/reports/readonly_pluto_grid.dart';
-import '../inventory/facility_selection.dart';
 
 class PerformamnceSummaryReportDetailsPage extends LocalizedStatefulWidget
     with AutoRouteWrapper {
   const PerformamnceSummaryReportDetailsPage({
-    Key? key,
+    super.key,
     super.appLocalizations,
-  }) : super(key: key);
+  });
 
   @override
   State<PerformamnceSummaryReportDetailsPage> createState() =>
@@ -70,9 +57,13 @@ class _PerformamnceSummaryReportDetailsPageState
     final bloc = BlocProvider.of<PerformannceSummaryReportBloc>(context);
     bloc.add(PerformanceSummaryReportLoadDataEvent(
       userId: context.loggedInUserUuid,
+      projectCode: context.selectedProjectType != null
+          ? context.selectedProjectType!.code
+          : '',
     ));
   }
 
+static const _schoolKey = 'schoolKey';
   static const _householdKey = 'householdKey';
   static const _treatedPercentageKey = 'treatedPercentageKey';
   static const _treatedKey = 'treatedKey';
@@ -124,37 +115,58 @@ class _PerformamnceSummaryReportDetailsPageState
                               key: _dateKey,
                               width: 90,
                             ),
+                            // school
+                             DigitGridColumn(
+                              label: localizations.translate(
+                                 i18.deliverIntervention.schoolRegistered,
+                                
+                              ),
+                              key: _schoolKey,
+                              width: 170,
+                            ),
+                            //
                             DigitGridColumn(
                               label: localizations.translate(
-                                "PERFORMANCE_SUMMARY_HOUSEHOLD_DATA_LIST",
+                                i18.deliverIntervention.householdRegistered,
                               ),
                               key: _householdKey,
                               width: 170,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                "PERFORMANCE_SUMMARY_INDIVIDUAL_DATA_LIST",
+                                i18.deliverIntervention
+                                    .peoplePercentageTreatedLabel,
                               ),
                               key: _treatedPercentageKey,
                               width: 140,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                "PERFORMANCE_SUMMARY_TASK_DATA_LIST",
+                                i18.deliverIntervention.peopleTreatedLabel,
                               ),
                               key: _treatedKey,
                               width: 120,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                "PERFORMANCE_SUMMARY_DRUG_ONE",
+                                !(context.selectedProjectType!.code ==
+                                        ProjectTypesEnum.schisto.toValue())
+                                    ? i18.deliverIntervention
+                                        .drugOneLabelTableSummary
+                                    : i18.deliverIntervention
+                                        .quantityDistributedLabel,
                               ),
                               key: _drugOneKey,
                               width: 130,
                             ),
                             DigitGridColumn(
                               label: localizations.translate(
-                                "PERFORMANCE_SUMMARY_DRUG_TWO",
+                                !(context.selectedProjectType!.code ==
+                                        ProjectTypesEnum.schisto.toValue())
+                                    ? i18.deliverIntervention
+                                        .drugTwoLabelTableSummary
+                                    : i18.deliverIntervention
+                                        .quantityWastedLabel,
                               ),
                               key: _drugTwoKey,
                               width: 130,
@@ -168,6 +180,11 @@ class _PerformamnceSummaryReportDetailsPageState
                                   DigitGridCell(
                                     key: _dateKey,
                                     value: entry.key,
+                                  ),
+                                   DigitGridCell(
+                                    key: _schoolKey,
+                                    value:
+                                        entry.value.schoolCount.toString(),
                                   ),
                                   DigitGridCell(
                                     key: _householdKey,

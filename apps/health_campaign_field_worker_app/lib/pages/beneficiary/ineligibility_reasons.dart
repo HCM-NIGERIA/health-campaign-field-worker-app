@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:digit_components/widgets/atoms/digit_divider.dart';
 import 'package:digit_components/widgets/atoms/digit_radio_button_list.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +68,9 @@ class _IneligibilityReasonsPageState
                   return BlocBuilder<DeliverInterventionBloc,
                       DeliverInterventionState>(
                     builder: (context, deliveryState) {
+                      final householdMemberWrapper =
+                          state.householdMemberWrapper;
+
                       return Scaffold(
                         body: state.loading
                             ? const Center(child: CircularProgressIndicator())
@@ -119,16 +123,52 @@ class _IneligibilityReasonsPageState
                                                         action: (ctx) {
                                                           isReasonSubmitted =
                                                               true;
-                                                          final dynamic reason =
-                                                              form
-                                                                  .control(
-                                                                    _ineligibleReason,
-                                                                  )
-                                                                  .value;
+                                                          final KeyValue
+                                                              reason = form
+                                                                      .control(
+                                                                        _ineligibleReason,
+                                                                      )
+                                                                      .value
+                                                                  as KeyValue;
 
                                                           final clientReferenceId =
                                                               IdGen
                                                                   .i.identifier;
+
+                                                          final projectBeneficiary =
+                                                              householdMemberWrapper
+                                                                  .projectBeneficiaries
+                                                                  .where((element) =>
+                                                                      element
+                                                                          .clientReferenceId ==
+                                                                      widget
+                                                                          .projectBeneficiaryClientRefId)
+                                                                  .firstOrNull;
+                                                          final individual = householdMemberWrapper
+                                                              .members
+                                                              .where((element) =>
+                                                                  element
+                                                                      .clientReferenceId ==
+                                                                  projectBeneficiary
+                                                                      ?.beneficiaryClientReferenceId)
+                                                              .firstOrNull;
+
+                                                          DigitDOBAge? age = individual !=
+                                                                      null &&
+                                                                  individual
+                                                                          .dateOfBirth !=
+                                                                      null
+                                                              ? DigitDateUtils
+                                                                  .calculateAge(
+                                                                  DigitDateUtils
+                                                                          .getFormattedDateToDateTime(
+                                                                        individual
+                                                                            .dateOfBirth!,
+                                                                      ) ??
+                                                                      DateTime
+                                                                          .now(),
+                                                                )
+                                                              : null;
                                                           context
                                                               .read<
                                                                   DeliverInterventionBloc>()
@@ -189,8 +229,36 @@ class _IneligibilityReasonsPageState
                                                                         AdditionalField(
                                                                           'ineligibleReasons',
                                                                           reason
+                                                                              .key
                                                                               .toString(),
                                                                         ),
+                                                                        if (individual !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.individualClientreferenceId.toValue(),
+                                                                            individual.clientReferenceId,
+                                                                          ),
+                                                                        if (individual?.gender !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.gender.toValue(),
+                                                                            individual!.gender!.name,
+                                                                          ),
+                                                                        if (age !=
+                                                                            null)
+                                                                          AdditionalField(
+                                                                            AdditionalFieldsType.age.toValue(),
+                                                                            "0${age.years * 12 + age.months}",
+                                                                          ),
+                                                                        isHouseHoldSchool(householdMemberWrapper!)
+                                                                            ? addSchoolAdditionalType()
+                                                                            : addHouseHoldAdditionalType(),
+                                                                        if (isHouseHoldSchool(
+                                                                          householdMemberWrapper,
+                                                                        ))
+                                                                          addSchoolName(
+                                                                            householdMemberWrapper,
+                                                                          ),
                                                                       ],
                                                                     ),
                                                                     address: widget
@@ -251,13 +319,24 @@ class _IneligibilityReasonsPageState
                                                       },
                                                     ).then(
                                                       (value) {
-                                                        context.router
-                                                            .popAndPush(
-                                                          HouseholdAcknowledgementRoute(
-                                                            enableViewHousehold:
-                                                                true,
-                                                          ),
-                                                        );
+                                                        !isHouseHoldSchool(
+                                                          reloadState.state
+                                                              .householdMemberWrapper,
+                                                        )
+                                                            ? context.router
+                                                                .popAndPush(
+                                                                HouseholdAcknowledgementRoute(
+                                                                  enableViewHousehold:
+                                                                      true,
+                                                                ),
+                                                              )
+                                                            : context.router
+                                                                .popAndPush(
+                                                                SchoolAcknowledgementRoute(
+                                                                  enableViewSchool:
+                                                                      true,
+                                                                ),
+                                                              );
                                                         Navigator.pop(context);
                                                       },
                                                     );
@@ -320,8 +399,15 @@ class _IneligibilityReasonsPageState
                                               initialized:
                                                   (appConfiguration, _) {
                                                 final ineleigibilityReasonOptions =
-                                                    appConfiguration
-                                                            .ineligibilityReasons ??
+                                                    ((context.selectedProjectType!
+                                                                    .code ==
+                                                                ProjectTypesEnum
+                                                                    .schisto
+                                                                    .toValue())
+                                                            ? appConfiguration
+                                                                .ineligibilityReasonsSchisto
+                                                            : appConfiguration
+                                                                .ineligibilityReasons) ??
                                                         <IneligibilityReasons>[];
                                                 ineleigibilityReasons =
                                                     ineleigibilityReasonOptions

@@ -8,10 +8,10 @@ import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/utils/date_utils.dart';
-import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_dialog.dart';
 import 'package:digit_components/widgets/digit_sync_dialog.dart';
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +25,7 @@ import '../blocs/search_households/project_beneficiaries_downsync.dart';
 import '../blocs/search_households/search_households.dart';
 import '../data/local_store/app_shared_preferences.dart';
 import '../data/local_store/no_sql/schema/localization.dart';
+import '../data/local_store/no_sql/schema/oplog.dart';
 import '../data/local_store/secure_store/secure_store.dart';
 import '../models/data_model.dart';
 import '../models/project_type/project_type_model.dart';
@@ -71,6 +72,26 @@ class IdGen {
 
 class CustomValidator {
   /// Validates that control's value must be `true`
+  static Map<String, dynamic>? requiredMinStudentCount(
+    AbstractControl<dynamic> control,
+  ) {
+    return control.value == null ||
+            !(control.value.toString() == '0') ||
+            control.value.toString().trim().isEmpty
+        ? null
+        : {'min1': true};
+  }
+
+  static Map<String, dynamic>? requiredMaxStudentCount(
+    AbstractControl<dynamic> control,
+  ) {
+    return control.value == null ||
+            int.parse(control.value.toString()) <= 10000 ||
+            control.value.toString().trim().isEmpty
+        ? null
+        : {'max10000': true};
+  }
+
   static Map<String, dynamic>? requiredMin(
     AbstractControl<dynamic> control,
   ) {
@@ -109,6 +130,23 @@ class CustomValidator {
     return {'mobileNumber': true};
   }
 
+  static Map<String, dynamic>? validWaybillStockCount(
+    AbstractControl<dynamic> control,
+  ) {
+    if (control.value == null || control.value.toString().isEmpty) {
+      return null;
+    }
+
+    var parsed = int.tryParse(control.value.toString()) ?? 0;
+    if (parsed < 0) {
+      return {'min': true};
+    } else if (parsed > 1000000000) {
+      return {'max': true};
+    }
+
+    return null;
+  }
+
   static Map<String, dynamic>? validStockCount(
     AbstractControl<dynamic> control,
   ) {
@@ -119,7 +157,7 @@ class CustomValidator {
     var parsed = int.tryParse(control.value) ?? 0;
     if (parsed < 0) {
       return {'min': true};
-    } else if (parsed > 10000000) {
+    } else if (parsed > 1000000000) {
       return {'max': true};
     }
 
@@ -359,7 +397,8 @@ bool checkEligibilityForAgeAndSideEffect(
     if (true) {
       return currentCycle == null || currentCycle.deliveries == null
           ? false
-          : fetchProductVariant(currentCycle.deliveries!.first, individual) ==
+          : fetchProductVariant(
+                      currentCycle.deliveries!.firstOrNull, individual) ==
                   null
               ? false
               : true;
@@ -377,6 +416,26 @@ bool checkEligibilityForAgeAndSideEffect(
   }
 
   return false;
+}
+
+Future<T> retryLocalCallOperation<T>(Future<T> Function() operation,
+    {int maxRetries = 5,
+    Duration retryDelay = const Duration(seconds: 1)}) async {
+  int retryCount = 0;
+  while (retryCount < maxRetries) {
+    try {
+      return await operation();
+    } catch (e) {
+      if (e is SqliteException && e.extendedResultCode == 5) {
+        retryCount++;
+        await Future.delayed(retryDelay); // Wait before retrying
+      } else {
+        rethrow; // Exit loop on unexpected errors
+      }
+    }
+  }
+  throw Exception(
+      'Failed to complete the database operation after $maxRetries retries.');
 }
 
 Cycle? getCurrentCycle(ProjectType? projectType) {
@@ -503,6 +562,10 @@ bool recordedSideEffect(
   if (selectedCycle != null &&
       selectedCycle.startDate != null &&
       selectedCycle.endDate != null) {
+    if ((task != null) && task.status == Status.beneficiaryRefused.toValue()) {
+      return true;
+    }
+
     if ((task != null) && (sideEffects ?? []).isNotEmpty) {
       final lastTaskCreatedTime =
           task.clientReferenceId == sideEffects?.last.taskClientReferenceId
@@ -516,6 +579,64 @@ bool recordedSideEffect(
   }
 
   return false;
+}
+
+int getSyncCount(List<OpLog> oplogs) {
+  int count = oplogs.where((element) {
+    if (element.syncedDown == false && element.syncedUp == true) {
+      switch (element.entityType) {
+        case DataModelType.household:
+        case DataModelType.individual:
+        case DataModelType.householdMember:
+        case DataModelType.projectBeneficiary:
+        case DataModelType.task:
+        case DataModelType.stock:
+        case DataModelType.stockReconciliation:
+        case DataModelType.sideEffect:
+        case DataModelType.referral:
+        case DataModelType.hFReferral:
+        case DataModelType.attendance:
+          return true;
+        default:
+          return false;
+      }
+    } else {
+      switch (element.entityType) {
+        case DataModelType.household:
+        case DataModelType.individual:
+        case DataModelType.householdMember:
+        case DataModelType.projectBeneficiary:
+        case DataModelType.task:
+        case DataModelType.stock:
+        case DataModelType.stockReconciliation:
+        case DataModelType.service:
+        case DataModelType.complaints:
+        case DataModelType.sideEffect:
+        case DataModelType.referral:
+        case DataModelType.hFReferral:
+        case DataModelType.attendance:
+          return true;
+        default:
+          return false;
+      }
+    }
+  }).length;
+
+  return count;
+}
+
+bool isCurrentTimeBeforeEndTime(int startEpochMillis, int hoursToAdd) {
+  // Convert the epoch time to a DateTime object
+  DateTime startTime = DateTime.fromMillisecondsSinceEpoch(startEpochMillis);
+
+  // Add the given hours to the start time
+  DateTime endTime = startTime.add(Duration(hours: hoursToAdd));
+
+  // Get the current time
+  DateTime currentTime = DateTime.now();
+
+  // Return true if current time is before end time, otherwise false
+  return currentTime.isBefore(endTime);
 }
 
 bool allDosesDelivered(
@@ -584,9 +705,9 @@ DoseCriteriaModel? fetchProductVariant(
                 .isNotEmpty
         ? individualModel.additionalFields?.fields
             .where((element) => element.key == "height")
-            .first
+            .firstOrNull!
             .value
-        : 0);
+        : '0');
     final filteredCriteria = currentDelivery.doseCriteria?.where((criteria) {
       final condition = criteria.condition;
       if (condition != null) {
@@ -857,4 +978,79 @@ getSelectedLanguage(AppInitialized state, int index) {
       state.appConfiguration.languages![index].value == selectedLanguage;
 
   return isSelected;
+}
+
+List<HouseholdModel> excludeHouseholdType(
+  List<HouseholdModel> householdModels,
+  String excludeType,
+) {
+  // Create a new list to store the households that are not of type "SCHOOL"
+  List<HouseholdModel> filteredHouseholds = [];
+
+  for (final household in householdModels) {
+    if (household.additionalFields != null) {
+      // Check if the additional fields contain 'type'
+      if (household.additionalFields!.fields
+          .map((e) => e.key)
+          .contains(Constants.houseHoldBeneficiaryType)) {
+        // Get the value of 'type'
+        var typeValue = household.additionalFields!.fields
+            .firstWhere(
+              (element) => element.key == Constants.houseHoldBeneficiaryType,
+            )
+            .value;
+
+        // Only add the household to the filtered list if the type is not 'SCHOOL'
+        if (typeValue != excludeType) {
+          filteredHouseholds.add(household);
+        }
+      } else {
+        // Add households that don't have 'type' field as well
+        filteredHouseholds.add(household);
+      }
+    } else {
+      // Add households that don't have additional fields
+      filteredHouseholds.add(household);
+    }
+  }
+
+  return filteredHouseholds;
+}
+
+bool isHouseHoldSchool(HouseholdMemberWrapper wrapper) {
+  bool isSchool = wrapper.household.additionalFields!.fields
+          .where(
+            (element) =>
+                element.key == Constants.houseHoldBeneficiaryType &&
+                element.value == Constants.schoolType,
+          )
+          .firstOrNull !=
+      null;
+
+  return isSchool;
+}
+
+addSchoolName(HouseholdMemberWrapper wrapper) {
+  String schoolName = wrapper.household.additionalFields!.fields
+      .where(
+        (element) => element.key == Constants.schoolNameKey,
+      )
+      .firstOrNull!
+      .value;
+
+  return AdditionalField(Constants.schoolNameKey, schoolName);
+}
+
+addSchoolAdditionalType() {
+  return const AdditionalField(
+    Constants.houseHoldBeneficiaryType,
+    Constants.schoolType,
+  );
+}
+
+addHouseHoldAdditionalType() {
+  return const AdditionalField(
+    Constants.houseHoldBeneficiaryType,
+    Constants.houseHoldType,
+  );
 }

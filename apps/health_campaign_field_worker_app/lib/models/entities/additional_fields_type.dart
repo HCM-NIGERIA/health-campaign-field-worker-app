@@ -21,5 +21,6 @@ enum AdditionalFieldsType {
   @MappableValue("deliveryComment") deliveryComment,
   @MappableValue("latitude") latitude,
   @MappableValue("longitude") longitude,
+  @MappableValue("individualClientreferenceId") individualClientreferenceId,
   ;
 }

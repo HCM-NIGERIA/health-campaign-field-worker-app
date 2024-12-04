@@ -5,13 +5,15 @@ import 'data_model.dart';
 class PerformanceSummary extends EntityModel {
   double treatedPercentage;
   int householdCount;
+  int schoolCount;
   int taskCount;
-  int drugOne;
-  int drugTwo;
+  dynamic drugOne;
+  dynamic drugTwo;
 
   PerformanceSummary({
     required this.treatedPercentage,
     required this.householdCount,
+    required this.schoolCount,
     required this.taskCount,
     required this.drugOne,
     required this.drugTwo,

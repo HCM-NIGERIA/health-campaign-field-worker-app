@@ -68,23 +68,7 @@ Widget buildTableContent(
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisSize: MainAxisSize.min,
           children: [
-            DigitTableCard(
-              topPadding: const EdgeInsets.only(top: 0.0),
-              padding: const EdgeInsets.only(bottom: kPadding / 2),
-              fraction: 2.5,
-              element: {
-                localizations.translate(
-                  i18.beneficiaryDetails.beneficiaryAge,
-                ): localizations.translate(
-                  '${getAgeConditionString('${fetchProductVariant(item, individualModel)?.condition}')}',
-                ),
-              },
-            ),
-            const Divider(
-              thickness: 1,
-            ),
             getHeightConditionString(
                       '${fetchProductVariant(item, individualModel)?.condition}',
                     ) !=
@@ -124,7 +108,8 @@ Widget buildTableContent(
                           (element) => element.id == e.productVariantId,
                         )
                         .sku;
-                    final quantity = e.quantity!.toInt();
+                    final quantity =
+                        e.quantity != null ? e.quantity!.toDouble() : 0.0;
 
                     return TableDataRow([
                       // Display the dose information in the first column if it's the first row,
@@ -141,7 +126,7 @@ Widget buildTableContent(
                           : TableData(''),
                       // Display the SKU value in the second column.
                       TableData(
-                        '$quantity ${localizations.translate(value.toString())}',
+                        '$quantity ${localizations.translate(i18.beneficiaryDetails.tabletOf.toString())} ${localizations.translate(value.toString())}',
                         cellKey: 'resources',
                       ),
                     ]);

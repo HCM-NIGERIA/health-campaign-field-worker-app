@@ -7,6 +7,7 @@ import 'package:digit_components/widgets/digit_dob_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:health_campaign_field_worker_app/blocs/household_overview/household_overview.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -60,6 +61,7 @@ class _IndividualDetailsPageState
     final router = context.router;
     final theme = Theme.of(context);
     DateTime before150Years = DateTime(now.year - 150, now.month, now.day);
+    DateTime before18Years = DateTime(now.year - 18, now.month, now.day);
 
     return Scaffold(
       body: ReactiveFormBuilder(
@@ -73,6 +75,7 @@ class _IndividualDetailsPageState
                   (router.parent() as StackRouter).pop();
                 } else {
                   (router.parent() as StackRouter).pop();
+
                   context.read<SearchBlocWrapper>().searchHouseholdsBloc.add(
                         SearchHouseholdsEvent.searchByHousehold(
                           householdModel: value.householdModel,
@@ -80,6 +83,7 @@ class _IndividualDetailsPageState
                           isProximityEnabled: false,
                         ),
                       );
+
                   router.push(BeneficiaryAcknowledgementRoute(
                     enableViewHousehold: true,
                   ));
@@ -200,38 +204,7 @@ class _IndividualDetailsPageState
                                       ),
                                     );
                                   } else {
-                                    final submit = await DigitDialog.show<bool>(
-                                      context,
-                                      options: DigitDialogOptions(
-                                        titleText: localizations.translate(
-                                          i18.deliverIntervention.dialogTitle,
-                                        ),
-                                        contentText: localizations.translate(
-                                          i18.deliverIntervention.dialogContent,
-                                        ),
-                                        primaryAction: DigitDialogActions(
-                                          label: localizations.translate(
-                                            i18.common.coreCommonSubmit,
-                                          ),
-                                          action: (context) {
-                                            clickedStatus.value = true;
-                                            Navigator.of(
-                                              context,
-                                              rootNavigator: true,
-                                            ).pop(true);
-                                          },
-                                        ),
-                                        secondaryAction: DigitDialogActions(
-                                          label: localizations.translate(
-                                            i18.common.coreCommonCancel,
-                                          ),
-                                          action: (context) => Navigator.of(
-                                            context,
-                                            rootNavigator: true,
-                                          ).pop(false),
-                                        ),
-                                      ),
-                                    );
+                                    final submit = await getSubmitStatus();
 
                                     if (submit ?? false) {
                                       if (context.mounted) {
@@ -326,7 +299,7 @@ class _IndividualDetailsPageState
                                   addressModel,
                                   householdModel,
                                   loading,
-                                ) {
+                                ) async {
                                   final individual = _getIndividualModel(
                                     context,
                                     form: form,
@@ -349,21 +322,26 @@ class _IndividualDetailsPageState
                                         ),
                                       );
                                     } else {
-                                      bloc.add(
-                                        BeneficiaryRegistrationAddMemberEvent(
-                                          beneficiaryType:
-                                              context.beneficiaryType,
-                                          householdModel: householdModel,
-                                          individualModel: individual,
-                                          addressModel: addressModel,
-                                          userUuid: userId,
-                                          projectId: context.projectId,
-                                          tag: scannerBloc
-                                                  .state.qrcodes.isNotEmpty
-                                              ? scannerBloc.state.qrcodes.first
-                                              : null,
-                                        ),
-                                      );
+                                      final submit = await getSubmitStatus();
+
+                                      if (submit ?? false) {
+                                        bloc.add(
+                                          BeneficiaryRegistrationAddMemberEvent(
+                                            beneficiaryType:
+                                                context.beneficiaryType,
+                                            householdModel: householdModel,
+                                            individualModel: individual,
+                                            addressModel: addressModel,
+                                            userUuid: userId,
+                                            projectId: context.projectId,
+                                            tag: scannerBloc
+                                                    .state.qrcodes.isNotEmpty
+                                                ? scannerBloc
+                                                    .state.qrcodes.first
+                                                : null,
+                                          ),
+                                        );
+                                      }
                                     }
                                   }
                                 },
@@ -483,6 +461,9 @@ class _IndividualDetailsPageState
                                   i18.individualDetails.yearsAndMonthsErrorText,
                                 ),
                                 initialDate: before150Years,
+                                finalDate: widget.isHeadOfHousehold
+                                    ? before18Years
+                                    : DateTime.now(),
                                 onChangeOfFormControl: (formControl) {
                                   // Handle changes to the control's value here
                                   final value = formControl.value;
@@ -745,10 +726,10 @@ class _IndividualDetailsPageState
           identifierType: 'DEFAULT',
         ),
       ],
-      additionalFields: disabilityType != null
-          ? IndividualAdditionalFields(
-              version: 1,
-              fields: [
+      additionalFields: IndividualAdditionalFields(
+        version: 1,
+        fields: (disabilityType != null)
+            ? [
                 AdditionalField(
                   _disabilityTypeKey,
                   disabilityType,
@@ -757,9 +738,9 @@ class _IndividualDetailsPageState
                   _heightKey,
                   height.length == 1 ? '0$height' : height,
                 ),
-              ],
-            )
-          : null,
+              ]
+            : [],
+      ),
     );
     final cycleIndex =
         context.selectedCycle.id == 0 ? "" : "0${context.selectedCycle.id}";
@@ -869,10 +850,47 @@ class _IndividualDetailsPageState
           FormControl<String>(value: individual?.mobileNumber, validators: [
         CustomValidator.validMobileNumber,
       ]),
-      _disabilityTypeKey:
-          FormControl<String>(value: disabilityType, validators: [
-        Validators.required,
-      ]),
+      _disabilityTypeKey: FormControl<String>(
+        value: disabilityType,
+        validators: [
+          Validators.required,
+        ],
+      ),
     });
+  }
+
+  Future<bool?> getSubmitStatus() async {
+    return await DigitDialog.show<bool>(
+      context,
+      options: DigitDialogOptions(
+        titleText: localizations.translate(
+          i18.deliverIntervention.dialogTitle,
+        ),
+        contentText: localizations.translate(
+          i18.deliverIntervention.dialogContent,
+        ),
+        primaryAction: DigitDialogActions(
+          label: localizations.translate(
+            i18.common.coreCommonSubmit,
+          ),
+          action: (context) {
+            clickedStatus.value = true;
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pop(true);
+          },
+        ),
+        secondaryAction: DigitDialogActions(
+          label: localizations.translate(
+            i18.common.coreCommonCancel,
+          ),
+          action: (context) => Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pop(false),
+        ),
+      ),
+    );
   }
 }

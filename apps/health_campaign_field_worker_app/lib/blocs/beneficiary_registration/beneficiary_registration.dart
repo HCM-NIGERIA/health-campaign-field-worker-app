@@ -1,6 +1,7 @@
 // GENERATED using mason_cli
 import 'dart:async';
 
+import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -209,6 +210,15 @@ class BeneficiaryRegistrationBloc
             }
           }
 
+          DigitDOBAge? age = individual.dateOfBirth != null
+              ? DigitDateUtils.calculateAge(
+                  DigitDateUtils.getFormattedDateToDateTime(
+                        individual.dateOfBirth!,
+                      ) ??
+                      DateTime.now(),
+                )
+              : null;
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId: household.clientReferenceId,
@@ -232,6 +242,20 @@ class BeneficiaryRegistrationBloc
                 fields: [
                   if (cycleIndex.isNotEmpty)
                     AdditionalField("cycleIndex", cycleIndex),
+                  AdditionalField(
+                    AdditionalFieldsType.individualClientreferenceId.toValue(),
+                    individual.clientReferenceId,
+                  ),
+                  if (individual.gender != null)
+                    AdditionalField(
+                      AdditionalFieldsType.gender.toValue(),
+                      individual.gender!.name,
+                    ),
+                  if (age != null)
+                    AdditionalField(
+                      AdditionalFieldsType.age.toValue(),
+                      "0${age.years * 12 + age.months}",
+                    ),
                 ],
               ),
             ),
@@ -456,6 +480,15 @@ class BeneficiaryRegistrationBloc
             );
           }
 
+          DigitDOBAge? age = event.individualModel.dateOfBirth != null
+              ? DigitDateUtils.calculateAge(
+                  DigitDateUtils.getFormattedDateToDateTime(
+                        event.individualModel.dateOfBirth!,
+                      ) ??
+                      DateTime.now(),
+                )
+              : null;
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId:
@@ -481,6 +514,20 @@ class BeneficiaryRegistrationBloc
                 fields: [
                   if (cycleIndex.isNotEmpty)
                     AdditionalField("cycleIndex", cycleIndex),
+                  AdditionalField(
+                    AdditionalFieldsType.individualClientreferenceId.toValue(),
+                    event.individualModel.clientReferenceId,
+                  ),
+                  if (event.individualModel.gender != null)
+                    AdditionalField(
+                      AdditionalFieldsType.gender.toValue(),
+                      event.individualModel.gender!.name,
+                    ),
+                  if (age != null)
+                    AdditionalField(
+                      AdditionalFieldsType.age.toValue(),
+                      "0${age.years * 12 + age.months}",
+                    ),
                 ],
               ),
             ),

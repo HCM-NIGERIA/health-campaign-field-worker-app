@@ -5248,6 +5248,11 @@ class $BoundaryTable extends Boundary
   late final GeneratedColumn<String> longitude = GeneratedColumn<String>(
       'longitude', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _areaMeta = const VerificationMeta('area');
+  @override
+  late final GeneratedColumn<String> area = GeneratedColumn<String>(
+      'area', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _materializedPathMeta =
       const VerificationMeta('materializedPath');
   @override
@@ -5312,6 +5317,7 @@ class $BoundaryTable extends Boundary
         label,
         latitude,
         longitude,
+        area,
         materializedPath,
         auditCreatedBy,
         boundaryNum,
@@ -5351,6 +5357,10 @@ class $BoundaryTable extends Boundary
     if (data.containsKey('longitude')) {
       context.handle(_longitudeMeta,
           longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta));
+    }
+    if (data.containsKey('area')) {
+      context.handle(
+          _areaMeta, area.isAcceptableOrUnknown(data['area']!, _areaMeta));
     }
     if (data.containsKey('materialized_path')) {
       context.handle(
@@ -5421,6 +5431,8 @@ class $BoundaryTable extends Boundary
           .read(DriftSqlType.string, data['${effectivePrefix}latitude']),
       longitude: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}longitude']),
+      area: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}area']),
       materializedPath: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}materialized_path']),
       auditCreatedBy: attachedDatabase.typeMapping.read(
@@ -5454,6 +5466,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
   final String? label;
   final String? latitude;
   final String? longitude;
+  final String? area;
   final String? materializedPath;
   final String? auditCreatedBy;
   final int? boundaryNum;
@@ -5469,6 +5482,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
       this.label,
       this.latitude,
       this.longitude,
+      this.area,
       this.materializedPath,
       this.auditCreatedBy,
       this.boundaryNum,
@@ -5495,6 +5509,9 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
     }
     if (!nullToAbsent || longitude != null) {
       map['longitude'] = Variable<String>(longitude);
+    }
+    if (!nullToAbsent || area != null) {
+      map['area'] = Variable<String>(area);
     }
     if (!nullToAbsent || materializedPath != null) {
       map['materialized_path'] = Variable<String>(materializedPath);
@@ -5538,6 +5555,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
       longitude: longitude == null && nullToAbsent
           ? const Value.absent()
           : Value(longitude),
+      area: area == null && nullToAbsent ? const Value.absent() : Value(area),
       materializedPath: materializedPath == null && nullToAbsent
           ? const Value.absent()
           : Value(materializedPath),
@@ -5577,6 +5595,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
       label: serializer.fromJson<String?>(json['label']),
       latitude: serializer.fromJson<String?>(json['latitude']),
       longitude: serializer.fromJson<String?>(json['longitude']),
+      area: serializer.fromJson<String?>(json['area']),
       materializedPath: serializer.fromJson<String?>(json['materializedPath']),
       auditCreatedBy: serializer.fromJson<String?>(json['auditCreatedBy']),
       boundaryNum: serializer.fromJson<int?>(json['boundaryNum']),
@@ -5597,6 +5616,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
       'label': serializer.toJson<String?>(label),
       'latitude': serializer.toJson<String?>(latitude),
       'longitude': serializer.toJson<String?>(longitude),
+      'area': serializer.toJson<String?>(area),
       'materializedPath': serializer.toJson<String?>(materializedPath),
       'auditCreatedBy': serializer.toJson<String?>(auditCreatedBy),
       'boundaryNum': serializer.toJson<int?>(boundaryNum),
@@ -5615,6 +5635,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
           Value<String?> label = const Value.absent(),
           Value<String?> latitude = const Value.absent(),
           Value<String?> longitude = const Value.absent(),
+          Value<String?> area = const Value.absent(),
           Value<String?> materializedPath = const Value.absent(),
           Value<String?> auditCreatedBy = const Value.absent(),
           Value<int?> boundaryNum = const Value.absent(),
@@ -5630,6 +5651,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
         label: label.present ? label.value : this.label,
         latitude: latitude.present ? latitude.value : this.latitude,
         longitude: longitude.present ? longitude.value : this.longitude,
+        area: area.present ? area.value : this.area,
         materializedPath: materializedPath.present
             ? materializedPath.value
             : this.materializedPath,
@@ -5657,6 +5679,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
           ..write('label: $label, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
+          ..write('area: $area, ')
           ..write('materializedPath: $materializedPath, ')
           ..write('auditCreatedBy: $auditCreatedBy, ')
           ..write('boundaryNum: $boundaryNum, ')
@@ -5677,6 +5700,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
       label,
       latitude,
       longitude,
+      area,
       materializedPath,
       auditCreatedBy,
       boundaryNum,
@@ -5695,6 +5719,7 @@ class BoundaryData extends DataClass implements Insertable<BoundaryData> {
           other.label == this.label &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
+          other.area == this.area &&
           other.materializedPath == this.materializedPath &&
           other.auditCreatedBy == this.auditCreatedBy &&
           other.boundaryNum == this.boundaryNum &&
@@ -5712,6 +5737,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
   final Value<String?> label;
   final Value<String?> latitude;
   final Value<String?> longitude;
+  final Value<String?> area;
   final Value<String?> materializedPath;
   final Value<String?> auditCreatedBy;
   final Value<int?> boundaryNum;
@@ -5728,6 +5754,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
     this.label = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
+    this.area = const Value.absent(),
     this.materializedPath = const Value.absent(),
     this.auditCreatedBy = const Value.absent(),
     this.boundaryNum = const Value.absent(),
@@ -5745,6 +5772,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
     this.label = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
+    this.area = const Value.absent(),
     this.materializedPath = const Value.absent(),
     this.auditCreatedBy = const Value.absent(),
     this.boundaryNum = const Value.absent(),
@@ -5762,6 +5790,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
     Expression<String>? label,
     Expression<String>? latitude,
     Expression<String>? longitude,
+    Expression<String>? area,
     Expression<String>? materializedPath,
     Expression<String>? auditCreatedBy,
     Expression<int>? boundaryNum,
@@ -5779,6 +5808,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
       if (label != null) 'label': label,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
+      if (area != null) 'area': area,
       if (materializedPath != null) 'materialized_path': materializedPath,
       if (auditCreatedBy != null) 'audit_created_by': auditCreatedBy,
       if (boundaryNum != null) 'boundary_num': boundaryNum,
@@ -5798,6 +5828,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
       Value<String?>? label,
       Value<String?>? latitude,
       Value<String?>? longitude,
+      Value<String?>? area,
       Value<String?>? materializedPath,
       Value<String?>? auditCreatedBy,
       Value<int?>? boundaryNum,
@@ -5814,6 +5845,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
       label: label ?? this.label,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      area: area ?? this.area,
       materializedPath: materializedPath ?? this.materializedPath,
       auditCreatedBy: auditCreatedBy ?? this.auditCreatedBy,
       boundaryNum: boundaryNum ?? this.boundaryNum,
@@ -5844,6 +5876,9 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
     }
     if (longitude.present) {
       map['longitude'] = Variable<String>(longitude.value);
+    }
+    if (area.present) {
+      map['area'] = Variable<String>(area.value);
     }
     if (materializedPath.present) {
       map['materialized_path'] = Variable<String>(materializedPath.value);
@@ -5886,6 +5921,7 @@ class BoundaryCompanion extends UpdateCompanion<BoundaryData> {
           ..write('label: $label, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
+          ..write('area: $area, ')
           ..write('materializedPath: $materializedPath, ')
           ..write('auditCreatedBy: $auditCreatedBy, ')
           ..write('boundaryNum: $boundaryNum, ')
@@ -30536,6 +30572,12 @@ class $AttributesTable extends Attributes
   late final GeneratedColumn<String> additionalFields = GeneratedColumn<String>(
       'additional_fields', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _additionalDetailsMeta =
+      const VerificationMeta('additionalDetails');
+  @override
+  late final GeneratedColumn<String> additionalDetails =
+      GeneratedColumn<String>('additional_details', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -30559,7 +30601,8 @@ class $AttributesTable extends Attributes
         auditModifiedTime,
         isDeleted,
         rowVersion,
-        additionalFields
+        additionalFields,
+        additionalDetails
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -30682,6 +30725,12 @@ class $AttributesTable extends Attributes
           additionalFields.isAcceptableOrUnknown(
               data['additional_fields']!, _additionalFieldsMeta));
     }
+    if (data.containsKey('additional_details')) {
+      context.handle(
+          _additionalDetailsMeta,
+          additionalDetails.isAcceptableOrUnknown(
+              data['additional_details']!, _additionalDetailsMeta));
+    }
     return context;
   }
 
@@ -30735,6 +30784,8 @@ class $AttributesTable extends Attributes
           .read(DriftSqlType.int, data['${effectivePrefix}row_version']),
       additionalFields: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}additional_fields']),
+      additionalDetails: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}additional_details']),
     );
   }
 
@@ -30767,6 +30818,7 @@ class Attribute extends DataClass implements Insertable<Attribute> {
   final bool? isDeleted;
   final int? rowVersion;
   final String? additionalFields;
+  final String? additionalDetails;
   const Attribute(
       {this.id,
       this.dataType,
@@ -30789,7 +30841,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
       this.auditModifiedTime,
       this.isDeleted,
       this.rowVersion,
-      this.additionalFields});
+      this.additionalFields,
+      this.additionalDetails});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -30859,6 +30912,9 @@ class Attribute extends DataClass implements Insertable<Attribute> {
     if (!nullToAbsent || additionalFields != null) {
       map['additional_fields'] = Variable<String>(additionalFields);
     }
+    if (!nullToAbsent || additionalDetails != null) {
+      map['additional_details'] = Variable<String>(additionalDetails);
+    }
     return map;
   }
 
@@ -30923,6 +30979,9 @@ class Attribute extends DataClass implements Insertable<Attribute> {
       additionalFields: additionalFields == null && nullToAbsent
           ? const Value.absent()
           : Value(additionalFields),
+      additionalDetails: additionalDetails == null && nullToAbsent
+          ? const Value.absent()
+          : Value(additionalDetails),
     );
   }
 
@@ -30953,6 +31012,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
       isDeleted: serializer.fromJson<bool?>(json['isDeleted']),
       rowVersion: serializer.fromJson<int?>(json['rowVersion']),
       additionalFields: serializer.fromJson<String?>(json['additionalFields']),
+      additionalDetails:
+          serializer.fromJson<String?>(json['additionalDetails']),
     );
   }
   @override
@@ -30981,6 +31042,7 @@ class Attribute extends DataClass implements Insertable<Attribute> {
       'isDeleted': serializer.toJson<bool?>(isDeleted),
       'rowVersion': serializer.toJson<int?>(rowVersion),
       'additionalFields': serializer.toJson<String?>(additionalFields),
+      'additionalDetails': serializer.toJson<String?>(additionalDetails),
     };
   }
 
@@ -31006,7 +31068,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
           Value<int?> auditModifiedTime = const Value.absent(),
           Value<bool?> isDeleted = const Value.absent(),
           Value<int?> rowVersion = const Value.absent(),
-          Value<String?> additionalFields = const Value.absent()}) =>
+          Value<String?> additionalFields = const Value.absent(),
+          Value<String?> additionalDetails = const Value.absent()}) =>
       Attribute(
         id: id.present ? id.value : this.id,
         dataType: dataType.present ? dataType.value : this.dataType,
@@ -31049,6 +31112,9 @@ class Attribute extends DataClass implements Insertable<Attribute> {
         additionalFields: additionalFields.present
             ? additionalFields.value
             : this.additionalFields,
+        additionalDetails: additionalDetails.present
+            ? additionalDetails.value
+            : this.additionalDetails,
       );
   @override
   String toString() {
@@ -31074,7 +31140,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
           ..write('auditModifiedTime: $auditModifiedTime, ')
           ..write('isDeleted: $isDeleted, ')
           ..write('rowVersion: $rowVersion, ')
-          ..write('additionalFields: $additionalFields')
+          ..write('additionalFields: $additionalFields, ')
+          ..write('additionalDetails: $additionalDetails')
           ..write(')'))
         .toString();
   }
@@ -31102,7 +31169,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
         auditModifiedTime,
         isDeleted,
         rowVersion,
-        additionalFields
+        additionalFields,
+        additionalDetails
       ]);
   @override
   bool operator ==(Object other) =>
@@ -31129,7 +31197,8 @@ class Attribute extends DataClass implements Insertable<Attribute> {
           other.auditModifiedTime == this.auditModifiedTime &&
           other.isDeleted == this.isDeleted &&
           other.rowVersion == this.rowVersion &&
-          other.additionalFields == this.additionalFields);
+          other.additionalFields == this.additionalFields &&
+          other.additionalDetails == this.additionalDetails);
 }
 
 class AttributesCompanion extends UpdateCompanion<Attribute> {
@@ -31155,6 +31224,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
   final Value<bool?> isDeleted;
   final Value<int?> rowVersion;
   final Value<String?> additionalFields;
+  final Value<String?> additionalDetails;
   final Value<int> rowid;
   const AttributesCompanion({
     this.id = const Value.absent(),
@@ -31179,6 +31249,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
     this.isDeleted = const Value.absent(),
     this.rowVersion = const Value.absent(),
     this.additionalFields = const Value.absent(),
+    this.additionalDetails = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AttributesCompanion.insert({
@@ -31204,6 +31275,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
     this.isDeleted = const Value.absent(),
     this.rowVersion = const Value.absent(),
     this.additionalFields = const Value.absent(),
+    this.additionalDetails = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<Attribute> custom({
@@ -31229,6 +31301,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
     Expression<bool>? isDeleted,
     Expression<int>? rowVersion,
     Expression<String>? additionalFields,
+    Expression<String>? additionalDetails,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -31256,6 +31329,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (rowVersion != null) 'row_version': rowVersion,
       if (additionalFields != null) 'additional_fields': additionalFields,
+      if (additionalDetails != null) 'additional_details': additionalDetails,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -31283,6 +31357,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
       Value<bool?>? isDeleted,
       Value<int?>? rowVersion,
       Value<String?>? additionalFields,
+      Value<String?>? additionalDetails,
       Value<int>? rowid}) {
     return AttributesCompanion(
       id: id ?? this.id,
@@ -31307,6 +31382,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
       isDeleted: isDeleted ?? this.isDeleted,
       rowVersion: rowVersion ?? this.rowVersion,
       additionalFields: additionalFields ?? this.additionalFields,
+      additionalDetails: additionalDetails ?? this.additionalDetails,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -31380,6 +31456,9 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
     if (additionalFields.present) {
       map['additional_fields'] = Variable<String>(additionalFields.value);
     }
+    if (additionalDetails.present) {
+      map['additional_details'] = Variable<String>(additionalDetails.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -31411,6 +31490,7 @@ class AttributesCompanion extends UpdateCompanion<Attribute> {
           ..write('isDeleted: $isDeleted, ')
           ..write('rowVersion: $rowVersion, ')
           ..write('additionalFields: $additionalFields, ')
+          ..write('additionalDetails: $additionalDetails, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
