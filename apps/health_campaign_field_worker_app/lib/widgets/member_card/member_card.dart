@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/utils/date_utils.dart';
 import 'package:flutter/material.dart';
@@ -409,6 +410,22 @@ class MemberCard extends StatelessWidget {
                                                   )
                                                 : null;
 
+                                            final disabilityType = individual
+                                                .additionalFields?.fields
+                                                .firstWhereOrNull(
+                                              (element) =>
+                                                  element.key ==
+                                                  Constants.disabilityTypeKey,
+                                            );
+
+                                            final height = individual
+                                                .additionalFields?.fields
+                                                .firstWhereOrNull(
+                                              (element) =>
+                                                  element.key ==
+                                                  Constants.heightKey,
+                                            );
+
                                             context
                                                 .read<DeliverInterventionBloc>()
                                                 .add(
@@ -479,6 +496,23 @@ class MemberCard extends StatelessWidget {
                                                               age.years * 12 +
                                                                   age.months,
                                                             ),
+                                                          if (age != null)
+                                                            AdditionalField(
+                                                              Constants.dob,
+                                                              DigitDateUtils
+                                                                          .getFormattedDateToDateTime(
+                                                                    individual!
+                                                                        .dateOfBirth!,
+                                                                  )
+                                                                      ?.millisecondsSinceEpoch ??
+                                                                  DateTime.now()
+                                                                      .microsecondsSinceEpoch,
+                                                            ),
+                                                          if (disabilityType !=
+                                                              null)
+                                                            disabilityType,
+                                                          if (height != null)
+                                                            height,
                                                           isHouseHoldSchool(
                                                             reloadState.state
                                                                 .householdMemberWrapper,
