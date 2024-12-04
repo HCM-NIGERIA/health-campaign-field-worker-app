@@ -51,8 +51,6 @@ class _IndividualDetailsPageState
   static const maxLength = 200;
   final clickedStatus = ValueNotifier<bool>(false);
   DateTime now = DateTime.now();
-  static const _disabilityTypeKey = 'disabilityType';
-  static const _heightKey = 'height';
   bool isHeadAgeValid = true;
 
   @override
@@ -567,7 +565,7 @@ class _IndividualDetailsPageState
                           child: DigitTextFormField(
                             keyboardType: TextInputType.number,
                             isRequired: true,
-                            formControlName: _heightKey,
+                            formControlName: Constants.heightKey,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                 RegExp("[0-9]"),
@@ -612,7 +610,7 @@ class _IndividualDetailsPageState
                                 menuItems: disabilityTypes.map((e) {
                                   return e.code;
                                 }).toList(),
-                                formControlName: _disabilityTypeKey,
+                                formControlName: Constants.disabilityTypeKey,
                                 validationMessages: {
                                   'required': (object) => localizations
                                       .translate(i18.common.corecommonRequired),
@@ -704,9 +702,9 @@ class _IndividualDetailsPageState
       ),
     );
 
-    final disabilityType = form.control(_disabilityTypeKey).value;
+    final disabilityType = form.control(Constants.disabilityTypeKey).value;
 
-    final height = form.control(_heightKey).value as String;
+    final height = form.control(Constants.heightKey).value as String;
 
     individual = individual.copyWith(
       name: name.copyWith(
@@ -731,11 +729,11 @@ class _IndividualDetailsPageState
         fields: (disabilityType != null)
             ? [
                 AdditionalField(
-                  _disabilityTypeKey,
+                  Constants.disabilityTypeKey,
                   disabilityType,
                 ),
                 AdditionalField(
-                  _heightKey,
+                  Constants.heightKey,
                   height.length == 1 ? '0$height' : height,
                 ),
               ]
@@ -794,11 +792,13 @@ class _IndividualDetailsPageState
     );
 
     final disabilityType = individual?.additionalFields?.fields
-        .firstWhereOrNull((element) => element.key == _disabilityTypeKey)
+        .firstWhereOrNull(
+          (element) => element.key == Constants.disabilityTypeKey,
+        )
         ?.value;
 
     final height = individual?.additionalFields?.fields
-        .firstWhereOrNull((element) => element.key == _heightKey)
+        .firstWhereOrNull((element) => element.key == Constants.heightKey)
         ?.value;
 
     return fb.group(<String, Object>{
@@ -842,7 +842,7 @@ class _IndividualDetailsPageState
               },
             ),
       ),
-      _heightKey: FormControl<String>(
+      Constants.heightKey: FormControl<String>(
         value: height,
         validators: [Validators.required],
       ),
@@ -850,7 +850,7 @@ class _IndividualDetailsPageState
           FormControl<String>(value: individual?.mobileNumber, validators: [
         CustomValidator.validMobileNumber,
       ]),
-      _disabilityTypeKey: FormControl<String>(
+      Constants.disabilityTypeKey: FormControl<String>(
         value: disabilityType,
         validators: [
           Validators.required,

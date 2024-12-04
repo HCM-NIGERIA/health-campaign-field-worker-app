@@ -556,6 +556,15 @@ class _DeliverInterventionPageState
           )
         : null;
 
+    final disabilityType =
+        individual?.additionalFields?.fields.firstWhereOrNull(
+      (element) => element.key == Constants.disabilityTypeKey,
+    );
+
+    final height = individual?.additionalFields?.fields.firstWhereOrNull(
+      (element) => element.key == Constants.heightKey,
+    );
+
     // Update the task with information from the form and other context
     task = task.copyWith(
       projectId: context.projectId,
@@ -665,6 +674,16 @@ class _DeliverInterventionPageState
               AdditionalFieldsType.age.toValue(),
               "0${age.years * 12 + age.months}",
             ),
+          if (age != null)
+            AdditionalField(
+              Constants.dob,
+              DigitDateUtils.getFormattedDateToDateTime(
+                    individual!.dateOfBirth!,
+                  )?.millisecondsSinceEpoch ??
+                  DateTime.now().microsecondsSinceEpoch,
+            ),
+          if (disabilityType != null) disabilityType,
+          if (height != null) height,
           isHouseHoldSchool(wrapper!)
               ? addSchoolAdditionalType()
               : addHouseHoldAdditionalType(),

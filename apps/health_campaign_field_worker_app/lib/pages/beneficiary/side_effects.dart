@@ -532,6 +532,39 @@ class _SideEffectsPageState extends LocalizedState<SideEffectsPage> {
           .firstOrNull!);
     }
     if (task.additionalFields!.fields
+        .where(
+          (element) => element.key == Constants.disabilityTypeKey,
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) => element.key == Constants.disabilityTypeKey,
+          )
+          .firstOrNull!);
+    }
+    if (task.additionalFields!.fields
+        .where(
+          (element) => element.key == Constants.heightKey,
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) => element.key == Constants.heightKey,
+          )
+          .firstOrNull!);
+    }
+    if (task.additionalFields!.fields
+        .where(
+          (element) => element.key == Constants.dob,
+        )
+        .isNotEmpty) {
+      additionalFileds.add(task.additionalFields!.fields
+          .where(
+            (element) => element.key == Constants.dob,
+          )
+          .firstOrNull!);
+    }
+    if (task.additionalFields!.fields
         .where((element) =>
             element.key == Constants.houseHoldBeneficiaryType &&
             element.value == Constants.houseHoldType)

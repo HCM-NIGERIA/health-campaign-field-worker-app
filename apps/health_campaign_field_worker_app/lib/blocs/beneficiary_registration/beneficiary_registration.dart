@@ -1,4 +1,5 @@
 // GENERATED using mason_cli
+import 'package:collection/collection.dart';
 import 'dart:async';
 
 import 'package:digit_components/utils/date_utils.dart';
@@ -219,6 +220,15 @@ class BeneficiaryRegistrationBloc
                 )
               : null;
 
+          final disabilityType =
+              individual.additionalFields?.fields.firstWhereOrNull(
+            (element) => element.key == Constants.disabilityTypeKey,
+          );
+
+          final height = individual.additionalFields?.fields.firstWhereOrNull(
+            (element) => element.key == Constants.heightKey,
+          );
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId: household.clientReferenceId,
@@ -256,6 +266,16 @@ class BeneficiaryRegistrationBloc
                       AdditionalFieldsType.age.toValue(),
                       "0${age.years * 12 + age.months}",
                     ),
+                  if (age != null)
+                    AdditionalField(
+                      Constants.dob,
+                      DigitDateUtils.getFormattedDateToDateTime(
+                            individual.dateOfBirth!,
+                          )?.millisecondsSinceEpoch ??
+                          DateTime.now().microsecondsSinceEpoch,
+                    ),
+                  if (disabilityType != null) disabilityType,
+                  if (height != null) height,
                 ],
               ),
             ),
@@ -489,6 +509,16 @@ class BeneficiaryRegistrationBloc
                 )
               : null;
 
+          final disabilityType =
+              event.individualModel.additionalFields?.fields.firstWhereOrNull(
+            (element) => element.key == Constants.disabilityTypeKey,
+          );
+
+          final height =
+              event.individualModel.additionalFields?.fields.firstWhereOrNull(
+            (element) => element.key == Constants.heightKey,
+          );
+
           await householdMemberRepository.create(
             HouseholdMemberModel(
               householdClientReferenceId:
@@ -528,6 +558,16 @@ class BeneficiaryRegistrationBloc
                       AdditionalFieldsType.age.toValue(),
                       "0${age.years * 12 + age.months}",
                     ),
+                  if (age != null)
+                    AdditionalField(
+                      Constants.dob,
+                      DigitDateUtils.getFormattedDateToDateTime(
+                            event.individualModel.dateOfBirth!,
+                          )?.millisecondsSinceEpoch ??
+                          DateTime.now().microsecondsSinceEpoch,
+                    ),
+                  if (disabilityType != null) disabilityType,
+                  if (height != null) height,
                 ],
               ),
             ),
