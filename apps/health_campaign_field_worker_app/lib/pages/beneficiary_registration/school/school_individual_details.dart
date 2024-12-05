@@ -667,13 +667,24 @@ class _SchoolIndividualDetailsPageState
                                   },
                                 );
 
-                                final radioValue =
+                                dynamic radioValue =
                                     individual?.additionalFields?.fields
                                         .firstWhereOrNull(
                                           (element) =>
                                               element.key == "radioKey",
                                         )
                                         ?.value;
+
+                                if (radioValue == null) {
+                                  radioValue = false;
+                                } else {
+                                  if (radioValue is String) {
+                                    bool? converted = _stringToBool(radioValue);
+                                    radioValue = converted ?? false;
+                                  } else {
+                                    radioValue = false;
+                                  }
+                                }
 
                                 form.control(_parentknownKey).value =
                                     radioValue != null && radioValue
@@ -702,6 +713,9 @@ class _SchoolIndividualDetailsPageState
                             validationMessages: {
                               'required': (object) => localizations
                                   .translate(i18.common.corecommonRequired),
+                              "min3": (object) => localizations.translate(
+                                    i18.common.min3CharsRequired,
+                                  ),
                             },
                           ),
                         ],
@@ -906,11 +920,25 @@ class _SchoolIndividualDetailsPageState
         .firstWhereOrNull((element) => element.key == "parentName")
         ?.value;
 
-    final radioKeyKnown = individual?.additionalFields?.fields
+    dynamic radioKeyKnown = individual?.additionalFields?.fields
         .firstWhereOrNull((element) => element.key == "radioKey")
         ?.value;
 
-    showParent = (radioKeyKnown ?? false);
+    if (radioKeyKnown == null) {
+      showParent = false;
+      radioKeyKnown = false;
+    } else {
+      if (radioKeyKnown is bool) {
+        showParent = radioKeyKnown;
+      } else if (radioKeyKnown is String) {
+        bool? converted = _stringToBool(radioKeyKnown);
+        radioKeyKnown = converted ?? false;
+        showParent = converted ?? false;
+      } else {
+        radioKeyKnown = false;
+        showParent = false;
+      }
+    }
 
     final searchQuery = state.mapOrNull<String>(
       create: (value) {
@@ -1005,7 +1033,10 @@ class _SchoolIndividualDetailsPageState
       ),
       _parentknownKey: _buildFormControl<String>(
         value: parentName ?? widget.headName,
-        validators: [Validators.required],
+        validators: [
+          Validators.required,
+          CustomValidator.requiredMin3,
+        ],
       ),
     };
   }
@@ -1043,5 +1074,21 @@ class _SchoolIndividualDetailsPageState
         ),
       ),
     );
+  }
+
+  bool? _stringToBool(String value) {
+    // Convert common string representations of bool to actual bool
+    switch (value.toLowerCase()) {
+      case 'true':
+      case '1':
+      case 'yes':
+        return true;
+      case 'false':
+      case '0':
+      case 'no':
+        return false;
+      default:
+        return null; // Return null if the string cannot be converted
+    }
   }
 }
