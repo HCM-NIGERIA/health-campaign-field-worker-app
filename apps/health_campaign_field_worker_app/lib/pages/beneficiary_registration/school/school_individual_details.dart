@@ -910,7 +910,18 @@ class _SchoolIndividualDetailsPageState
         .firstWhereOrNull((element) => element.key == "radioKey")
         ?.value;
 
-    showParent = (radioKeyKnown ?? false);
+    if (radioKeyKnown == null) {
+      showParent = false;
+    } else {
+      if (radioKeyKnown is bool) {
+        showParent = radioKeyKnown;
+      } else if (radioKeyKnown is String) {
+        bool? converted = _stringToBool(radioKeyKnown);
+        showParent = converted ?? false;
+      } else {
+        showParent = false;
+      }
+    }
 
     final searchQuery = state.mapOrNull<String>(
       create: (value) {
@@ -1043,5 +1054,21 @@ class _SchoolIndividualDetailsPageState
         ),
       ),
     );
+  }
+
+  bool? _stringToBool(String value) {
+    // Convert common string representations of bool to actual bool
+    switch (value.toLowerCase()) {
+      case 'true':
+      case '1':
+      case 'yes':
+        return true;
+      case 'false':
+      case '0':
+      case 'no':
+        return false;
+      default:
+        return null; // Return null if the string cannot be converted
+    }
   }
 }
