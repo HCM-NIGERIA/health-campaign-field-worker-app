@@ -667,13 +667,24 @@ class _SchoolIndividualDetailsPageState
                                   },
                                 );
 
-                                final radioValue =
+                                dynamic radioValue =
                                     individual?.additionalFields?.fields
                                         .firstWhereOrNull(
                                           (element) =>
                                               element.key == "radioKey",
                                         )
                                         ?.value;
+
+                                if (radioValue == null) {
+                                  radioValue = false;
+                                } else {
+                                  if (radioValue is String) {
+                                    bool? converted = _stringToBool(radioValue);
+                                    radioValue = converted ?? false;
+                                  } else {
+                                    radioValue = false;
+                                  }
+                                }
 
                                 form.control(_parentknownKey).value =
                                     radioValue != null && radioValue
@@ -906,19 +917,22 @@ class _SchoolIndividualDetailsPageState
         .firstWhereOrNull((element) => element.key == "parentName")
         ?.value;
 
-    final radioKeyKnown = individual?.additionalFields?.fields
+    dynamic radioKeyKnown = individual?.additionalFields?.fields
         .firstWhereOrNull((element) => element.key == "radioKey")
         ?.value;
 
     if (radioKeyKnown == null) {
       showParent = false;
+      radioKeyKnown = false;
     } else {
       if (radioKeyKnown is bool) {
         showParent = radioKeyKnown;
       } else if (radioKeyKnown is String) {
         bool? converted = _stringToBool(radioKeyKnown);
+        radioKeyKnown = converted ?? false;
         showParent = converted ?? false;
       } else {
+        radioKeyKnown = false;
         showParent = false;
       }
     }
