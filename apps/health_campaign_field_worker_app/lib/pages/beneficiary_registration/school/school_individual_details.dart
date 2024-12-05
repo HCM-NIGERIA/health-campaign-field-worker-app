@@ -713,6 +713,9 @@ class _SchoolIndividualDetailsPageState
                             validationMessages: {
                               'required': (object) => localizations
                                   .translate(i18.common.corecommonRequired),
+                              "min3": (object) => localizations.translate(
+                                    i18.common.min3CharsRequired,
+                                  ),
                             },
                           ),
                         ],
@@ -1030,7 +1033,10 @@ class _SchoolIndividualDetailsPageState
       ),
       _parentknownKey: _buildFormControl<String>(
         value: parentName ?? widget.headName,
-        validators: [Validators.required],
+        validators: [
+          Validators.required,
+          CustomValidator.requiredMin3,
+        ],
       ),
     };
   }
