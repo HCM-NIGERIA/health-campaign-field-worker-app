@@ -110,18 +110,39 @@ class _IndividualDetailsPageState
                           : () async {
                               if (form.control(_dobKey).value == null) {
                                 form.control(_dobKey).setErrors({'': true});
-                              } else if (!isHeadAgeValid) {
-                                await DigitToast.show(
-                                  context,
-                                  options: DigitToastOptions(
-                                    localizations.translate(i18
-                                        .individualDetails.headAgeValidError),
-                                    true,
-                                    theme,
-                                  ),
-                                );
+                              } else {
+                                final dobValue = form.control(_dobKey).value;
 
-                                return;
+                                DigitDOBAge age =
+                                    DigitDateUtils.calculateAge(dobValue);
+                                if ((age.years == 0 && age.months == 0) ||
+                                    age.months > 11 ||
+                                    (age.years > 150 ||
+                                        (age.years == 150 && age.months > 0))) {
+                                  form.control(_dobKey).setErrors({'': true});
+                                } else if (widget.isHeadOfHousehold &&
+                                    age.years < 18) {
+                                  isHeadAgeValid = false;
+                                } else {
+                                  if (widget.isHeadOfHousehold) {
+                                    isHeadAgeValid = true;
+                                  }
+                                  form.control(_dobKey).removeError('');
+                                }
+
+                                if (!isHeadAgeValid) {
+                                  await DigitToast.show(
+                                    context,
+                                    options: DigitToastOptions(
+                                      localizations.translate(i18
+                                          .individualDetails.headAgeValidError),
+                                      true,
+                                      theme,
+                                    ),
+                                  );
+
+                                  return;
+                                }
                               }
                               final userId = context.loggedInUserUuid;
                               final projectId = context.projectId;
