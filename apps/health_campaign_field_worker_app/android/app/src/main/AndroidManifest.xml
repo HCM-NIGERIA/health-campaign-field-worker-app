@@ -22,7 +22,7 @@
   </queries>
   <!--#enddocregion android-queries-->
    <application
-        android:label="Schisto Training"
+        android:label="STH Training"
         android:name="${applicationName}"
         android:allowBackup="false"
         android:fullBackupOnly="false"
