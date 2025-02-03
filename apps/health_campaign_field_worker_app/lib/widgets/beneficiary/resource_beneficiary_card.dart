@@ -127,8 +127,7 @@ class _ResourceBeneficiaryCardState
           ),
           show
               ? DigitIntegerFormPicker(
-                  minimum: 0.5,
-                  decimal: true,
+                  minimum: 1,
                   form: widget.form,
                   formControlName: 'quantityWasted.${widget.cardIndex}',
                   label: localizations.translate(
