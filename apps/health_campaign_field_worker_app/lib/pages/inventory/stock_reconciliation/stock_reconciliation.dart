@@ -470,59 +470,59 @@ class _StockReconciliationPageState
                                                           _facilityKey,
                                                       readOnly: true,
                                                       isRequired: true,
-                                                      onTap: () async {
-                                                        final stockReconciliationBloc =
-                                                            context.read<
-                                                                StockReconciliationBloc>();
+                                                      // onTap: () async {
+                                                      //   final stockReconciliationBloc =
+                                                      //       context.read<
+                                                      //           StockReconciliationBloc>();
 
-                                                        final facility =
-                                                            await context.router
-                                                                .push<
-                                                                    FacilityModel>(
-                                                          FacilitySelectionRoute(
-                                                            facilities: isCommunityDistributor &&
-                                                                    filteredFacility
-                                                                        .isNotEmpty
-                                                                ? filteredFacility
-                                                                : facilities,
-                                                          ),
-                                                        );
+                                                      //   final facility =
+                                                      //       await context.router
+                                                      //           .push<
+                                                      //               FacilityModel>(
+                                                      //     FacilitySelectionRoute(
+                                                      //       facilities: isCommunityDistributor &&
+                                                      //               filteredFacility
+                                                      //                   .isNotEmpty
+                                                      //           ? filteredFacility
+                                                      //           : facilities,
+                                                      //     ),
+                                                      //   );
 
-                                                        if (facility == null)
-                                                          return;
-                                                        form
-                                                                .control(
-                                                                    _facilityKey)
-                                                                .value =
-                                                            localizations
-                                                                .translate(
-                                                          '${facility.name}',
-                                                        );
-                                                        setState(() {
-                                                          selectedFacilityId =
-                                                              facility.id;
-                                                        });
-                                                        if (productVariants
-                                                                .length ==
-                                                            1) {
-                                                          stockReconciliationBloc
-                                                              .add(
-                                                            StockReconciliationSelectProductEvent(
-                                                              productVariants
-                                                                  .first.id,
-                                                              isDistributor:
-                                                                  isDistributor &&
-                                                                      !isWareHouseMgr,
-                                                            ),
-                                                          );
-                                                        }
-                                                        stockReconciliationBloc
-                                                            .add(
-                                                          StockReconciliationSelectFacilityEvent(
-                                                            facility,
-                                                          ),
-                                                        );
-                                                      },
+                                                      //   if (facility == null)
+                                                      //     return;
+                                                      //   form
+                                                      //           .control(
+                                                      //               _facilityKey)
+                                                      //           .value =
+                                                      //       localizations
+                                                      //           .translate(
+                                                      //     '${facility.name}',
+                                                      //   );
+                                                      //   setState(() {
+                                                      //     selectedFacilityId =
+                                                      //         facility.id;
+                                                      //   });
+                                                      //   if (productVariants
+                                                      //           .length ==
+                                                      //       1) {
+                                                      //     stockReconciliationBloc
+                                                      //         .add(
+                                                      //       StockReconciliationSelectProductEvent(
+                                                      //         productVariants
+                                                      //             .first.id,
+                                                      //         isDistributor:
+                                                      //             isDistributor &&
+                                                      //                 !isWareHouseMgr,
+                                                      //       ),
+                                                      //     );
+                                                      //   }
+                                                      //   stockReconciliationBloc
+                                                      //       .add(
+                                                      //     StockReconciliationSelectFacilityEvent(
+                                                      //       facility,
+                                                      //     ),
+                                                      //   );
+                                                      // },
                                                     ),
                                                   ),
                                                 );
