@@ -752,7 +752,7 @@ class _DeliverInterventionPageState
       ]),
       _quantityWastedKey: FormArray<double>([
         ..._controllers.map(
-          (e) => FormControl<double>(value: 0.5),
+          (e) => FormControl<double>(value: 1),
         ),
       ]),
       _quantityWastedRadioKey: FormArray<KeyValue>([
