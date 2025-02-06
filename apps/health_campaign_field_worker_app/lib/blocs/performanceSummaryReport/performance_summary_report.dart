@@ -83,7 +83,7 @@ class PerformannceSummaryReportBloc
                 .where((element) => element!
                     .toUpperCase()
                     .contains(BeneficiaryType.albendazole.name.toUpperCase()))
-                .first;
+                .firstOrNull;
     var albendazoleResourceId = variantIdVsProduct[albendazoleResourceKey];
 
     var ivermectinResourceKey =
@@ -93,7 +93,7 @@ class PerformannceSummaryReportBloc
                 .where((element) => element!
                     .toUpperCase()
                     .contains(BeneficiaryType.ivermectin.name.toUpperCase()))
-                .first;
+                .firstOrNull;
     var ivermectinResourceId = variantIdVsProduct[ivermectinResourceKey];
 
     for (var element in householdList) {
