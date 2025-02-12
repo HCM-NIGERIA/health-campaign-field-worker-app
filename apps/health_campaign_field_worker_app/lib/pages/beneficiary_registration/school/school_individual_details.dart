@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:recase/recase.dart';
 
 import '../../../blocs/app_initialization/app_initialization.dart';
 import '../../../blocs/beneficiary_registration/beneficiary_registration.dart';
@@ -536,8 +537,9 @@ class _SchoolIndividualDetailsPageState
                                       label: localizations.translate(
                                         i18.individualDetails.genderLabelText,
                                       ),
-                                      valueMapper: (value) =>
-                                          localizations.translate(value),
+                                      valueMapper: (value) => localizations
+                                          .translate(value)
+                                          .titleCase,
                                       initialValue:
                                           genderOptions.firstOrNull?.name,
                                       menuItems: genderOptions

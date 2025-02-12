@@ -8,28 +8,28 @@ import '../../data/local_store/sql_store/sql_store.dart';
 part 'project_type.mapper.dart';
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ProjectTypeSearchModel extends EntitySearchModel with ProjectTypeSearchModelMappable {
+class ProjectTypeSearchModel extends EntitySearchModel
+    with ProjectTypeSearchModelMappable {
   final List<String>? clientReferenceId;
   final String? tenantId;
-  
+
   ProjectTypeSearchModel({
     this.clientReferenceId,
     this.tenantId,
     super.boundaryCode,
     super.isDeleted,
-  }):  super();
+  }) : super();
 
   @MappableConstructor()
   ProjectTypeSearchModel.ignoreDeleted({
     this.clientReferenceId,
     this.tenantId,
     super.boundaryCode,
-  }):  super(isDeleted: false);
+  }) : super(isDeleted: false);
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
 class ProjectTypeModel extends EntityModel with ProjectTypeModelMappable {
-
   static const schemaName = 'ProjectType';
 
   final String? id;
@@ -60,9 +60,10 @@ class ProjectTypeModel extends EntityModel with ProjectTypeModelMappable {
     this.tenantId,
     this.rowVersion,
     this.resources,
-    super.auditDetails,super.clientAuditDetails,
+    super.auditDetails,
+    super.clientAuditDetails,
     super.isDeleted = false,
-  }): super();
+  }) : super();
 
   ProjectTypeCompanion get companion {
     return ProjectTypeCompanion(
@@ -87,12 +88,13 @@ class ProjectTypeModel extends EntityModel with ProjectTypeModelMappable {
       clientReferenceId: Value(clientReferenceId),
       tenantId: Value(tenantId),
       rowVersion: Value(rowVersion),
-      );
+    );
   }
 }
 
 @MappableClass(ignoreNull: true, discriminatorValue: MappableClass.useAsDefault)
-class ProjectTypeAdditionalFields extends AdditionalFields with ProjectTypeAdditionalFieldsMappable {
+class ProjectTypeAdditionalFields extends AdditionalFields
+    with ProjectTypeAdditionalFieldsMappable {
   ProjectTypeAdditionalFields({
     super.schema = 'ProjectType',
     required super.version,
@@ -102,8 +104,13 @@ class ProjectTypeAdditionalFields extends AdditionalFields with ProjectTypeAddit
 
 @MappableEnum(caseStyle: CaseStyle.upperCase)
 enum ProjectTypesEnum {
-  @MappableValue("LF") lf,
-  @MappableValue("SMC") smc,
-  @MappableValue("SCHISTO") schisto,
+  @MappableValue("LF")
+  lf,
+  @MappableValue("SMC")
+  smc,
+  @MappableValue("SCHISTO")
+  schisto,
+  @MappableValue("STH")
+  sth,
   ;
 }
