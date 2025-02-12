@@ -77,7 +77,8 @@ class PerformannceSummaryReportBloc
     }
 
     var albendazoleResourceKey =
-        (event.projectCode == ProjectTypesEnum.schisto.toValue())
+        (event.projectCode == ProjectTypesEnum.schisto.toValue() ||
+                event.projectCode == ProjectTypesEnum.sth.toValue())
             ? variantIdVsProduct.keys.first
             : variantIdVsProduct.keys
                 .where((element) => element!
@@ -87,7 +88,8 @@ class PerformannceSummaryReportBloc
     var albendazoleResourceId = variantIdVsProduct[albendazoleResourceKey];
 
     var ivermectinResourceKey =
-        (event.projectCode == ProjectTypesEnum.schisto.toValue())
+        (event.projectCode == ProjectTypesEnum.schisto.toValue() ||
+                event.projectCode == ProjectTypesEnum.sth.toValue())
             ? ""
             : variantIdVsProduct.keys
                 .where((element) => element!
@@ -182,30 +184,31 @@ class PerformannceSummaryReportBloc
       // assumption here is drugOne Albendazole and drugTwo is Ivermectin
       double drugOne = 0;
       double drugTwo = 0;
+      bool isProjectTypeMatch =
+          event.projectCode == ProjectTypesEnum.schisto.toValue() ||
+              event.projectCode == ProjectTypesEnum.sth.toValue();
       if (dayVsDrugsQuantityMap.containsKey(date) &&
           dayVsDrugsQuantityMap[date] != null &&
           dayVsDrugsQuantityMap[date]!.containsKey(
-            (event.projectCode == ProjectTypesEnum.schisto.toValue())
+            isProjectTypeMatch
                 ? "${albendazoleResourceId}used"
                 : albendazoleResourceId,
           )) {
-        drugOne = dayVsDrugsQuantityMap[date]![
-                (event.projectCode == ProjectTypesEnum.schisto.toValue())
-                    ? "${albendazoleResourceId}used"
-                    : albendazoleResourceId] ??
+        drugOne = dayVsDrugsQuantityMap[date]![isProjectTypeMatch
+                ? "${albendazoleResourceId}used"
+                : albendazoleResourceId] ??
             0;
       }
       if (dayVsDrugsQuantityMap.containsKey(date) &&
           dayVsDrugsQuantityMap[date] != null &&
           dayVsDrugsQuantityMap[date]!.containsKey(
-            (event.projectCode == ProjectTypesEnum.schisto.toValue())
+            isProjectTypeMatch
                 ? "${albendazoleResourceId}wasted"
                 : ivermectinResourceId,
           )) {
-        drugTwo = dayVsDrugsQuantityMap[date]![
-                (event.projectCode == ProjectTypesEnum.schisto.toValue())
-                    ? "${albendazoleResourceId}wasted"
-                    : ivermectinResourceId] ??
+        drugTwo = dayVsDrugsQuantityMap[date]![isProjectTypeMatch
+                ? "${albendazoleResourceId}wasted"
+                : ivermectinResourceId] ??
             0;
       }
 
@@ -252,7 +255,8 @@ class PerformannceSummaryReportBloc
       var resourceId = resource.productVariantId;
       quantityDistributed = quantityDistributed +
           (resource.quantity!.contains(".")
-              ? (projectCode == ProjectTypesEnum.schisto.toValue())
+              ? (projectCode == ProjectTypesEnum.schisto.toValue() ||
+                      projectCode == ProjectTypesEnum.sth.toValue())
                   ? double.parse(resource.quantity ?? "0.0")
                   : double.parse(resource.quantity ?? "0.0").toInt()
               : int.parse(resource.quantity ?? "0"));
@@ -264,14 +268,16 @@ class PerformannceSummaryReportBloc
             (value == null || value == "null"
                 ? 0
                 : (value.toString().contains(".")
-                    ? (projectCode == ProjectTypesEnum.schisto.toValue())
+                    ? (projectCode == ProjectTypesEnum.schisto.toValue() ||
+                            projectCode == ProjectTypesEnum.sth.toValue())
                         ? double.parse(value.toString())
                         : double.parse(value.toString()).toInt()
                     : int.parse(value.toString())));
       }
       final quantityUsed = quantityDistributed + quantityWasted;
 
-      if (!(projectCode == ProjectTypesEnum.schisto.toValue())) {
+      if (!(projectCode == ProjectTypesEnum.schisto.toValue()) ||
+          projectCode == ProjectTypesEnum.sth.toValue()) {
         resourceVsQuantity.update(
           resourceId,
           (existingValue) => existingValue + quantityUsed,

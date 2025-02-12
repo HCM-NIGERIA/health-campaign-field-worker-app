@@ -54,16 +54,17 @@ class _PerformamnceSummaryReportDetailsPageState
   }
 
   void _loadData() {
+    String projectCode = context.selectedProjectType != null
+        ? context.selectedProjectType!.code
+        : '';
     final bloc = BlocProvider.of<PerformannceSummaryReportBloc>(context);
     bloc.add(PerformanceSummaryReportLoadDataEvent(
       userId: context.loggedInUserUuid,
-      projectCode: context.selectedProjectType != null
-          ? context.selectedProjectType!.code
-          : '',
+      projectCode: projectCode,
     ));
   }
 
-static const _schoolKey = 'schoolKey';
+  static const _schoolKey = 'schoolKey';
   static const _householdKey = 'householdKey';
   static const _treatedPercentageKey = 'treatedPercentageKey';
   static const _treatedKey = 'treatedKey';
@@ -116,10 +117,9 @@ static const _schoolKey = 'schoolKey';
                               width: 90,
                             ),
                             // school
-                             DigitGridColumn(
+                            DigitGridColumn(
                               label: localizations.translate(
-                                 i18.deliverIntervention.schoolRegistered,
-                                
+                                i18.deliverIntervention.schoolRegistered,
                               ),
                               key: _schoolKey,
                               width: 170,
@@ -150,7 +150,7 @@ static const _schoolKey = 'schoolKey';
                             DigitGridColumn(
                               label: localizations.translate(
                                 !(context.selectedProjectType!.code ==
-                                        ProjectTypesEnum.schisto.toValue())
+                                        ProjectTypesEnum.sth.toValue())
                                     ? i18.deliverIntervention
                                         .drugOneLabelTableSummary
                                     : i18.deliverIntervention
@@ -162,7 +162,7 @@ static const _schoolKey = 'schoolKey';
                             DigitGridColumn(
                               label: localizations.translate(
                                 !(context.selectedProjectType!.code ==
-                                        ProjectTypesEnum.schisto.toValue())
+                                        ProjectTypesEnum.sth.toValue())
                                     ? i18.deliverIntervention
                                         .drugTwoLabelTableSummary
                                     : i18.deliverIntervention
@@ -181,10 +181,9 @@ static const _schoolKey = 'schoolKey';
                                     key: _dateKey,
                                     value: entry.key,
                                   ),
-                                   DigitGridCell(
+                                  DigitGridCell(
                                     key: _schoolKey,
-                                    value:
-                                        entry.value.schoolCount.toString(),
+                                    value: entry.value.schoolCount.toString(),
                                   ),
                                   DigitGridCell(
                                     key: _householdKey,
