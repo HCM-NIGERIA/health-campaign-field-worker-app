@@ -60,6 +60,7 @@ import 'package:attendance_management/models/staff.dart' as p53;
 import 'package:attendance_management/models/attendance_audit.dart' as p54;
 import 'package:attendance_management/models/attendance_log.dart' as p55;
 import 'package:attendance_management/models/attendee.dart' as p56;
+import 'entities/identifier_types.dart' as p57;
 
 void initializeMappers() {
   p0.EntityModelMapper.ensureInitialized();
@@ -209,4 +210,5 @@ void initializeMappers() {
   p54.AttendanceAuditDetailsMapper.ensureInitialized();
   p55.AttendanceLogModelMapper.ensureInitialized();
   p56.AttendeeModelMapper.ensureInitialized();
+  p57.IdentifierTypesMapper.ensureInitialized();
 }
