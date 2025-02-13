@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/project/project.dart';
 import '../../blocs/search_households/search_households.dart';
 import '../../models/data_model.dart';
+import '../../models/entities/identifier_types.dart';
 import '../../models/project_type/project_type_model.dart';
 import '../../utils/i18_key_constants.dart' as i18;
 import '../../utils/utils.dart';
@@ -70,6 +71,12 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
         cellKey: 'delivery',
       ),
       TableHeader(
+        localizations.translate(
+          i18.common.coreCommonBeneficiaryId,
+        ),
+        cellKey: 'beneficiaryId',
+      ),
+      TableHeader(
         localizations.translate(i18.individualDetails.ageLabelText),
         cellKey: 'age',
       ),
@@ -125,22 +132,16 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                 .toList()
             : null;
 
-        // final ageInYears = DigitDateUtils.calculateAge(
-        //   householdMember.headOfHousehold.dateOfBirth != null
-        //       ? DigitDateUtils.getFormattedDateToDateTime(
-        //             householdMember.headOfHousehold.dateOfBirth!,
-        //           ) ??
-        //           DateTime.now()
-        //       : DateTime.now(),
-        // ).years;
-        // final ageInMonths = DigitDateUtils.calculateAge(
-        //   householdMember.headOfHousehold.dateOfBirth != null
-        //       ? DigitDateUtils.getFormattedDateToDateTime(
-        //             householdMember.headOfHousehold.dateOfBirth!,
-        //           ) ??
-        //           DateTime.now()
-        //       : DateTime.now(),
-        // ).months;
+        final beneficiaryId = e.identifiers
+                ?.lastWhereOrNull(
+                  (e) =>
+                      e.identifierType ==
+                      IdentifierTypes.uniqueBeneficiaryID.toValue(),
+                )
+                ?.identifierId ??
+            localizations.translate(
+              i18.common.noResultsFound,
+            );
 
         final isNotEligible = !checkEligibilityForAgeAndSideEffect(
           bloc.projectType,
@@ -148,11 +149,7 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
           sideEffects,
           e,
         );
-        final isSideEffectRecorded = recordedSideEffect(
-          currentCycle,
-          (taskdata ?? []).isNotEmpty ? taskdata?.last : null,
-          sideEffects,
-        );
+
         final isBeneficiaryRefused = checkIfBeneficiaryRefused(taskdata);
         final isBeneficiaryReferred = checkIfBeneficiaryReferred(
           taskdata,
@@ -161,8 +158,6 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
               taskdata,
             ) &&
             !checkStatus(taskdata, currentCycle);
-
-// TODO need to pass the current cycle
 
         final isStatusReset = checkStatus(taskdata, currentCycle);
 
@@ -197,6 +192,10 @@ class _ViewBeneficiaryCardState extends LocalizedState<ViewBeneficiaryCard> {
                 theme: theme,
               ),
             ),
+          ),
+          TableData(
+            beneficiaryId,
+            cellKey: 'beneficiaryId',
           ),
           TableData(
             e.dateOfBirth == null
