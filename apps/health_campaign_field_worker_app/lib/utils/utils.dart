@@ -1065,44 +1065,44 @@ class UniqueIdGeneration {
     required String loggedInUserId,
     required bool returnBothIds,
   }) async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
 
-    // Get the Android ID
-    String androidId = androidInfo.serialNumber == 'unknown'
-        ? androidInfo.id.replaceAll('.', '')
-        : androidInfo.serialNumber;
+      // Get the Android ID
+      String androidId = androidInfo.serialNumber == 'unknown'
+          ? androidInfo.id.replaceAll('.', '')
+          : androidInfo.serialNumber;
 
-    // Get current timestamp
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
+      // Get current timestamp
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
 
-    // Combine the Android ID with the timestamp
-    String combinedId = '$loggedInUserId$androidId$localityCode$timestamp';
+      // Combine the Android ID with the timestamp
+      String combinedId = '$loggedInUserId$androidId$localityCode$timestamp';
 
-    // Generate SHA-256 hash
-    List<int> bytes = utf8.encode(combinedId);
-    Digest sha256Hash = sha256.convert(bytes);
+      // Generate SHA-256 hash
+      List<int> bytes = utf8.encode(combinedId);
+      Digest sha256Hash = sha256.convert(bytes);
 
-    // Convert the hash to a 12-character string and make it uppercase
-    String hashString = sha256Hash.toString();
-    String uniqueId = hashString.substring(0, 12).toUpperCase();
+      // Convert the hash to a 12-character string and make it uppercase
+      String hashString = sha256Hash.toString();
+      String uniqueId = hashString.substring(0, 12).toUpperCase();
 
-    // Add a hyphen every 4 characters, except the last
-    String formattedUniqueId = uniqueId.replaceAllMapped(
-      RegExp(r'.{1,4}'),
-      (match) => '${match.group(0)}-',
-    );
+      // Add a hyphen every 4 characters, except the last
+      String formattedUniqueId = uniqueId.replaceAllMapped(
+        RegExp(r'.{1,4}'),
+        (match) => '${match.group(0)}-',
+      );
 
-    // Remove the last hyphen
-    formattedUniqueId =
-        formattedUniqueId.substring(0, formattedUniqueId.length - 1);
+      // Remove the last hyphen
+      formattedUniqueId =
+          formattedUniqueId.substring(0, formattedUniqueId.length - 1);
 
-    if (kDebugMode) {
-      print('uniqueId : $formattedUniqueId');
+      return returnBothIds
+          ? {formattedUniqueId, combinedId}
+          : {formattedUniqueId};
+    } catch (e) {
+      throw Exception('Failed to generate unique ID: $e');
     }
-
-    return returnBothIds
-        ? {formattedUniqueId, combinedId}
-        : {formattedUniqueId};
   }
 }
