@@ -66,6 +66,8 @@ class Common {
 
   String get coreCommonGender => 'CORE_COMMON_GENDER';
 
+  String get coreCommonBeneficiaryId => 'CORE_COMMON_BENEFICIARY_ID';
+
   String get coreCommonMobileNumber => 'CORE_COMMON_MOBILE_NUMBER';
 
   String get coreCommonSubmit => 'CORE_COMMON_SUBMIT';
@@ -970,6 +972,7 @@ class BeneficiaryDetails {
   String get beneficiaryAge => 'BENEFICIARY_AGE';
   String get beneficiaryHeight => 'BENEFICIARY_HEIGHT';
   String get ctaProceed => 'PROCEED';
+  String get beneficiaryId => 'BENEFICIARY_ID';
   String get beneficiaryDoseNo => 'BENEFICIARY_DETAILS_DOSE_NO';
   String get beneficiaryDose => 'BENEFICIARY_DETAILS_DOSE';
   String get beneficiaryDeliveryText => 'DELIVERY';

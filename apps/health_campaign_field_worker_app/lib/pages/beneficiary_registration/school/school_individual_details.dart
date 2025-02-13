@@ -18,6 +18,7 @@ import '../../../blocs/search_households/search_bloc_common_wrapper.dart';
 import '../../../blocs/search_households/search_households.dart';
 import '../../../data/local_store/no_sql/schema/app_configuration.dart';
 import '../../../models/data_model.dart';
+import '../../../models/entities/identifier_types.dart';
 import '../../../router/app_router.dart';
 import '../../../utils//i18_key_constants.dart' as i18;
 import '../../../utils/environment_config.dart';
@@ -806,23 +807,30 @@ class _SchoolIndividualDetailsPageState
         ? individual.identifiers!.first
         : null;
 
-    identifier ??= IdentifierModel(
-      clientReferenceId: individual.clientReferenceId,
-      tenantId: envConfig.variables.tenantId,
-      rowVersion: 1,
-      auditDetails: AuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
-        lastModifiedTime: context.millisecondsSinceEpoch(),
-      ),
-      clientAuditDetails: ClientAuditDetails(
-        createdBy: context.loggedInUserUuid,
-        createdTime: context.millisecondsSinceEpoch(),
-        lastModifiedBy: context.loggedInUserUuid,
-        lastModifiedTime: context.millisecondsSinceEpoch(),
-      ),
-    );
+    var identifiers = individual.identifiers;
+
+    if (identifier == null) {
+      identifier ??= IdentifierModel(
+        identifierId: context.loggedInUserUuid,
+        identifierType: IdentifierTypes.defaultID.toValue(),
+        clientReferenceId: IdGen.i.identifier,
+        tenantId: envConfig.variables.tenantId,
+        rowVersion: 1,
+        auditDetails: AuditDetails(
+          createdBy: context.loggedInUserUuid,
+          createdTime: context.millisecondsSinceEpoch(),
+          lastModifiedBy: context.loggedInUserUuid,
+          lastModifiedTime: context.millisecondsSinceEpoch(),
+        ),
+        clientAuditDetails: ClientAuditDetails(
+          createdBy: context.loggedInUserUuid,
+          createdTime: context.millisecondsSinceEpoch(),
+          lastModifiedBy: context.loggedInUserUuid,
+          lastModifiedTime: context.millisecondsSinceEpoch(),
+        ),
+      );
+      identifiers = [identifier];
+    }
 
     final disabilityType = form.control(Constants.disabilityTypeKey).value;
 
@@ -842,12 +850,7 @@ class _SchoolIndividualDetailsPageState
           ? form.control(_mobileNumberKey).value
           : null,
       dateOfBirth: dobString,
-      identifiers: [
-        identifier.copyWith(
-          identifierId: 'DEFAULT',
-          identifierType: 'DEFAULT',
-        ),
-      ],
+      identifiers: identifiers,
       additionalFields: disabilityType != null
           ? IndividualAdditionalFields(
               version: 1,
