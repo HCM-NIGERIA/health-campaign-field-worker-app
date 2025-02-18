@@ -73,7 +73,7 @@ class _BeneficiaryProgressBarState extends State<BeneficiaryProgressBar> {
 
   @override
   Widget build(BuildContext context) {
-    const target = 100;
+    const target = 150;
 
     return DigitCard(
       child: ProgressIndicatorContainer(
