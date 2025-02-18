@@ -391,14 +391,44 @@ class _StockReconciliationPageState
                                                         [];
 
                                                 List<FacilityModel>
-                                                    filteredFacility = [];
+                                                    filteredFacilities = [];
                                                 if (isCommunityDistributor) {
-                                                  filteredFacility = facilities
-                                                      .where((element) =>
-                                                          element.name ==
-                                                          context.loggedInUser
-                                                              .userName)
-                                                      .toList();
+                                                  filteredFacilities =
+                                                      facilities
+                                                          .where(
+                                                            (element) =>
+                                                                element.name ==
+                                                                context
+                                                                    .loggedInUser
+                                                                    .userName,
+                                                          )
+                                                          .toList();
+                                                } else {
+                                                  String? boundaryType = context
+                                                      .selectedProject
+                                                      .address
+                                                      ?.boundaryType;
+
+                                                  if (boundaryType ==
+                                                      Constants
+                                                          .healthFacility) {
+                                                    filteredFacilities =
+                                                        facilities
+                                                            .where(
+                                                              (element) =>
+                                                                  element
+                                                                      .usage ==
+                                                                  Constants
+                                                                      .healthFacility,
+                                                            )
+                                                            .toList();
+                                                  }
+                                                }
+
+                                                if (filteredFacilities
+                                                    .isEmpty) {
+                                                  filteredFacilities =
+                                                      facilities;
                                                 }
 
                                                 return InkWell(
@@ -412,11 +442,8 @@ class _StockReconciliationPageState
                                                             .push<
                                                                 FacilityModel>(
                                                       FacilitySelectionRoute(
-                                                        facilities: isCommunityDistributor &&
-                                                                filteredFacility
-                                                                    .isNotEmpty
-                                                            ? filteredFacility
-                                                            : facilities,
+                                                        facilities:
+                                                            filteredFacilities,
                                                       ),
                                                     );
 
@@ -478,11 +505,8 @@ class _StockReconciliationPageState
                                                               .push<
                                                                   FacilityModel>(
                                                         FacilitySelectionRoute(
-                                                          facilities: isCommunityDistributor &&
-                                                                  filteredFacility
-                                                                      .isNotEmpty
-                                                              ? filteredFacility
-                                                              : facilities,
+                                                          facilities:
+                                                              filteredFacilities,
                                                         ),
                                                       );
 

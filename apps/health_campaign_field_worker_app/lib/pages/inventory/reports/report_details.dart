@@ -229,6 +229,33 @@ class _InventoryReportDetailsPageState
                                                                           .userName,
                                                                 )
                                                                 .toList();
+                                                      } else {
+                                                        String? boundaryType =
+                                                            context
+                                                                .selectedProject
+                                                                .address
+                                                                ?.boundaryType;
+
+                                                        if (boundaryType ==
+                                                            Constants
+                                                                .healthFacility) {
+                                                          filteredFacilities =
+                                                              facilities
+                                                                  .where(
+                                                                    (element) =>
+                                                                        element
+                                                                            .usage ==
+                                                                        Constants
+                                                                            .healthFacility,
+                                                                  )
+                                                                  .toList();
+                                                        }
+                                                      }
+
+                                                      if (filteredFacilities
+                                                          .isEmpty) {
+                                                        filteredFacilities =
+                                                            facilities;
                                                       }
 
                                                       final allFacilities =
@@ -259,11 +286,8 @@ class _InventoryReportDetailsPageState
                                                                   .push<
                                                                       FacilityModel>(
                                                             FacilitySelectionRoute(
-                                                              facilities: isCommunityDistributor &&
-                                                                      filteredFacilities
-                                                                          .isNotEmpty
-                                                                  ? filteredFacilities
-                                                                  : facilities,
+                                                              facilities:
+                                                                  filteredFacilities,
                                                             ),
                                                           );
 

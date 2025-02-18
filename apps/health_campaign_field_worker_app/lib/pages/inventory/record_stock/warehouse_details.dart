@@ -128,6 +128,21 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
               if (filteredFacilities.isNotEmpty) {
                 filteredFacility = filteredFacilities.first;
               }
+            } else {
+              String? boundaryType =
+                  context.selectedProject.address?.boundaryType;
+
+              if (boundaryType == Constants.healthFacility) {
+                filteredFacilities = facilities
+                    .where(
+                      (element) => element.usage == Constants.healthFacility,
+                    )
+                    .toList();
+              }
+            }
+
+            if (filteredFacilities.isEmpty) {
+              filteredFacilities = facilities;
             }
 
             // prevFacility = facilityState.whenOrNull(
@@ -327,10 +342,7 @@ class _WarehouseDetailsPageState extends LocalizedState<WarehouseDetailsPage> {
                                       final facility =
                                           await parent.push<FacilityModel>(
                                         FacilitySelectionRoute(
-                                          facilities: isCommunityDistributor &&
-                                                  filteredFacility != null
-                                              ? filteredFacilities
-                                              : facilities,
+                                          facilities: filteredFacilities,
                                         ),
                                       );
 

@@ -124,6 +124,7 @@ class Constants {
   static const String disabilityTypeKey = 'disabilityType';
   static const String heightKey = 'height';
   static const String dob = 'dob';
+  static const String healthFacility = 'Health Facility';
 
   static List<LocalRepository> getLocalRepositories(
     LocalSqlDataStore sql,
