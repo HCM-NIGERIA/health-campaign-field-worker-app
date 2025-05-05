@@ -1,3 +1,6 @@
+import 'package:complaints/complaints.dart';
+import 'package:survey_form/survey_form.dart';
+import 'package:registration_delivery/registration_delivery.dart';
 import 'package:digit_data_model/data/local_store/no_sql/schema/entity_mapper_listener.dart';
 import 'package:digit_data_model/data_model.dart';
 
@@ -20,6 +23,38 @@ class EntityMapper extends EntityMapperListener {
     switch (entityType) {
       case "individual":
         final entity = IndividualModelMapper.fromJson(entityString);
+        return entity;
+
+      case "household":
+        final entity = HouseholdModelMapper.fromJson(entityString);
+        return entity;
+
+      case "householdMember":
+        final entity = HouseholdMemberModelMapper.fromJson(entityString);
+        return entity;
+
+      case "projectBeneficiary":
+        final entity = ProjectBeneficiaryModelMapper.fromJson(entityString);
+        return entity;
+
+      case "task":
+        final entity = TaskModelMapper.fromJson(entityString);
+        return entity;
+
+      case "sideEffect":
+        final entity = SideEffectModelMapper.fromJson(entityString);
+        return entity;
+
+      case "referral":
+        final entity = ReferralModelMapper.fromJson(entityString);
+        return entity;
+
+      case "service":
+        final entity = ServiceModelMapper.fromJson(entityString);
+        return entity;
+
+      case "complaints":
+        final entity = PgrServiceModelMapper.fromJson(entityString);
         return entity;
 
       default:

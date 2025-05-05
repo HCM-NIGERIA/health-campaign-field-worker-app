@@ -1,3 +1,13 @@
+import 'package:complaints/complaints.dart';
+import 'package:complaints/router/complaints_router.gm.dart';
+
+import 'package:recase/recase.dart';
+import 'package:survey_form/survey_form.dart';
+import 'package:survey_form/router/survey_form_router.gm.dart';
+
+import 'package:registration_delivery/registration_delivery.dart';
+import 'package:registration_delivery/router/registration_delivery_router.gm.dart';
+
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -299,6 +309,36 @@ class _HomePageState extends LocalizedState<HomePage> {
 
     final Map<String, Widget> homeItemsMap = {
       // INFO : Need to add home items of package Here
+      i18.home.fileComplaint:
+          homeShowcaseData.distributorFileComplaint.buildWith(
+        child: HomeItemCard(
+          icon: Icons.announcement,
+          label: i18.home.fileComplaint,
+          onPressed: () =>
+              context.router.push(const ComplaintsInboxWrapperRoute()),
+        ),
+      ),
+
+      i18.home.mySurveyForm: homeShowcaseData.supervisorMySurveyForm.buildWith(
+        child: HomeItemCard(
+          enableCustomIcon: true,
+          customIcon: mySurveyFormSvg,
+          icon: Icons.checklist,
+          label: i18.home.mySurveyForm,
+          onPressed: () => context.router.push(SurveyFormWrapperRoute()),
+        ),
+      ),
+
+      i18.home.beneficiaryLabel:
+          homeShowcaseData.distributorBeneficiaries.buildWith(
+        child: HomeItemCard(
+          icon: Icons.all_inbox,
+          label: i18.home.beneficiaryLabel,
+          onPressed: () async {
+            await context.router.push(const RegistrationDeliveryWrapperRoute());
+          },
+        ),
+      ),
 
       i18.home.dashboard: homeShowcaseData.dashBoard.buildWith(
         child: HomeItemCard(
@@ -372,6 +412,15 @@ class _HomePageState extends LocalizedState<HomePage> {
 
     final Map<String, GlobalKey> homeItemsShowcaseMap = {
       // INFO : Need to add showcase keys of package Here
+      i18.home.fileComplaint:
+          homeShowcaseData.distributorFileComplaint.showcaseKey,
+
+      i18.home.mySurveyForm:
+          homeShowcaseData.supervisorMySurveyForm.showcaseKey,
+
+      i18.home.beneficiaryLabel:
+          homeShowcaseData.distributorBeneficiaries.showcaseKey,
+
       i18.home.syncDataLabel: homeShowcaseData.distributorSyncData.showcaseKey,
       i18.home.db: homeShowcaseData.db.showcaseKey,
       i18.home.dashboard: homeShowcaseData.dashBoard.showcaseKey,
@@ -380,6 +429,12 @@ class _HomePageState extends LocalizedState<HomePage> {
 
     final homeItemsLabel = <String>[
       // INFO: Need to add items label of package Here
+      i18.home.fileComplaint,
+
+      i18.home.mySurveyForm,
+
+      i18.home.beneficiaryLabel,
+
       i18.home.syncDataLabel,
       i18.home.db,
       i18.home.dashboard,
@@ -422,12 +477,52 @@ class _HomePageState extends LocalizedState<HomePage> {
               localRepositories: [
                 // INFO : Need to add local repo of package Here
                 context.read<
+                    LocalRepository<PgrServiceModel, PgrServiceSearchModel>>(),
+
+                context
+                    .read<LocalRepository<ServiceModel, ServiceSearchModel>>(),
+
+                context.read<
+                    LocalRepository<HouseholdModel, HouseholdSearchModel>>(),
+                context.read<
+                    LocalRepository<ProjectBeneficiaryModel,
+                        ProjectBeneficiarySearchModel>>(),
+                context.read<
+                    LocalRepository<HouseholdMemberModel,
+                        HouseholdMemberSearchModel>>(),
+                context.read<LocalRepository<TaskModel, TaskSearchModel>>(),
+                context.read<
+                    LocalRepository<SideEffectModel, SideEffectSearchModel>>(),
+                context.read<
+                    LocalRepository<ReferralModel, ReferralSearchModel>>(),
+
+                context.read<
                     LocalRepository<IndividualModel, IndividualSearchModel>>(),
                 context.read<
                     LocalRepository<UserActionModel, UserActionSearchModel>>()
               ],
               remoteRepositories: [
                 // INFO : Need to add repo repo of package Here
+                context.read<
+                    RemoteRepository<PgrServiceModel, PgrServiceSearchModel>>(),
+
+                context
+                    .read<RemoteRepository<ServiceModel, ServiceSearchModel>>(),
+
+                context.read<
+                    RemoteRepository<HouseholdModel, HouseholdSearchModel>>(),
+                context.read<
+                    RemoteRepository<ProjectBeneficiaryModel,
+                        ProjectBeneficiarySearchModel>>(),
+                context.read<
+                    RemoteRepository<HouseholdMemberModel,
+                        HouseholdMemberSearchModel>>(),
+                context.read<RemoteRepository<TaskModel, TaskSearchModel>>(),
+                context.read<
+                    RemoteRepository<SideEffectModel, SideEffectSearchModel>>(),
+                context.read<
+                    RemoteRepository<ReferralModel, ReferralSearchModel>>(),
+
                 context.read<
                     RemoteRepository<IndividualModel, IndividualSearchModel>>(),
                 context.read<
@@ -478,6 +573,66 @@ void setPackagesSingleton(BuildContext context) {
             dashboardConfigSchema ?? [], context.projectTypeCode ?? "");
         loadLocalization(context, appConfiguration);
         // INFO : Need to add singleton of package Here
+        ComplaintsSingleton().setInitialData(
+          tenantId: envConfig.variables.tenantId,
+          loggedInUserUuid: context.loggedInUserUuid,
+          userMobileNumber: context.loggedInUser.mobileNumber,
+          loggedInUserName: context.loggedInUser.name,
+          complaintTypes:
+              appConfiguration.complaintTypes!.map((e) => e.code).toList(),
+          userName: context.loggedInUser.name ?? '',
+        );
+
+        SurveyFormSingleton().setInitialData(
+          projectId: context.projectId,
+          projectName: context.selectedProject.name,
+          loggedInIndividualId: context.loggedInIndividualId ?? '',
+          loggedInUserUuid: context.loggedInUserUuid,
+          appVersion: Constants().version,
+          roles: context.read<AuthBloc>().state.maybeMap(
+              orElse: () => const Offstage(),
+              authenticated: (res) {
+                return res.userModel.roles
+                    .map((e) => e.code.snakeCase.toUpperCase())
+                    .toList();
+              }),
+        );
+
+        RegistrationDeliverySingleton().setInitialData(
+          loggedInUserUuid: context.loggedInUserUuid,
+          maxRadius: appConfiguration.maxRadius!,
+          projectId: context.projectId,
+          selectedBeneficiaryType: context.beneficiaryType,
+          projectType: context.selectedProjectType,
+          selectedProject: context.selectedProject,
+          searchHouseHoldFilter: [],
+          refusalReasons: [],
+          loggedInUser: context.loggedInUserModel,
+          houseStructureTypes: [],
+          genderOptions:
+              appConfiguration.genderOptions!.map((e) => e.code).toList(),
+          idTypeOptions:
+              appConfiguration.idTypeOptions!.map((e) => e.code).toList(),
+          householdDeletionReasonOptions: appConfiguration
+              .householdDeletionReasonOptions!
+              .map((e) => e.code)
+              .toList(),
+          householdMemberDeletionReasonOptions: appConfiguration
+              .householdMemberDeletionReasonOptions!
+              .map((e) => e.code)
+              .toList(),
+          deliveryCommentOptions: appConfiguration.deliveryCommentOptions!
+              .map((e) => e.code)
+              .toList(),
+          symptomsTypes:
+              appConfiguration.symptomsTypes!.map((e) => e.code).toList(),
+          referralReasons:
+              appConfiguration.referralReasons!.map((e) => e.code).toList(),
+          searchCLFFilters: appConfiguration.searchCLFFilters != null
+              ? appConfiguration.searchCLFFilters!.map((e) => e.code).toList()
+              : [],
+        );
+
         DashboardSingleton().setInitialData(
             projectId: context.projectId,
             tenantId: envConfig.variables.tenantId,

@@ -1,5 +1,10 @@
 library app_utils;
 
+import 'package:survey_form/survey_form.init.dart' as surveyForm_mappers;
+
+import 'package:registration_delivery/registration_delivery.init.dart'
+    as registration_delivery_mappers;
+
 import 'dart:async';
 import 'dart:io';
 
@@ -461,6 +466,8 @@ initializeAllMappers() async {
     Future(() => attendance_mappers.initializeMappers()),
     Future(() => data_model_mappers.initializeMappers()),
     Future(() => dss_mappers.initializeMappers()),
+    Future(() => registration_delivery_mappers.initializeMappers()),
+    Future(() => surveyForm_mappers.initializeMappers()),
   ];
   await Future.wait(initializations);
 }

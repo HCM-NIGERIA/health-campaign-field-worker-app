@@ -1,3 +1,9 @@
+import 'package:complaints/blocs/localization/app_localization.dart'
+    as complaints_localization;
+import 'package:survey_form/blocs/app_localization.dart'
+    as surveyForm_localization;
+import 'package:registration_delivery/blocs/app_localization.dart'
+    as registration_delivery_localization;
 import 'dart:ui';
 
 import 'package:attendance_management/blocs/app_localization.dart'
@@ -41,6 +47,19 @@ getAppLocalizationDelegates({
       appConfig.languages!,
     ),
     component_localization.ComponentLocalization.getDelegate(
+      LocalizationLocalRepository().returnLocalizationFromSQL(sql) as Future,
+      appConfig.languages!,
+    ),
+    registration_delivery_localization.RegistrationDeliveryLocalization
+        .getDelegate(
+      LocalizationLocalRepository().returnLocalizationFromSQL(sql) as Future,
+      appConfig.languages!,
+    ),
+    surveyForm_localization.SurveyFormLocalization.getDelegate(
+      LocalizationLocalRepository().returnLocalizationFromSQL(sql) as Future,
+      appConfig.languages!,
+    ),
+    complaints_localization.ComplaintsLocalization.getDelegate(
       LocalizationLocalRepository().returnLocalizationFromSQL(sql) as Future,
       appConfig.languages!,
     ),

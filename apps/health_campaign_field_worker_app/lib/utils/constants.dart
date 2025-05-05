@@ -1,3 +1,6 @@
+import 'package:complaints/complaints.dart';
+import 'package:survey_form/survey_form.dart';
+import 'package:registration_delivery/registration_delivery.dart';
 import 'package:collection/collection.dart';
 import 'package:digit_data_model/data_model.dart';
 import 'package:digit_dss/digit_dss.dart';
@@ -114,6 +117,29 @@ class Constants {
       ),
       LocationTrackerLocalBaseRepository(
           sql, LocationTrackerOpLogManager(isar)),
+      HouseholdMemberLocalRepository(sql, HouseholdMemberOpLogManager(isar)),
+      HouseholdLocalRepository(sql, HouseholdOpLogManager(isar)),
+      ProjectBeneficiaryLocalRepository(
+        sql,
+        ProjectBeneficiaryOpLogManager(
+          isar,
+        ),
+      ),
+      TaskLocalRepository(sql, TaskOpLogManager(isar)),
+      SideEffectLocalRepository(sql, SideEffectOpLogManager(isar)),
+      ReferralLocalRepository(sql, ReferralOpLogManager(isar)),
+      ServiceDefinitionLocalRepository(
+        sql,
+        ServiceDefinitionOpLogManager(isar),
+      ),
+      ServiceLocalRepository(
+        sql,
+        ServiceOpLogManager(isar),
+      ),
+      PgrServiceLocalRepository(
+        sql,
+        PgrServiceOpLogManager(isar),
+      ),
     ];
   }
 
@@ -174,6 +200,24 @@ class Constants {
           DownsyncRemoteRepository(dio, actionMap: actions),
         if (value == DataModelType.userLocation)
           LocationTrackerRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.household)
+          HouseholdRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.projectBeneficiary)
+          ProjectBeneficiaryRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.task)
+          TaskRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.householdMember)
+          HouseholdMemberRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.sideEffect)
+          SideEffectRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.referral)
+          ReferralRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.serviceDefinition)
+          ServiceDefinitionRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.service)
+          ServiceRemoteRepository(dio, actionMap: actions),
+        if (value == DataModelType.complaints)
+          PgrServiceRemoteRepository(dio, actionMap: actions),
       ]);
     }
 
@@ -219,6 +263,9 @@ class Constants {
     SyncServiceSingleton().registries?.registerSyncRegistries({
       DataModelType.complaints: (remote) => CustomSyncRegistry(remote),
     });
+    SurveyFormSingleton().setTenantId(envConfig.variables.tenantId);
+
+    RegistrationDeliverySingleton().setTenantId(envConfig.variables.tenantId);
   }
 }
 

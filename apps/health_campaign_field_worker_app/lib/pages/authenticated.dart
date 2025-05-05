@@ -1,3 +1,4 @@
+import 'package:survey_form/survey_form.dart';
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -125,6 +126,14 @@ class AuthenticatedPageWrapper extends StatelessWidget {
                   drawer: showDrawer ? drawerWidget(context) : null,
                   body: MultiBlocProvider(
                     providers: [
+                      BlocProvider(
+                        create: (_) => ServiceBloc(
+                          const ServiceEmptyState(),
+                          serviceDataRepository: context
+                              .repository<ServiceModel, ServiceSearchModel>(),
+                        ),
+                      ),
+
                       // INFO : Need to add bloc of package Here
                       BlocProvider(
                         create: (context) {
